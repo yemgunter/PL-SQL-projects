@@ -1,0 +1,128 @@
+1. Read Chapter 5 pages 175- 209  Casteel text
+2. Review    Ch05_PPT.pdf Ch05_PPT.pdf - Alternative Formats  
+3. Read - pages -- 99  McLaughlin Text
+4. Read -  pages   -- 338 --343  McLaughlin text
+5 - Read - pages  -- 276-281  McLaughlin text
+6 - Read - pages -- 263  McLaughlin text
+
+See Pages 209 - 212 -- required supporting files are included in attached file
+This assignment includes:
+5-1  Create a Procedure
+5-2 Using a Procedure with  IN  Parameters
+5-3 Calculating the Tax on an Order
+5-4 Updating Columns in a Table
+5-5 Updating order Status
+5-6 Returning Order Status  Information
+5-7 Identifying Customers
+5-8 Adding Items to a Basket
+
+Procedures and functions are quite similar in that they can accept input values and return values.  However, a procedure is used to perform one or more tasks, can return no values or many values,  and can be used only in PL/SQL statements. On the other hand, a function contains a RETURN clause  and is used to manipulate data and return a single value. Functions you construct are similar to the  Oracle-supplied functions, such as ROUND, that you have already used. 
+
+Casteel, Joan. Oracle 11g: PL/SQL Programming (p. 178). Cengage Textbook. Kindle Edition. 
+
+naming conventions include using the prefix p_ for a parameter  name or the suffix  _num in a numeric variable name. In both cases, the name tells you  something about it, such as that it’s a parameter or holds numeric data.
+
+Casteel, Joan. Oracle 11g: PL/SQL Programming (p. 180). Cengage Textbook. Kindle Edition. 
+
+procedure is a program
+
+create as a sub-program to be used in another area
+
+syntax structure
+
+
+CREATE [OR REPLACE] PROCEDURE
+procedure_name
+    [(parameter1_name[mode] data type,
+    parameter2_name[mode] data type)]
+	IN/OUT inform if one way or two way
+IS|AS
+    declaration section
+BEGIN
+    executable section
+        SELECT, FROM, WHERE
+	can call another procedure to give assistance
+	
+EXCEPTION
+    exception handlers
+    look to build the process doing more than printing out
+END;
+
+
+
+
+above the BEGIN is header with information
+after the BEGIN is body with executables
+
+as we bring information in, you can have a constant value
+
+$10 @ 40 hrs = $400
+
+
+The %TYPE and %ROWTYPE attributes can be used to provide a data type based on a  table column, which is especially suitable for parameters holding data retrieved from the  database. 
+
+
+Using these attributes in variable declarations can minimize program maintenance. 
+
+
+
+-----
+
+BOOK SAYS
+
+DECLARE
+    lv_prodid   bb_product.idproduct%TYPE;   -- Declare a variable for product ID
+    lv_descrip  bb_product.description%TYPE; -- Declare a variable for the new description
+BEGIN
+    lv_prodid := 1;                          -- Assign value to the product ID variable
+    lv_descrip := 'CapressoBar Model #388';  -- Assign value to the description variable
+
+    prod_name_sp(lv_prodid, lv_descrip);     -- Call the procedure with the variables
+END;
+
+BUT ASHER SAID better way: 
+
+BEGIN
+    prod_name_sp(1, 'CapressoBar Model #388');
+END;
+
+
+
+
+The special symbol => is used for named association.
+
+DECLARE 
+    lv_prodname bb_product.productname%TYPE;  
+    lv_descrip bb_product.description%TYPE;
+    lv_prodimg bb_product.productimage%TYPE;
+    lv_price bb_product.price%TYPE;
+    lv_active bb_product.active%TYPE; 
+BEGIN  
+     prod_add_sp (p_prodname => 
+     p_descrip 
+     p_prodimg 
+     p_price 
+     p_active 
+
+
+
+
+'Roasted Blend', 'Well-balanced mix of roasted beans, a medium body', 'roasted.jpg',9.50,1);  
+END;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
