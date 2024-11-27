@@ -1,0 +1,451 @@
+Yolanda Gunter Hands On 3
+
+Chapter_3_data
+
+Assignment 3-1: Querying Data in a Block  A Brewbean’s application page is being developed for employees to enter a basket number and  view shipping information for the order that includes date, shipper, and shipping number. An  IDSTAGE value of 5 in the BB_BASKETSTATUS table indicates that the order has been  shipped. In this assignment, you create a block using scalar variables to hold the data retrieved  from the database. Follow these steps to create a block for checking shipping information: 
+
+1. Start SQL Developer, if necessary.
+2. Open the assignxnent03-01.sql file in the Chapter03 folder.
+3. Review the code, and note the use of scalar variables to hold the values retrieved in the SELECT
+statement.
+4. Add data type assignments to the first three variables declared. These variables will be used to
+hold data retrieved from a query.
+5. Run the block for basket ID 3, and compare the results with below
+
+DECLARE --initialize 
+  lv_ship_date bb_basketstatus.dtstage%TYPE;
+  lv_shipper_txt bb_basketstatus.shipper%TYPE;
+  lv_ship_num bb_basketstatus.shippingnum%TYPE;
+  lv_bask_num bb_basketstatus.idbasket%TYPE := 3;
+
+BEGIN --retrieve data 
+  SELECT dtstage, shipper, shippingnum
+   INTO lv_ship_date, lv_shipper_txt, lv_ship_num
+   FROM bb_basketstatus
+   WHERE idbasket = lv_bask_num
+    AND idstage = 5;
+
+  DBMS_OUTPUT.PUT_LINE('Date Shipped: '||lv_ship_date);
+  DBMS_OUTPUT.PUT_LINE('Shipper: '||lv_shipper_txt);
+  DBMS_OUTPUT.PUT_LINE('Shipping #: '||lv_ship_num);
+END;
+/
+
+6. Now try to run this same block with a basket ID that has no shipping information recorded. Edit the basket ID variable to be 7.
+
+7. Run the block again, and review the error shown in below
+
+
+DECLARE
+  lv_ship_date bb_basketstatus.dtstage%TYPE;
+  lv_shipper_txt bb_basketstatus.shipper%TYPE;
+  lv_ship_num bb_basketstatus.shippingnum%TYPE;
+  lv_bask_num bb_basketstatus.idbasket%TYPE := 7;
+BEGIN
+  SELECT dtstage, shipper, shippingnum
+   INTO lv_ship_date, lv_shipper_txt, lv_ship_num
+   FROM bb_basketstatus
+   WHERE idbasket = lv_bask_num
+    AND idstage = 5;
+  DBMS_OUTPUT.PUT_LINE('Date Shipped: '||lv_ship_date);
+  DBMS_OUTPUT.PUT_LINE('Shipper: '||lv_shipper_txt);
+  DBMS_OUTPUT.PUT_LINE('Shipping #: '||lv_ship_num);
+END;
+/
+
+
+Assignment 3-2: Using a Record Variable 
+
+A Brewbean's application page is being developed for employees to enter a basket number and view shipping information for the order. The page needs to display all column values from the BB_BASKETSTATUS table. An IDSTAGE value of 5 in the BB_BASKETSTATUS table indicates that the order has been shipped. Follow these steps to create a block with a record variable:
+
+1. Start SQL Developer, if necessary.
+2. Open the assigriment03-02.sql file in the Chapter03 folder.
+3. Review the code, and note the use of a record variable to hold the values retrieved in the SELECT statement. Also, notice that the record variable's values are referenced separately in the DBMS OUTPUT statements.
+4. Run the block, and compare the results with below 
+
+DECLARE
+  rec_ship bb_basketstatus%ROWTYPE;
+  lv_bask_num bb_basketstatus.idbasket%TYPE := 3;
+BEGIN
+  SELECT *
+   INTO rec_ship
+   FROM bb_basketstatus
+   WHERE idbasket =  lv_bask_num
+    AND idstage = 5;
+  DBMS_OUTPUT.PUT_LINE('Date Shipped: '||rec_ship.dtstage);
+  DBMS_OUTPUT.PUT_LINE('Shipper: '||rec_ship.shipper);
+  DBMS_OUTPUT.PUT_LINE('Shipping #: '||rec_ship.shippingnum);
+  DBMS_OUTPUT.PUT_LINE('Notes: '||rec_ship.notes);
+END;
+
+
+Assignment 3-3: Processing Database Data with IF Statements 
+ 
+The Brewbean's application needs a block to determine whether a customer is rated HIGH, MID, or LOW based on his or her total purchases. The block needs to select the total amount of orders for a specified customer, determine the rating, and then display the results onscreen. The code rates the customer HIGH if total purchases are greater than $200, MID if greater than $100, and LOW if $100 or lower. Use an initialized variable to provide the shopper ID.
+
+1. Start SQL Developer, if necessary.
+2. Open the assigxment03-03.sql file from the Chapter03 folder. Review the partial block. Edit the block to perform the required task.
+3. Run the block and verify the results. Enter and run the following SQL query to confirm that the total for this shopper is indeed greater than $200:
+
+SELECT SUM (total)
+ FROM bb—basket
+ WHERE idshopper = 22
+ AND orderplaced = 1
+ GROUP BY idshopper;
+
+4. Test other shoppers who have a completed order.
+
+DECLARE
+ lv_total_num NUMBER(6,2);
+ lv_rating_txt VARCHAR2(4);
+ lv_shop_num bb_basket.idshopper%TYPE := 22;
+BEGIN
+ SELECT SUM(total)
+    INTO lv_total_num
+    FROM bb_basket
+    WHERE idshopper = lv_shop_num
+        AND orderplaced = 1
+    GROUP BY idshopper;
+    
+    IF lv_total_num > 200 THEN
+        lv_rating_txt := 'HIGH';
+    ELSIF lv_total_num > 100 THEN
+        lv_rating_txt := 'MID';
+    ELSE 
+        lv_rating_txt := 'LOW';
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Shopper '||lv_shop_num ||' is rated '||lv_rating_txt);
+END;
+/
+
+SELECT SUM(total)
+FROM bb_basket
+WHERE idshopper = 22
+  AND orderplaced = 1
+GROUP BY idshopper;
+
+
+SUM(TOTAL)
+----------
+    210.21
+
+
+
+DECLARE
+ lv_total_num NUMBER(6,2);
+ lv_rating_txt VARCHAR2(4);
+ lv_shop_num bb_basket.idshopper%TYPE := 21;
+BEGIN
+    SELECT SUM(total)
+    INTO lv_total_num
+    FROM bb_basket
+    WHERE idshopper = lv_shop_num
+        AND orderplaced = 1
+    GROUP BY idshopper;
+    
+    IF lv_total_num > 200 THEN
+        lv_rating_txt := 'HIGH';
+    ELSIF lv_total_num > 100 THEN
+        lv_rating_txt := 'MID';
+    ELSE 
+        lv_rating_txt := 'LOW';
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+END;
+
+Shopper 21 is rated LOW
+
+
+SELECT SUM(total)
+FROM bb_basket
+WHERE idshopper = 21
+  AND orderplaced = 1
+GROUP BY idshopper;
+
+
+SUM(TOTAL)
+----------
+     66.76
+
+
+Assignment 3-4: Using Searched CASE Statements 
+
+The Brewbean's application needs a block to determine whether a customer is rated HIGH, MID, or LOW
+based on his or her total purchases. The block needs to select the total amount of orders for a specified customer, determine the rating, and then display the results onscreen. The code rates the customer HIGH if total purchases are greater than $200, MID if greater than $100, and LOW if $100 or lower. Use an initialized variable to provide the shopper ID.
+
+1. Start SQL Developer, if necessary.
+2. Modify the code used in Assignment 3-3 to use a searched CASE statement to check the
+shopper's total purchase amount and determine the correct rating.
+3. Run the block, and verify the results.
+4. Enter and run the following code to confirm that the total for this shopper is indeed greater
+than $200:
+
+SELECT SUM (total)
+ FROM bb_basket
+ WHERE idshopper = 22
+ AND orderplaced = 1
+ GROUP BY idshopper;
+
+5. Test other shoppers who have a completed order. 
+
+
+DECLARE
+ lv_total_num NUMBER(6,2);
+ lv_rating_txt VARCHAR2(4);
+ lv_shop_num bb_basket.idshopper%TYPE := 21;
+BEGIN
+    SELECT SUM(total)
+    INTO lv_total_num
+    FROM bb_basket
+    WHERE idshopper = lv_shop_num
+        AND orderplaced = 1
+    GROUP BY idshopper;
+    
+    CASE
+        WHEN lv_total_num > 200 THEN
+            lv_rating_txt := 'HIGH';
+        WHEN lv_total_num > 100 THEN
+            lv_rating_txt := 'MID';
+        ELSE 
+            lv_rating_txt := 'LOW';
+    END CASE;
+
+    DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+END;
+
+Shopper 21 is rated LOW
+
+
+SELECT SUM (total)
+FROM bb_basket
+WHERE idshopper = 21
+AND orderplaced = 1
+GROUP BY idshopper;
+
+SUM(TOTAL)
+----------
+     66.76
+
+-
+
+DECLARE
+ lv_total_num NUMBER(6,2);
+ lv_rating_txt VARCHAR2(4);
+ lv_shop_num bb_basket.idshopper%TYPE := 22;
+BEGIN
+    SELECT SUM(total)
+    INTO lv_total_num
+    FROM bb_basket
+    WHERE idshopper = lv_shop_num
+        AND orderplaced = 1
+    GROUP BY idshopper;
+    
+    CASE
+        WHEN lv_total_num > 200 THEN
+            lv_rating_txt := 'HIGH';
+        WHEN lv_total_num > 100 THEN
+            lv_rating_txt := 'MID';
+        ELSE 
+            lv_rating_txt := 'LOW';
+    END CASE;
+
+    DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+END;
+/
+
+SELECT SUM (total)
+FROM bb_basket
+WHERE idshopper = 22
+AND orderplaced = 1
+GROUP BY idshopper;
+
+SUM(TOTAL)
+----------
+    210.21
+
+
+
+
+Assignment 3-5: Using a WHILE Loop  
+
+Brewbean’s wants to include a feature in its application that calculates the total amount (quantity)  of a specified item that can be purchased with a given amount of money. Create a block with a  WHILE loop to increment the item’s cost until the dollar value is met. Test first with a total spending  amount of $100 and product ID 4. Then test with an amount and a product of your choice. Use  initialized variables to provide the total spending amount and product ID. 
+
+DECLARE
+    lv_item_qty NUMBER := 0;
+    lv_spending_budget NUMBER(8,2) := 100.00;
+    lv_amount_spent NUMBER(8,2) := 0.00;
+    lv_product_id bb_product.idproduct%TYPE := 4;
+    lv_item_price bb_product.price%TYPE;
+    
+BEGIN
+    SELECT price
+    INTO lv_item_price
+    FROM bb_product
+    WHERE idproduct = lv_product_id;
+    
+    WHILE (lv_amount_spent + lv_item_price) <= lv_spending_budget LOOP
+        lv_item_qty := lv_item_qty + 1;
+        lv_amount_spent := lv_amount_spent + lv_item_price;
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('Product ID: ' || lv_product_id);
+    DBMS_OUTPUT.PUT_LINE('Amount Spent: $' ||  TO_CHAR(lv_amount_spent, '99999.00'));
+
+END;
+
+Product ID: 4
+Spending Budget: $100.00
+Item Quantity: 3
+Amount Spent: $85.50
+
+
+DECLARE
+    lv_item_qty NUMBER := 0;
+    lv_spending_budget NUMBER(8,2) := 10000.00;
+    lv_amount_spent NUMBER(8,2) := 0.00;
+    lv_product_id bb_product.idproduct%TYPE := 8;
+    lv_item_price bb_product.price%TYPE;
+   
+BEGIN
+    SELECT price
+    INTO lv_item_price
+    FROM bb_product
+    WHERE idproduct = lv_product_id;
+    
+    WHILE (lv_amount_spent + lv_item_price) <= lv_spending_budget LOOP
+        lv_item_qty := lv_item_qty + 1;
+        lv_amount_spent := lv_amount_spent + lv_item_price;
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('Product ID: ' || lv_product_id);
+    DBMS_OUTPUT.PUT_LINE('Amount Spent: $' || TO_CHAR(lv_amount_spent, '99,999.00'));
+
+END;
+
+Product ID: 8
+Spending Budget: $ 10,000.00
+Item Quantity: 925
+Amount Spent: $  9,990.00
+
+
+Assignment 3-6: Working with IF Statements  
+
+Brewbean’s calculates shipping cost based on the quantity of items in an order. Assume the  quantity column in the BB_BASKET table contains the total number of items in a basket.  A block is needed to check the quantity provided by an initialized variable and determine the  shipping cost. Display the calculated shipping cost onscreen. Test using the basket IDs 5 and  12, and apply the shipping rates listed in Table 3-3.  
+
+TABLE 3-3 Shipping Charges  
+Quantity of Items 	Shipping Cost  
+Up to 3 		$5.00  
+4–6 			$7.50  
+7–10 			$10.00  
+More than 10		$12.00
+
+DECLARE
+    lv_basket_id bb_basket.idbasket%TYPE := 5;
+    lv_num_items bb_basket.quantity%TYPE;
+    lv_shipping_cost bb_basket.shipping%TYPE;
+
+BEGIN
+    SELECT quantity
+    INTO lv_num_items
+    FROM bb_basket
+    WHERE idbasket = lv_basket_id;
+	
+    IF lv_num_items <= 3 THEN
+        lv_shipping_cost := 5.00;
+    ELSIF lv_num_items <= 6 THEN
+        lv_shipping_cost := 7.50;
+    ELSIF lv_num_items <= 10 THEN
+        lv_shipping_cost := 10.00;
+    ELSE lv_shipping_cost := 12.00;
+    END IF;
+        
+    	DBMS_OUTPUT.PUT_LINE('Shipping Cost: $' || TO_CHAR(lv_shipping_cost, '99.00'));
+END;
+//
+
+Shipping Cost: $  7.50
+
+DECLARE
+    lv_basket_id bb_basket.idbasket%TYPE := 12;
+    lv_num_items bb_basket.quantity%TYPE;
+	lv_shipping_cost bb_basket.shipping%TYPE;
+
+BEGIN
+    SELECT quantity
+    INTO lv_num_items
+    FROM bb_basket
+    WHERE idbasket = lv_basket_id;
+	
+    IF lv_num_items <= 3 THEN
+        lv_shipping_cost := 5.00;
+    ELSIF lv_num_items <= 6 THEN
+        lv_shipping_cost := 7.50;
+    ELSIF lv_num_items <= 10 THEN
+        lv_shipping_cost := 10.00;
+    ELSE lv_shipping_cost := 12.00;
+    END IF;
+        
+    DBMS_OUTPUT.PUT_LINE('Shipping Cost: $' || TO_CHAR(lv_shipping_cost, '99.00'));
+END;
+
+Shipping Cost: $ 10.00
+
+
+Assignment 3-7: Using Scalar Variables for Data Retrieval  
+
+The Brewbean’s application contains a page displaying order summary information, including  IDBASKET, SUBTOTAL, SHIPPING, TAX, and TOTAL columns from the BB_BASKET table. Create a PL/SQL block with scalar variables to retrieve this data and then display it  onscreen. An initialized variable should provide the IDBASKET value. Test the block using the  basket ID 12.  
+
+DECLARE
+    lv_basket_id bb_basket.idbasket%TYPE := 12;  
+    lv_subtotal bb_basket.subtotal%TYPE;     
+    lv_shipping bb_basket.shipping%TYPE;         
+    lv_tax bb_basket.tax%TYPE;                   
+    lv_total bb_basket.total%TYPE;               
+BEGIN
+    SELECT subtotal, shipping, tax, total
+    INTO lv_subtotal, lv_shipping, lv_tax, lv_total
+    FROM bb_basket
+    WHERE idbasket = lv_basket_id;
+    
+    DBMS_OUTPUT.PUT_LINE('Order Summary for Basket ID: ' || lv_basket_id);
+    DBMS_OUTPUT.PUT_LINE('Subtotal: $' || TO_CHAR(lv_subtotal, '99,000.00'));
+    DBMS_OUTPUT.PUT_LINE('Shipping: $' || TO_CHAR(lv_shipping, '99,000.00'));
+    DBMS_OUTPUT.PUT_LINE('Tax: $' || TO_CHAR(lv_tax, '99,000.00'));
+    DBMS_OUTPUT.PUT_LINE('Total: $' || TO_CHAR(lv_total, '99,000.00'));
+END;
+/
+
+
+Assignment 3-8: Using a Record Variable for Data Retrieval  
+
+The Brewbean’s application contains a page displaying order summary information, including  IDBASKET, SUBTOTAL, SHIPPING, TAX, and TOTAL columns from the BB_BASKET  table. Create a PL/SQL block with a record variable to retrieve this data and display it  onscreen. An initialized variable should provide the IDBASKET value. Test the block using  the basket ID 12. 
+
+DECLARE
+   
+    TYPE type_basket IS RECORD ( 
+        idbasket bb_basket.idbasket%TYPE,
+        subtotal bb_basket.subtotal%TYPE,
+        shipping bb_basket.shipping%TYPE,
+        tax bb_basket.tax%TYPE,
+        total bb_basket.total%TYPE);
+
+    rec_basket type_basket;  
+
+    lv_basket_id NUMBER(3) := 12; 
+BEGIN
+    
+    SELECT idbasket, subtotal, shipping, tax, total
+    INTO rec_basket 
+    FROM bb_basket
+    WHERE idbasket = lv_basket_id;
+
+    DBMS_OUTPUT.PUT_LINE('Order Summary Information for Basket ID: ' || rec_basket.idBasket);
+    DBMS_OUTPUT.PUT_LINE('Subtotal: $' || TO_CHAR(rec_basket.subtotal, '99,999.99'));
+    DBMS_OUTPUT.PUT_LINE('Shipping: $' || TO_CHAR(rec_basket.shipping, '99,999.99'));
+    DBMS_OUTPUT.PUT_LINE('Tax: $' || TO_CHAR(rec_basket.tax, '99,999.99'));
+    DBMS_OUTPUT.PUT_LINE('Total: $' || TO_CHAR(rec_basket.total, '99,999.99'));
+END;
+/
+
