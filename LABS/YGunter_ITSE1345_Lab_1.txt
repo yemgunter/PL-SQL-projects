@@ -1,0 +1,351 @@
+YOLANDA GUNTER
+ITSE 1345 (91188)
+
+
+
+SQL> spool
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\YGunter_ITSE1345_Lab_1.txt
+
+
+SQL> set Echo On
+SQL> 
+SQL> set Linesize 100
+SQL> 
+SQL> set pagesize 50
+SQL> 
+SQL> SET SERVEROUTPUT ON
+SQL> Column Table_Name heading 'Table Name' format A15;
+SQL> Column Column_Name Heading 'Column Name' Format A15;
+SQL> Column Constraint_Name Heading 'Constraint Name' Format A15;
+SQL> Column Constraint_Type Heading 'Constraint Type' Format A15;
+
+
+
+Your first question is:
+1) What Database Objects( tables) am I responsible for, how can I find them, 
+And   --   2) read through it before your meeting?-- 
+
+A) Locate tables for this class.
+ Use Select      Table_name from all_tables
+
+
+SQL> SELECT table_name FROM user_tables;
+
+Table Name                                                                                          
+---------------                                                                                     
+STATE_LOOKUP                                                                                        
+DEPT                                                                                                
+EMP                                                                                                 
+SALGRADE                                                                                            
+CUSTOMER                                                                                            
+WIDGETS                                                                                             
+PURCHASE_ORDER                                                                                      
+EMP_SERVICE                                                                                         
+EMP_SERVICE_LOG                                                                                     
+
+9 rows selected.
+
+
+Your first step is to print the information by querying all the tables to find the names of the FIELDS.  Be sure to include table names and for the owner information.   
+
+Describe tables you will be using 
+with   “Describe: command. 
+ 
+You have been handed  select commands that will assist in 
+1) Defining the names of the tables (objects) owned by creator( this is you the student ) 
+2) All of the Columns 
+3) Table Constraints for the tables (objects) owned by creator( this is you the student ) 
+4) Constraint Type
+
+Your final step will then be to perform   SELECT * and   DESCRIBE commands for each of these tables owned by creator 
+
+
+SQL> DESC STATE_LOOKUP;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ STATE                                                 NOT NULL VARCHAR2(2)
+ STATE_DESC                                                     VARCHAR2(16)
+
+SQL> SELECT * FROM STATE_LOOKUP;
+
+ST STATE_DESC                                                                                       
+-- ----------------                                                                                 
+NJ New Jersey                                                                                       
+MD Maryland                                                                                         
+NY New York                                                                                         
+HA Hawaii                                                                                           
+AK Alaska                                                                                           
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2    FROM   user_constraints
+  3    WHERE  table_name = 'STATE_LOOKUP';
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+Constraint Name Constraint Type Table Name                                                          
+--------------- --------------- ---------------                                                     
+YEMGUNTER                                                                                           
+PK_STATE_LOOKUP P               STATE_LOOKUP                                                        
+                                                                                                    
+
+SQL> DESC DEPT;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ DEPTNO                                                NOT NULL NUMBER(3)
+ DNAME                                                          VARCHAR2(15)
+ LOC                                                            VARCHAR2(10)
+
+SQL> SELECT * FROM DEPT;
+
+    DEPTNO DNAME           LOC                                                                      
+---------- --------------- ----------                                                               
+        10 ACCOUNTING      NEW YORK                                                                 
+        20 RESEARCH        AUSTIN                                                                   
+        30 SALES           CHICAGO                                                                  
+        40 OPERATIONS      BOSTON                                                                   
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2      FROM   user_constraints
+  3      WHERE  table_name = 'DEPT';
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+Constraint Name Constraint Type Table Name                                                          
+--------------- --------------- ---------------                                                     
+YEMGUNTER                                                                                           
+PK_DEPT         P               DEPT                                                                
+                                                                                                    
+
+SQL> 
+SQL> DESC EMP;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ EMPNO                                                 NOT NULL NUMBER(4)
+ ENAME                                                 NOT NULL VARCHAR2(10)
+ JOB                                                            VARCHAR2(10)
+ MGR                                                            NUMBER(4)
+ HIREDATE                                                       DATE
+ SAL                                                            NUMBER(6)
+ COMM                                                           NUMBER(6)
+ DEPTNO                                                         NUMBER(3)
+
+SQL> SELECT * FROM EMP;
+
+     EMPNO ENAME      JOB               MGR HIREDATE         SAL       COMM     DEPTNO              
+---------- ---------- ---------- ---------- --------- ---------- ---------- ----------              
+      7839 KING       PRESIDENT             17-NOV-95       5000                    10              
+      7566 JONES      MANAGER          7839 02-APR-95       2975                    20              
+      7698 BLAKE      MANAGER          7839 01-MAY-95       2850                    30              
+      7782 CLARKS     MANAGER          7839 09-JUN-95       2450                    10              
+      7902 FORD       ANALYST          7566 03-DEC-95       3000                    20              
+      7369 SMITH      CLERK            7902 17-DEC-98        800                    20              
+      7499 ALLEN      SALESMAN         7698 20-FEB-99       1600        300         30              
+      7521 WARD       SALESMAN         7698 22-FEB-98       1250        500         30              
+      7654 MARTIN     SALESMAN         7698 28-SEP-99       1250       1400         30              
+      7788 SCOTTS     ANALYST          7566 09-DEC-96       3000                    20              
+      7844 TURNER     SALESMAN         7698 08-SEP-95       1500          0         30              
+      7876 ADAM       CLERK            7788 12-JAN-00       1100                    20              
+      7900 JAMES      CLERK            7698 03-DEC-95        950                    30              
+      7934 MARTIN     CLERK            7782 23-JAN-96       1300                    10              
+
+14 rows selected.
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2     FROM   user_constraints
+  3     WHERE  table_name = 'EMP';
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+Constraint Name Constraint Type Table Name                                                          
+--------------- --------------- ---------------                                                     
+YEMGUNTER                                                                                           
+SYS_C007103     C               EMP                                                                 
+                                                                                                    
+YEMGUNTER                                                                                           
+PK_EMP          P               EMP                                                                 
+                                                                                                    
+
+SQL> DESC SALGRADE;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ GRADE                                                 NOT NULL NUMBER(3)
+ LOSAL                                                          NUMBER(5)
+ HISAL                                                          NUMBER(6)
+
+SQL> SELECT * FROM SALGRADE;
+
+     GRADE      LOSAL      HISAL                                                                    
+---------- ---------- ----------                                                                    
+         1        700       1200                                                                    
+         2       1201       1400                                                                    
+         3       1401       2000                                                                    
+         4       2001       3000                                                                    
+         5       3001       9999                                                                    
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2      FROM   user_constraints
+  3      WHERE  table_name = 'SALGRADE';
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+Constraint Name Constraint Type Table Name                                                          
+--------------- --------------- ---------------                                                     
+YEMGUNTER                                                                                           
+PK_SALGRADE     P               SALGRADE                                                            
+                                                                                                    
+
+SQL> DESC CUSTOMER;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ CUST_ID                                               NOT NULL NUMBER(5)
+ CUST_NAME                                                      VARCHAR2(15)
+ ACCOUNT_ID                                                     VARCHAR2(10)
+ ACCOUNT_TYPE                                                   VARCHAR2(2)
+ STATE                                                          VARCHAR2(2)
+
+SQL> SELECT * FROM CUSTOMER;
+
+   CUST_ID CUST_NAME       ACCOUNT_ID AC ST                                                         
+---------- --------------- ---------- -- --                                                         
+     90001 B and B         A-11101    PR AK                                                         
+     90002 XYZ             A-11102    CM NJ                                                         
+     90003 JJ Sons         A-11103    CM NJ                                                         
+     90004 Exxon           A-11104    PR NY                                                         
+     90005 ABC             A-11105    CM NY                                                         
+     90006 Smith Co.       A-11106    CM MD                                                         
+     90007 Brown Co.       A-11107    CM MD                                                         
+     90008 Cooper Inc.     A-11108    PR MD                                                         
+
+8 rows selected.
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2     FROM   user_constraints
+  3     WHERE  table_name = 'CUSTOMER';
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+Constraint Name Constraint Type Table Name                                                          
+--------------- --------------- ---------------                                                     
+YEMGUNTER                                                                                           
+PK_CUSTOMER     P               CUSTOMER                                                            
+                                                                                                    
+
+SQL> DESC WIDGETS;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ WIDGET_ID                                             NOT NULL NUMBER(5)
+ STATUS                                                         VARCHAR2(3)
+ SAMPLE                                                         VARCHAR2(3)
+ LENGTH                                                         NUMBER(5)
+ WIDTH                                                          NUMBER(5)
+ HEIGHT                                                         NUMBER(5)
+
+SQL> SELECT * FROM WIDGETS;
+
+ WIDGET_ID STA SAM     LENGTH      WIDTH     HEIGHT                                                 
+---------- --- --- ---------- ---------- ----------                                                 
+        61 off yes         15         20         20                                                 
+        62 on  yes         17         21         21                                                 
+        63 off yes         16         20         20                                                 
+        64 off yes         14         20         20                                                 
+        65 off yes         17         20         21                                                 
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2      FROM   user_constraints
+  3      WHERE  table_name = 'WIDGETS';
+
+OWNER                                                                                               
+----------------------------------------------------------------------------------------------------
+Constraint Name Constraint Type Table Name                                                          
+--------------- --------------- ---------------                                                     
+YEMGUNTER                                                                                           
+PK_WIDGETS      P               WIDGETS                                                             
+                                                                                                    
+
+SQL> 
+SQL> DESC PURCHASE_ORDER;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ ORDER_ID                                                       NUMBER(5)
+ WIDGET_ID                                                      NUMBER(5)
+ CUST_ID                                                        NUMBER(5)
+ QUANTITY                                                       NUMBER(5)
+ PURCHASE_DATE                                                  DATE
+ PURCHASE_PRICE                                                 NUMBER(5)
+ DEV                                                            VARCHAR2(1)
+
+SQL> SELECT * FROM PURCHASE_ORDER;
+
+  ORDER_ID  WIDGET_ID    CUST_ID   QUANTITY PURCHASE_ PURCHASE_PRICE D                              
+---------- ---------- ---------- ---------- --------- -------------- -                              
+        31         61      90001         10 21-JAN-00            100 N                              
+        32         63      90004         10 11-FEB-98            100 N                              
+        33         64      90008          8 20-MAR-99             80 N                              
+        34         65      90007          7 10-JUN-99             90 N                              
+        35         62      90004         12 25-JUN-98             75 Y                              
+        36         65      90001          9 05-JAN-00             90 Y                              
+        37         61      90005          8 15-JUL-99            100 N                              
+        38         63      90001          5 22-JUL-98            100 Y                              
+        39         62      90005          7 01-AUG-98             75 N                              
+        40         64      90008         10 20-AUG-99             80 Y                              
+
+10 rows selected.
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2    FROM   user_constraints
+  3    WHERE  table_name = 'PURCHASE_ORDER';
+
+no rows selected
+
+SQL> 
+SQL> DESC EMP_SERVICE;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ EMPNO                                                          NUMBER(5)
+ CUST_ID                                                        NUMBER(5)
+ SALES                                                          NUMBER(5)
+
+SQL> SELECT * FROM EMP_SERVICE;
+
+     EMPNO    CUST_ID      SALES                                                                    
+---------- ---------- ----------                                                                    
+      7521      90001        100                                                                    
+      7522      90006        100                                                                    
+      7698      90004        100                                                                    
+      7369      90002        100                                                                    
+      7788      90003        300                                                                    
+      7789      90005        300                                                                    
+      7902      90007        300                                                                    
+      7903      90008       5001                                                                    
+
+8 rows selected.
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2    FROM   user_constraints
+  3    WHERE  table_name = 'EMP_SERVICE';
+
+no rows selected
+
+SQL> 
+SQL> DESC EMP_SERVICE_LOG;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ EMPNO                                                          NUMBER(5)
+ CUST_ID                                                        NUMBER(5)
+ LOG                                                            VARCHAR2(40)
+
+SQL> SELECT * FROM EMP_SERVICE_LOG;
+
+     EMPNO    CUST_ID LOG                                                                           
+---------- ---------- ----------------------------------------                                      
+      7521      90001 pur order sent                                                                
+      7521      90006 waiting on invoice                                                            
+      7698      90004 waiting parts                                                                 
+
+SQL> SELECT owner, constraint_name, constraint_type, table_name
+  2    FROM   user_constraints
+  3    WHERE  table_name = 'EMP_SERVICE_LOG';
+
+no rows selected
+
+SQL> SPOOL OFF
