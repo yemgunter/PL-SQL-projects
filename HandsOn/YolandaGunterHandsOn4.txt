@@ -1,0 +1,440 @@
+Yolanda Gunter Hands On 4
+
+SQL> spool
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn4.txt
+
+Assignment 4-1: Using an Explicit Cursor 
+
+SQL> DECLARE
+  2     CURSOR cur_basket IS
+  3       SELECT bi.idBasket, bi.quantity, p.stock
+  4         FROM bb_basketitem bi INNER JOIN bb_product p
+  5           USING (idProduct)
+  6         WHERE bi.idBasket = 6;
+  7     TYPE type_basket IS RECORD (
+  8       basket bb_basketitem.idBasket%TYPE,
+  9       qty bb_basketitem.quantity%TYPE,
+ 10       stock bb_product.stock%TYPE);
+ 11     rec_basket type_basket;
+ 12     lv_flag_txt CHAR(1) := 'Y';
+ 13  BEGIN
+ 14     OPEN cur_basket;
+ 15     LOOP
+ 16       FETCH cur_basket INTO rec_basket;
+ 17        EXIT WHEN cur_basket%NOTFOUND;
+ 18        IF rec_basket.stock < rec_basket.qty THEN lv_flag_txt := 'N'; END IF;
+ 19     END LOOP;
+ 20     CLOSE cur_basket;
+ 21     IF lv_flag_txt = 'Y' THEN DBMS_OUTPUT.PUT_LINE('All items in stock!'); END IF;
+ 22     IF lv_flag_txt = 'N' THEN DBMS_OUTPUT.PUT_LINE('All items NOT in stock!'); END IF;
+ 23  END;
+ 24  /
+All items in stock!
+
+PL/SQL procedure successfully completed.
+
+Assignment 4-2: Using a CURSOR FOR Loop
+
+SQL> DECLARE
+  2     CURSOR cur_shopper IS
+  3       SELECT a.idShopper, a.promo,  b.total
+  4         FROM bb_shopper a, (SELECT b.idShopper, SUM(bi.quantity*bi.price) total
+  5                              FROM bb_basketitem bi, bb_basket b
+  6                              WHERE bi.idBasket = b.idBasket
+  7                              GROUP BY idShopper) b
+  8          WHERE a.idShopper = b.idShopper
+  9       FOR UPDATE OF a.idShopper NOWAIT;
+ 10     lv_promo_txt CHAR(1);
+ 11  BEGIN
+ 12    FOR rec_shopper IN cur_shopper LOOP
+ 13     lv_promo_txt := 'X';
+ 14     IF rec_shopper.total > 100 THEN
+ 15            lv_promo_txt := 'A';
+ 16     END IF;
+ 17     IF rec_shopper.total BETWEEN 50 AND 99 THEN
+ 18            lv_promo_txt := 'B';
+ 19     END IF;
+ 20     IF lv_promo_txt <> 'X' THEN
+ 21       UPDATE bb_shopper
+ 22        SET promo = lv_promo_txt
+ 23        WHERE CURRENT OF cur_shopper;
+ 24     END IF;
+ 25    END LOOP;
+ 26    COMMIT;
+ 27  END;
+ 28  /
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT idShopper, s.promo, SUM(bi.quantity*bi.price) total
+  2  FROM bb_shopper s INNER JOIN bb_basket b USING(idShopper)
+  3  INNER JOIN bb_basketitem bi USING (idBasket)
+  4  GROUP BY idShopper, s.promo
+  5  ORDER BY idShopper;
+
+ IDSHOPPER P      TOTAL
+---------- - ----------
+        21 B       55.1
+        22 A     191.59
+        23 B       64.8
+        24         48.9
+        25 B       72.4
+        26           20
+        27         32.4
+
+7 rows selected.
+
+Assignment 4-3: Using Implicit Cursors 
+
+SQL> UPDATE bb_shopper
+  2  	SET promo = NULL;
+
+7 rows updated.
+
+SQL> UPDATE bb_shopper
+  2  	SET promo = 'B'
+  3  	WHERE idshopper IN (21,23,25);
+
+3 rows updated.
+
+SQL> UPDATE bb_shopper
+  2  	SET promo = 'A'
+  3  	WHERE idshopper = 22;
+
+1 row updated.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> BEGIN
+  2  	UPDATE bb_shopper
+  3  	SET promo = NULL
+  4  	WHERE promo IS NOT NULL;
+  5  
+  6  	DBMS_OUTPUT.PUT_LINE('How many rows updated?: ' || SQL%ROWCOUNT);
+  7  END;
+  8  /
+How many rows updated?: 4
+
+PL/SQL procedure successfully completed.
+
+Assignment 4-4: Using Exception Handling 
+
+SQL> DECLARE
+  2    lv_tax_num NUMBER(2,2);
+  3  BEGIN
+  4   CASE  'NJ'
+  5    WHEN 'VA' THEN lv_tax_num := .04;
+  6    WHEN 'NC' THEN lv_tax_num := .02;
+  7    WHEN 'NY' THEN lv_tax_num := .06;
+  8   END CASE;
+  9   DBMS_OUTPUT.PUT_LINE('tax rate = '||lv_tax_num);
+ 10  END;
+ 11  /
+DECLARE
+*
+ERROR at line 1:
+ORA-06592: CASE not found while executing CASE statement
+ORA-06512: at line 4
+
+
+SQL> DECLARE
+  2    lv_tax_num NUMBER(2,2);
+  3  BEGIN
+  4   CASE  'NJ'
+  5    WHEN 'VA' THEN lv_tax_num := .04;
+  6    WHEN 'NC' THEN lv_tax_num := .02;
+  7    WHEN 'NY' THEN lv_tax_num := .06;
+  8   END CASE;
+  9   DBMS_OUTPUT.PUT_LINE('tax rate = '||lv_tax_num);
+ 10   EXCEPTION
+ 11     WHEN CASE_NOT_FOUND THEN
+ 12      DBMS_OUTPUT.PUT_LINE('No tax');
+ 13  END;
+ 14  /
+No tax
+
+PL/SQL procedure successfully completed.
+
+
+Assignment 4-5: Handling Predefined Exceptions  
+
+SQL> DECLARE
+  2   lv_shopper_num NUMBER := 99;
+  3   rec_shopper bb_shopper%ROWTYPE;
+  4  BEGIN
+  5   SELECT *
+  6    INTO rec_shopper
+  7    FROM bb_shopper
+  8    WHERE idShopper = lv_shopper_num;
+  9  
+ 10    DBMS_OUTPUT.PUT_LINE('Shopper ID: ' || lv_shopper_num);
+ 11  
+ 12    EXCEPTION
+ 13      WHEN NO_DATA_FOUND THEN
+ 14      DBMS_OUTPUT.PUT_LINE('Invalid shopper ID');
+ 15  END;
+ 16  /
+Invalid shopper ID
+
+PL/SQL procedure successfully completed.
+
+Assignment 4-6: Handling Exceptions with Undefined Errors  
+
+SQL> ALTER TABLE bb_basketitem
+  2    ADD CONSTRAINT bitems_qty_ck CHECK (quantity < 20);
+  ADD CONSTRAINT bitems_qty_ck CHECK (quantity < 20)
+                 *
+ERROR at line 2:
+ORA-02264: name already used by an existing constraint
+
+
+SQL> 
+SQL> BEGIN
+  2    INSERT INTO bb_basketitem
+  3     VALUES (88,8,10.8,21,16,2,3);
+  4  
+  5     EXCEPTION
+  6     WHEN OTHERS THEN
+  7      DBMS_OUTPUT.PUT_LINE('Check Quantity');
+  8  END;
+  9  /
+Check Quantity
+
+PL/SQL procedure successfully completed.
+
+Assignment 4-7: Handling Exceptions with User-Defined Errors  
+
+SQL> 
+SQL> DECLARE
+  2      invalid_basket_id EXCEPTION;
+  3  
+  4      lv_old_num NUMBER := 30;
+  5      lv_new_num NUMBER := 4;
+  6  
+  7  BEGIN
+  8      UPDATE bb_basketitem
+  9       SET idBasket = lv_new_num
+ 10      WHERE idBasket = lv_old_num;
+ 11  
+ 12      IF SQL%NOTFOUND THEN
+ 13       RAISE invalid_basket_id;
+ 14      END IF;
+ 15  
+ 16  EXCEPTION
+ 17      WHEN invalid_basket_id THEN
+ 18      DBMS_OUTPUT.PUT_LINE('Invalid original basket ID');
+ 19  END;
+ 20  /
+Invalid original basket ID
+
+PL/SQL procedure successfully completed.
+
+
+
+SQL> SPOOL OFF;
+SQL> 
+SQL> BEGIN
+  2    DBMS_OUTPUT.PUT_LINE('This output will be appended to the file.');
+  3  END;
+  4  /
+This output will be appended to the file.
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off;
+SQL> BEGIN
+  2    DBMS_OUTPUT.PUT_LINE('This output will be appended to the file.');
+  3  END;
+  4  /
+This output will be appended to the file.
+
+PL/SQL procedure successfully completed.
+
+SQL> CLEAR SCREEN;
+
+
+Assignment 4-8: Processing and Updating a Group of Rows  
+
+To help track employee information, a new EMPLOYEE table was added to the Brewbean’s  database. Review the data in this table. 
+
+SQL> SELECT empno, ename, job, sal
+  2  FROM emp;
+
+     EMPNO ENAME      JOB               SAL
+---------- ---------- ---------- ----------
+      7839 KING       PRESIDENT        5000
+      7566 JONES      MANAGER          2975
+      7698 BLAKE      MANAGER          2850
+      7782 CLARKS     MANAGER          2450
+      7902 FORD       ANALYST          3000
+      7369 SMITH      CLERK             800
+      7499 ALLEN      SALESMAN         1600
+      7521 WARD       SALESMAN         1250
+      7654 MARTIN     SALESMAN         1250
+      7788 SCOTTS     ANALYST          3000
+      7844 TURNER     SALESMAN         1500
+      7876 ADAM       CLERK            1100
+      7900 JAMES      CLERK             950
+      7934 MARTIN     CLERK            1300
+
+14 rows selected.
+
+SQL> DECLARE
+  2  
+  3    CURSOR cur_emp IS -- Cursor declaration
+  4      SELECT empno, ename, job, sal * 12 AS annual_salary -- Convert monthly salary to annual
+  5      FROM emp;
+  6  
+  7    rec_emp cur_emp%ROWTYPE;   -- Record variable for cursor
+  8  
+  9    lv_raise emp.sal%TYPE;           -- Calculated raise amount
+ 10    lv_new_annual_salary emp.sal%TYPE; -- New calculated annual salary
+ 11    lv_total_raises emp.sal%TYPE := 0; -- Accumulated total of all salary increases
+ 12  
+ 13  BEGIN
+ 14  
+ 15    OPEN cur_emp;  -- Open  cursor  begin processing
+ 16    LOOP
+ 17  
+ 18      FETCH cur_emp INTO rec_emp;   -- Fetch each employee's data into the record variable
+ 19      EXIT WHEN cur_emp%NOTFOUND; -- Exit the loop when no more rows are found
+ 20  
+ 21      IF rec_emp.empno = 7839 THEN     -- Skip President (EMPNO = 7839)
+ 22        CONTINUE;
+ 23      END IF;
+ 24  
+ 25      lv_raise := rec_emp.annual_salary * 0.06;   -- Calculate the annual raise (6%)
+ 26  
+ 27      IF lv_raise > 2000 THEN  -- Cap the raise to a maximum of $2,000 annually
+ 28        lv_raise := 2000;
+ 29      END IF;
+ 30  
+ 31  
+ 32      lv_new_annual_salary := rec_emp.annual_salary + lv_raise;  -- Calculate  new annual salary after  raise
+ 33  
+ 34      lv_total_raises := lv_total_raises + lv_raise;   -- Calculate Total cost of all raises
+ 35  
+ 36  
+ 37  
+ 38      -- Display details for the current employee
+ 39      DBMS_OUTPUT.PUT_LINE('Employee ID: ' || rec_emp.empno || ', Name: ' || rec_emp.ename);
+ 40      DBMS_OUTPUT.PUT_LINE('Current Annual Salary: ' || rec_emp.annual_salary);
+ 41      DBMS_OUTPUT.PUT_LINE('Raise: ' || lv_raise);
+ 42      DBMS_OUTPUT.PUT_LINE('Proposed New Annual Salary: ' || lv_new_annual_salary);
+ 43      DBMS_OUTPUT.PUT_LINE('--------------------------------------');
+ 44  
+ 45  
+ 46   END LOOP;
+ 47    CLOSE cur_emp;  -- Close the cursor after processing is complete
+ 48  
+ 49    -- Display the total cost of raises
+ 50    DBMS_OUTPUT.PUT_LINE('Total Cost of Salary Increases: ' || lv_total_raises);
+ 51  END;
+ 52  /
+
+
+Employee ID: 7566, Name: JONES
+Current Annual Salary: 35700
+Raise: 2000
+Proposed New Annual Salary: 37700
+--------------------------------------
+Employee ID: 7698, Name: BLAKE
+Current Annual Salary: 34200
+Raise: 2000
+Proposed New Annual Salary: 36200
+--------------------------------------
+Employee ID: 7782, Name: CLARKS
+Current Annual Salary: 29400
+Raise: 1764
+Proposed New Annual Salary: 31164
+--------------------------------------
+Employee ID: 7902, Name: FORD
+Current Annual Salary: 36000
+Raise: 2000
+Proposed New Annual Salary: 38000
+--------------------------------------
+Employee ID: 7369, Name: SMITH
+Current Annual Salary: 9600
+Raise: 576
+Proposed New Annual Salary: 10176
+--------------------------------------
+Employee ID: 7499, Name: ALLEN
+Current Annual Salary: 19200
+Raise: 1152
+Proposed New Annual Salary: 20352
+--------------------------------------
+Employee ID: 7521, Name: WARD
+Current Annual Salary: 15000
+Raise: 900
+Proposed New Annual Salary: 15900
+--------------------------------------
+Employee ID: 7654, Name: MARTIN
+Current Annual Salary: 15000
+Raise: 900
+Proposed New Annual Salary: 15900
+--------------------------------------
+Employee ID: 7788, Name: SCOTTS
+Current Annual Salary: 36000
+Raise: 2000
+Proposed New Annual Salary: 38000
+--------------------------------------
+Employee ID: 7844, Name: TURNER
+Current Annual Salary: 18000
+Raise: 1080
+Proposed New Annual Salary: 19080
+--------------------------------------
+Employee ID: 7876, Name: ADAM
+Current Annual Salary: 13200
+Raise: 792
+Proposed New Annual Salary: 13992
+--------------------------------------
+Employee ID: 7900, Name: JAMES
+Current Annual Salary: 11400
+Raise: 684
+Proposed New Annual Salary: 12084
+--------------------------------------
+Employee ID: 7934, Name: MARTIN
+Current Annual Salary: 15600
+Raise: 936
+Proposed New Annual Salary: 16536
+--------------------------------------
+Total Cost of Salary Increases: 16784
+
+PL/SQL procedure successfully completed.
+
+SQL> spool
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn4.txt
+SQL> UPDATE emp
+  2  SET sal = CASE
+  3    WHEN empno = 7839 THEN sal -- No change for the President
+  4    WHEN sal * 12 * 0.06 > 2000 THEN (sal * 12 + 2000) / 12
+  5    ELSE (sal * 12 + sal * 12 * 0.06) / 12
+  6  END;
+
+14 rows updated.
+
+SQL> SELECT empno, ename, job, sal
+  2  FROM emp;
+
+     EMPNO ENAME      JOB               SAL
+---------- ---------- ---------- ----------
+      7839 KING       PRESIDENT        5000
+      7566 JONES      MANAGER          3142
+      7698 BLAKE      MANAGER          3017
+      7782 CLARKS     MANAGER          2597
+      7902 FORD       ANALYST          3167
+      7369 SMITH      CLERK             848
+      7499 ALLEN      SALESMAN         1696
+      7521 WARD       SALESMAN         1325
+      7654 MARTIN     SALESMAN         1325
+      7788 SCOTTS     ANALYST          3167
+      7844 TURNER     SALESMAN         1590
+      7876 ADAM       CLERK            1166
+      7900 JAMES      CLERK            1007
+      7934 MARTIN     CLERK            1378
+
+14 rows selected.
+
+SQL> spool off;

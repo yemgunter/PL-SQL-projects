@@ -1,0 +1,22 @@
+Yolanda Gunter Key Terms Ch 2 - Casteel
+
+
+1. anonymous blocks - pieces of code that don’t have a name. They are written, run once, and then forgotten. 
+
+2. naming conventions - a set of guidelines to make sure names of variables are easy to read, understand, and use correctly in a program.
+
+3. scalar variables - simple storage units that hold one piece of information at a time, like a number, a word, or a date. 
+
+4. composite variables -  variables that can hold multiple pieces of information at once. 
+
+5. variable initialization - giving a variable its first value when you declare it. 
+
+6. control structures - road signs for a program, helping it decide what action to take next.
+
+7. decision structures - parts of a program that make choices based on certain conditions like asking “if this is true, do this; if not, do something else.”
+
+8. looping constructs - parts of a program that repeat a set of instructions over and over again until you tell it to stop.
+
+9. basic loops - simple instructions in a program that tell it to repeat a set of steps a certain number of times or until a condition is met. 
+
+10. static statements - parts of the program that don’t change while the program runs, like fixed instructions that stay the same with each iteration.

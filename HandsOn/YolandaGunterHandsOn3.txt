@@ -1,0 +1,450 @@
+SQL> 
+SQL> SPOOL
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn3.txt
+SQL> DECLARE --initialize
+  2    lv_ship_date bb_basketstatus.dtstage%TYPE;
+  3    lv_shipper_txt bb_basketstatus.shipper%TYPE;
+  4    lv_ship_num bb_basketstatus.shippingnum%TYPE;
+  5    lv_bask_num bb_basketstatus.idbasket%TYPE := 3;
+  6  
+  7  BEGIN --retrieve data
+  8    SELECT dtstage, shipper, shippingnum
+  9     INTO lv_ship_date, lv_shipper_txt, lv_ship_num
+ 10     FROM bb_basketstatus
+ 11     WHERE idbasket = lv_bask_num
+ 12      AND idstage = 5;
+ 13  
+ 14    DBMS_OUTPUT.PUT_LINE('Date Shipped: '||lv_ship_date);
+ 15    DBMS_OUTPUT.PUT_LINE('Shipper: '||lv_shipper_txt);
+ 16    DBMS_OUTPUT.PUT_LINE('Shipping #: '||lv_ship_num);
+ 17  END;
+ 18  /
+Date Shipped: 25-JAN-12                                                                             
+Shipper: UPS                                                                                        
+Shipping #: ZW845584GD89H569                                                                        
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2    lv_ship_date bb_basketstatus.dtstage%TYPE;
+  3    lv_shipper_txt bb_basketstatus.shipper%TYPE;
+  4    lv_ship_num bb_basketstatus.shippingnum%TYPE;
+  5    lv_bask_num bb_basketstatus.idbasket%TYPE := 7;
+  6  BEGIN
+  7    SELECT dtstage, shipper, shippingnum
+  8     INTO lv_ship_date, lv_shipper_txt, lv_ship_num
+  9     FROM bb_basketstatus
+ 10     WHERE idbasket = lv_bask_num
+ 11      AND idstage = 5;
+ 12    DBMS_OUTPUT.PUT_LINE('Date Shipped: '||lv_ship_date);
+ 13    DBMS_OUTPUT.PUT_LINE('Shipper: '||lv_shipper_txt);
+ 14    DBMS_OUTPUT.PUT_LINE('Shipping #: '||lv_ship_num);
+ 15  END;
+ 16  /
+DECLARE
+*
+ERROR at line 1:
+ORA-01403: no data found 
+ORA-06512: at line 7 
+
+
+SQL> DECLARE
+  2    rec_ship bb_basketstatus%ROWTYPE;
+  3    lv_bask_num bb_basketstatus.idbasket%TYPE := 3;
+  4  BEGIN
+  5    SELECT *
+  6     INTO rec_ship
+  7     FROM bb_basketstatus
+  8     WHERE idbasket =  lv_bask_num
+  9      AND idstage = 5;
+ 10    DBMS_OUTPUT.PUT_LINE('Date Shipped: '||rec_ship.dtstage);
+ 11    DBMS_OUTPUT.PUT_LINE('Shipper: '||rec_ship.shipper);
+ 12    DBMS_OUTPUT.PUT_LINE('Shipping #: '||rec_ship.shippingnum);
+ 13    DBMS_OUTPUT.PUT_LINE('Notes: '||rec_ship.notes);
+ 14  END;
+ 15  /
+Date Shipped: 25-JAN-12                                                                             
+Shipper: UPS                                                                                        
+Shipping #: ZW845584GD89H569                                                                        
+Notes: Customer called to confirm shipment                                                          
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2   lv_total_num NUMBER(6,2);
+  3   lv_rating_txt VARCHAR2(4);
+  4   lv_shop_num bb_basket.idshopper%TYPE := 22;
+  5  BEGIN
+  6   SELECT SUM(total)
+  7      INTO lv_total_num
+  8      FROM bb_basket
+  9      WHERE idshopper = lv_shop_num
+ 10          AND orderplaced = 1
+ 11      GROUP BY idshopper;
+ 12  
+ 13      IF lv_total_num > 200 THEN
+ 14          lv_rating_txt := 'HIGH';
+ 15      ELSIF lv_total_num > 100 THEN
+ 16          lv_rating_txt := 'MID';
+ 17      ELSE
+ 18          lv_rating_txt := 'LOW';
+ 19      END IF;
+ 20  
+ 21      DBMS_OUTPUT.PUT_LINE('Shopper '||lv_shop_num ||' is rated '||lv_rating_txt);
+ 22  END;
+ 23  /
+Shopper 22 is rated HIGH                                                                            
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT SUM(total)
+  2  FROM bb_basket
+  3  WHERE idshopper = 22
+  4    AND orderplaced = 1
+  5  GROUP BY idshopper;
+
+SUM(TOTAL)                                                                                          
+----------                                                                                          
+    210.21                                                                                          
+
+SQL> DECLARE
+  2   lv_total_num NUMBER(6,2);
+  3   lv_rating_txt VARCHAR2(4);
+  4   lv_shop_num bb_basket.idshopper%TYPE := 21;
+  5  BEGIN
+  6      SELECT SUM(total)
+  7      INTO lv_total_num
+  8      FROM bb_basket
+  9      WHERE idshopper = lv_shop_num
+ 10          AND orderplaced = 1
+ 11      GROUP BY idshopper;
+ 12  
+ 13      IF lv_total_num > 200 THEN
+ 14          lv_rating_txt := 'HIGH';
+ 15      ELSIF lv_total_num > 100 THEN
+ 16          lv_rating_txt := 'MID';
+ 17      ELSE
+ 18          lv_rating_txt := 'LOW';
+ 19      END IF;
+ 20  
+ 21      DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+ 22  END;
+ 23  /
+Shopper 21 is rated LOW                                                                             
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT SUM(total)
+  2  FROM bb_basket
+  3  WHERE idshopper = 21
+  4    AND orderplaced = 1
+  5  GROUP BY idshopper;
+
+SUM(TOTAL)                                                                                          
+----------                                                                                          
+     66.76                                                                                          
+
+SQL> DECLARE
+  2   lv_total_num NUMBER(6,2);
+  3   lv_rating_txt VARCHAR2(4);
+  4   lv_shop_num bb_basket.idshopper%TYPE := 21;
+  5  BEGIN
+  6      SELECT SUM(total)
+  7      INTO lv_total_num
+  8      FROM bb_basket
+  9      WHERE idshopper = lv_shop_num
+ 10          AND orderplaced = 1
+ 11      GROUP BY idshopper;
+ 12  
+ 13      CASE
+ 14          WHEN lv_total_num > 200 THEN
+ 15              lv_rating_txt := 'HIGH';
+ 16          WHEN lv_total_num > 100 THEN
+ 17              lv_rating_txt := 'MID';
+ 18          ELSE
+ 19              lv_rating_txt := 'LOW';
+ 20      END CASE;
+ 21  
+ 22      DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+ 23  END;
+ 24  /
+Shopper 21 is rated LOW                                                                             
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT SUM (total)
+  2  FROM bb_basket
+  3  WHERE idshopper = 21
+  4  AND orderplaced = 1
+  5  GROUP BY idshopper;
+
+SUM(TOTAL)                                                                                          
+----------                                                                                          
+     66.76                                                                                          
+
+SQL> DECLARE
+  2   lv_total_num NUMBER(6,2);
+  3   lv_rating_txt VARCHAR2(4);
+  4   lv_shop_num bb_basket.idshopper%TYPE := 21;
+  5  BEGIN
+  6      SELECT SUM(total)
+  7      INTO lv_total_num
+  8      FROM bb_basket
+  9      WHERE idshopper = lv_shop_num
+ 10          AND orderplaced = 1
+ 11      GROUP BY idshopper;
+ 12  
+ 13      CASE
+ 14          WHEN lv_total_num > 200 THEN
+ 15              lv_rating_txt := 'HIGH';
+ 16          WHEN lv_total_num > 100 THEN
+ 17              lv_rating_txt := 'MID';
+ 18          ELSE
+ 19              lv_rating_txt := 'LOW';
+ 20      END CASE;
+ 21  
+ 22      DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+ 23  END;
+ 24  /
+Shopper 21 is rated LOW                                                                             
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2   lv_total_num NUMBER(6,2);
+  3   lv_rating_txt VARCHAR2(4);
+  4   lv_shop_num bb_basket.idshopper%TYPE := 22;
+  5  BEGIN
+  6      SELECT SUM(total)
+  7      INTO lv_total_num
+  8      FROM bb_basket
+  9      WHERE idshopper = lv_shop_num
+ 10          AND orderplaced = 1
+ 11      GROUP BY idshopper;
+ 12  
+ 13      CASE
+ 14          WHEN lv_total_num > 200 THEN
+ 15              lv_rating_txt := 'HIGH';
+ 16          WHEN lv_total_num > 100 THEN
+ 17              lv_rating_txt := 'MID';
+ 18          ELSE
+ 19              lv_rating_txt := 'LOW';
+ 20      END CASE;
+ 21  
+ 22      DBMS_OUTPUT.PUT_LINE('Shopper '|| lv_shop_num ||' is rated '||lv_rating_txt);
+ 23  END;
+ 24  /
+Shopper 22 is rated HIGH                                                                            
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT SUM (total)
+  2  FROM bb_basket
+  3  WHERE idshopper = 22
+  4  AND orderplaced = 1
+  5  GROUP BY idshopper;
+
+SUM(TOTAL)                                                                                          
+----------                                                                                          
+    210.21                                                                                          
+
+SQL> DECLARE
+  2      lv_item_qty NUMBER := 0;
+  3      lv_spending_budget NUMBER(8,2) := 100.00;
+  4      lv_amount_spent NUMBER(8,2) := 0.00;
+  5      lv_product_id bb_product.idproduct%TYPE := 4;
+  6      lv_item_price bb_product.price%TYPE;
+  7  
+  8  BEGIN
+  9      SELECT price
+ 10      INTO lv_item_price
+ 11      FROM bb_product
+ 12      WHERE idproduct = lv_product_id;
+ 13  
+ 14      WHILE (lv_amount_spent + lv_item_price) <= lv_spending_budget LOOP
+ 15          lv_item_qty := lv_item_qty + 1;
+ 16          lv_amount_spent := lv_amount_spent + lv_item_price;
+ 17      END LOOP;
+ 18  
+ 19      DBMS_OUTPUT.PUT_LINE('Product ID: ' || lv_product_id);
+ 20      DBMS_OUTPUT.PUT_LINE('Amount Spent: $' ||  TO_CHAR(lv_amount_spent, '99999.00'));
+ 21  
+ 22  END;
+ 23  /
+Product ID: 4                                                                                       
+Amount Spent: $    85.50                                                                            
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_item_qty NUMBER := 0;
+  3      lv_spending_budget NUMBER(8,2) := 10000.00;
+  4      lv_amount_spent NUMBER(8,2) := 0.00;
+  5      lv_product_id bb_product.idproduct%TYPE := 8;
+  6      lv_item_price bb_product.price%TYPE;
+  7  
+  8  BEGIN
+  9      SELECT price
+ 10      INTO lv_item_price
+ 11      FROM bb_product
+ 12      WHERE idproduct = lv_product_id;
+ 13  
+ 14      WHILE (lv_amount_spent + lv_item_price) <= lv_spending_budget LOOP
+ 15          lv_item_qty := lv_item_qty + 1;
+ 16          lv_amount_spent := lv_amount_spent + lv_item_price;
+ 17      END LOOP;
+ 18  
+ 19      DBMS_OUTPUT.PUT_LINE('Product ID: ' || lv_product_id);
+ 20      DBMS_OUTPUT.PUT_LINE('Amount Spent: $' || TO_CHAR(lv_amount_spent, '99,999.00'));
+ 21  
+ 22  END;
+ 23  /
+Product ID: 8                                                                                       
+Amount Spent: $  9,990.00                                                                           
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_basket_id bb_basket.idbasket%TYPE := 5;
+  3      lv_num_items bb_basket.quantity%TYPE;
+  4      lv_shipping_cost bb_basket.shipping%TYPE;
+  5  
+  6  BEGIN
+  7      SELECT quantity
+  8      INTO lv_num_items
+  9      FROM bb_basket
+ 10      WHERE idbasket = lv_basket_id;
+ 11  
+ 12      IF lv_num_items <= 3 THEN
+ 13          lv_shipping_cost := 5.00;
+ 14      ELSIF lv_num_items <= 6 THEN
+ 15          lv_shipping_cost := 7.50;
+ 16      ELSIF lv_num_items <= 10 THEN
+ 17          lv_shipping_cost := 10.00;
+ 18      ELSE lv_shipping_cost := 12.00;
+ 19      END IF;
+ 20  
+ 21      	DBMS_OUTPUT.PUT_LINE('Shipping Cost: $' || TO_CHAR(lv_shipping_cost, '99.00'));
+ 22  END;
+ 23  /
+Shipping Cost: $  7.50                                                                              
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_basket_id bb_basket.idbasket%TYPE := 12;
+  3      lv_num_items bb_basket.quantity%TYPE;
+  4  	lv_shipping_cost bb_basket.shipping%TYPE;
+  5  
+  6  BEGIN
+  7      SELECT quantity
+  8      INTO lv_num_items
+  9      FROM bb_basket
+ 10      WHERE idbasket = lv_basket_id;
+ 11  
+ 12      IF lv_num_items <= 3 THEN
+ 13          lv_shipping_cost := 5.00;
+ 14      ELSIF lv_num_items <= 6 THEN
+ 15          lv_shipping_cost := 7.50;
+ 16      ELSIF lv_num_items <= 10 THEN
+ 17          lv_shipping_cost := 10.00;
+ 18      ELSE lv_shipping_cost := 12.00;
+ 19      END IF;
+ 20  
+ 21      DBMS_OUTPUT.PUT_LINE('Shipping Cost: $' || TO_CHAR(lv_shipping_cost, '99.00'));
+ 22  END;
+ 23  /
+Shipping Cost: $ 10.00                                                                              
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_basket_id bb_basket.idbasket%TYPE := 12;
+  3      lv_subtotal bb_basket.subtotal%TYPE;
+  4      lv_shipping bb_basket.shipping%TYPE;
+  5      lv_tax bb_basket.tax%TYPE;
+  6      lv_total bb_basket.total%TYPE;
+  7  BEGIN
+  8      SELECT subtotal, shipping, tax, total
+  9      INTO lv_subtotal, lv_shipping, lv_tax, lv_total
+ 10      FROM bb_basket
+ 11      WHERE idbasket = lv_basket_id;
+ 12  
+ 13      DBMS_OUTPUT.PUT_LINE('Order Summary for Basket ID: ' || lv_basket_id);
+ 14      DBMS_OUTPUT.PUT_LINE('Subtotal: $' || TO_CHAR(lv_subtotal, '99000.00'));
+ 15      DBMS_OUTPUT.PUT_LINE('Shipping: $' || TO_CHAR(lv_shipping, '99000.00'));
+ 16      DBMS_OUTPUT.PUT_LINE('Tax: $' || TO_CHAR(lv_tax, '99000.00'));
+ 17      DBMS_OUTPUT.PUT_LINE('Total: $' || TO_CHAR(lv_total, '99000.00'));
+ 18  END;
+ 19  /
+Order Summary for Basket ID: 12                                                                     
+Subtotal: $   072.40                                                                                
+Shipping: $   008.00                                                                                
+Tax: $   003.26                                                                                     
+Total: $   083.66                                                                                   
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_basket_id bb_basket.idbasket%TYPE := 12;
+  3      lv_subtotal bb_basket.subtotal%TYPE;
+  4      lv_shipping bb_basket.shipping%TYPE;
+  5      lv_tax bb_basket.tax%TYPE;
+  6      lv_total bb_basket.total%TYPE;
+  7  BEGIN
+  8      SELECT subtotal, shipping, tax, total
+  9      INTO lv_subtotal, lv_shipping, lv_tax, lv_total
+ 10      FROM bb_basket
+ 11      WHERE idbasket = lv_basket_id;
+ 12  
+ 13      DBMS_OUTPUT.PUT_LINE('Order Summary for Basket ID: ' || lv_basket_id);
+ 14      DBMS_OUTPUT.PUT_LINE('Subtotal: $' || TO_CHAR(lv_subtotal, '99,000.00'));
+ 15      DBMS_OUTPUT.PUT_LINE('Shipping: $' || TO_CHAR(lv_shipping, '99,000.00'));
+ 16      DBMS_OUTPUT.PUT_LINE('Tax: $' || TO_CHAR(lv_tax, '99,000.00'));
+ 17      DBMS_OUTPUT.PUT_LINE('Total: $' || TO_CHAR(lv_total, '99,000.00'));
+ 18  END;
+ 19  /
+Order Summary for Basket ID: 12                                                                     
+Subtotal: $    072.40                                                                               
+Shipping: $    008.00                                                                               
+Tax: $    003.26                                                                                    
+Total: $    083.66                                                                                  
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  
+  3      TYPE type_basket IS RECORD (
+  4          idbasket bb_basket.idbasket%TYPE,
+  5          subtotal bb_basket.subtotal%TYPE,
+  6          shipping bb_basket.shipping%TYPE,
+  7          tax bb_basket.tax%TYPE,
+  8          total bb_basket.total%TYPE);
+  9  
+ 10      rec_basket type_basket;
+ 11  
+ 12      lv_basket_id NUMBER(3) := 12;
+ 13  BEGIN
+ 14  
+ 15      SELECT idbasket, subtotal, shipping, tax, total
+ 16      INTO rec_basket
+ 17      FROM bb_basket
+ 18      WHERE idbasket = lv_basket_id;
+ 19  
+ 20      DBMS_OUTPUT.PUT_LINE('Order Summary Information for Basket ID: ' || rec_basket.idBasket);
+ 21      DBMS_OUTPUT.PUT_LINE('Subtotal: $' || TO_CHAR(rec_basket.subtotal, '99,999.99'));
+ 22      DBMS_OUTPUT.PUT_LINE('Shipping: $' || TO_CHAR(rec_basket.shipping, '99,999.99'));
+ 23      DBMS_OUTPUT.PUT_LINE('Tax: $' || TO_CHAR(rec_basket.tax, '99,999.99'));
+ 24      DBMS_OUTPUT.PUT_LINE('Total: $' || TO_CHAR(rec_basket.total, '99,999.99'));
+ 25  END;
+ 26  /
+Order Summary Information for Basket ID: 12                                                         
+Subtotal: $     72.40                                                                               
+Shipping: $      8.00                                                                               
+Tax: $      3.26                                                                                    
+Total: $     83.66                                                                                  
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> SPOOL OFF

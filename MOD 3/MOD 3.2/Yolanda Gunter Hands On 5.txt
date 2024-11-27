@@ -1,0 +1,296 @@
+Yolanda Gunter Hands On 5
+
+Hands-On Assignments Part I  
+
+Assignment 5-1: Creating a Procedure  
+
+Use these steps to create a procedure that allows a company employee to make corrections to  a product’s assigned name. Review the BB_PRODUCT table and identify the PRODUCT NAME  and PRIMARY KEY columns. 
+
+PRODUCT NAME  			 	PRIMARY KEY
+ProductName VARCHAR2(25 byte)		idproduct NUMBER(2)
+
+The procedure needs two IN parameters to identify the product  ID and supply the new description. This procedure needs to perform only a DML action, so no  OUT parameters are necessary.  
+
+1. In SQL Developer, create the following procedure: 
+
+CREATE OR REPLACE PROCEDURE prod_name_sp  
+(p_idproduct IN bb_product.idproduct%TYPE,  
+p_descrip IN bb_product.description%TYPE) 
+  IS  
+BEGIN  
+  UPDATE bb_product  
+     SET description = p_descrip  
+     WHERE idproduct = p_idproduct;  
+  COMMIT;  
+END prod_name_sp;  
+
+2. Before testing the procedure, verify the current description value for product ID 1 with  SELECT * FROM bb_product;.  
+
+3. Call the procedure with parameter values of 1 for the product ID and CapressoBar Model  #388 for the description.  
+
+DECLARE
+    lv_idproduct   bb_product.idproduct%TYPE;   
+    lv_descrip  bb_product.description%TYPE; 
+BEGIN
+    lv_idproduct := 1;                         
+    lv_descrip := 'CapressoBar Model #388';  
+
+    prod_name_sp(lv_idproduct, lv_descrip);     
+END;
+
+4. Verify that the update was successful by querying the table with SELECT * FROM  bb_product;. 
+
+
+SELECT * FROM bb_product;
+
+
+Assignment 5-2: Using a Procedure with IN Parameters  
+
+Follow these steps to create a procedure that allows a company employee to add a new  product to the database. This procedure needs only IN parameters.
+  
+1. In SQL Developer, create a procedure named PROD_ADD_SP that adds a row for a new  product in the BB_PRODUCT table. Keep in mind that the user provides values for the  product name, description, image filename, price, and active status. Address the input  values or parameters in the same order as in the preceding sentence.  
+
+CREATE OR REPLACE 
+PROCEDURE prod_add_sp  
+    (p_idproduct IN bb_product.idproduct%TYPE,  --need idproduct due to it being primary key
+     p_prodname IN bb_product.productname%TYPE,  
+     p_descrip IN bb_product.description%TYPE,
+     p_prodimg IN bb_product.productimage%TYPE,
+     p_price IN bb_product.price%TYPE,
+     p_active IN bb_product.active%TYPE) 
+IS  
+BEGIN  
+    INSERT INTO bb_product (idproduct, productname, description, productimage, price, active)  
+    VALUES (p_idproduct, p_prodname, p_descrip, p_prodimg, p_price, p_active);
+    COMMIT;  
+END prod_add_sp;
+
+
+
+2. Call the procedure with these parameter values: ('Roasted Blend', 'Well-balanced  mix of roasted beans, a medium body', 'roasted.jpg',9.50,1).  
+
+DECLARE 
+    lv_prodname bb_product.productname%TYPE;  
+    lv_descrip bb_product.description%TYPE;
+    lv_prodimg bb_product.productimage%TYPE;
+    lv_price bb_product.price%TYPE;
+    lv_active bb_product.active%TYPE; 
+BEGIN
+    prod_add_sp(
+    p_idproduct => 11,  -- giving idproduct a value as primary key
+    p_prodname => 'Roasted Blend', 
+    p_descrip => 'Well-balanced mix of roasted beans, a medium body',
+    p_prodimg => 'roasted.jpg',
+    p_price => 9.50,
+    p_active => 1);
+END;
+
+
+3. Check whether the update was successful by querying the BB_PRODUCT table. 
+
+ IDPRODUCT PRODUCTNAME               DESCRIPTION
+---------- ------------------------- ---------------------------------------------------------------
+         1 CapressoBar Modal #351    CapressoBar Model #388
+         2 Capresso Ultima           Coffee and Espresso and Cappuccino Machine. Brews from one espr
+         3 Eileen 4-cup French Press A unique coffeemaker from those proud craftsmen in windy Norman
+         4 Coffee Grinder            Avoid blade grinders! This mill grinder allows you to choose a
+         5 Sumatra                   Spicy and intense with herbal aroma.
+         6 Guatamala                 heavy body, spicy twist, aromatic and smokey flavor.
+         7 Columbia                  dry, nutty flavor and smoothness
+         8 Brazil                    well-balanced mellow flavor, a medium body with hints of cocoa
+         9 Ethiopia                  distinctive berry-like flavor and aroma, reminds many of a frui
+        10 Espresso                  dense, caramel-like sweetness with a soft acidity. Roasted some
+        11 Roasted Blend             Well-balanced mix of roasted beans, a medium body
+
+11 rows selected.
+
+
+Assignment 5-3: Calculating the Tax on an Order  
+
+Follow these steps to create a procedure for calculating the tax on an order. The BB_TAX table  contains states that require submitting taxes for Internet sales. If the state isn’t listed in the  table, no tax should be assessed on the order. The shopper’s state and basket subtotal are the  inputs to the procedure, and the tax amount should be returned.  
+
+1. In SQL Developer, create a procedure named TAX_COST_SP. Remember that the state  and subtotal values are inputs to the procedure, which should return the tax amount.  Review the BB_TAX table, which contains the tax rate for each applicable state.  
+
+SELECT * FROM BB_TAX;
+
+   IDSTATE ST    TAXRATE
+---------- -- ----------
+         1 VA       .045
+         2 NC        .03
+         3 SC        .06
+
+
+
+CREATE OR REPLACE PROCEDURE
+tax_cost_sp
+    (p_state IN bb_tax.state%TYPE,
+    p_subtotal IN NUMBER,
+	p_tax OUT NUMBER)
+IS
+BEGIN
+    SELECT (taxrate * p_subtotal)
+        INTO p_tax
+    FROM bb_tax
+    WHERE state = p_state;
+	
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+    p_tax := 0;
+END tax_cost_sp;
+
+
+2. Call the procedure with the values VA for the state and $100 for the subtotal. Display the  tax amount the procedure returns. (It should be $4.50.) 
+
+DECLARE
+    lv_state bb_tax.state%TYPE := 'VA';
+    lv_subtotal NUMBER := 100;
+    lv_tax NUMBER;
+BEGIN
+    tax_cost_sp(
+        p_state => lv_state,
+        p_subtotal => lv_subtotal,
+        p_tax => lv_tax);
+        
+    DBMS_OUTPUT.PUT_LINE('Tax Amount: $' || TO_CHAR(lv_tax, '99.00'));
+END;
+
+Tax Amount: $  4.50
+
+PL/SQL procedure successfully completed.
+
+
+Assignment 5-4: Updating Columns in a Table  
+
+After a shopper completes an order, a procedure is called to update the following columns in the  BASKET table: ORDERPLACED, SUBTOTAL, SHIPPING, TAX, and TOTAL. The value 1  entered in the ORDERPLACED column indicates that the shopper has completed an order.  Inputs to the procedure are the basket ID and amounts for the subtotal, shipping, tax, and total.  
+
+1. In SQL Developer, create a procedure named BASKET_CONFIRM_SP that accepts the input  values specified in the preceding description. Keep in mind that you’re modifying an existing  row of the BB_BASKET table in this procedure. 
+
+
+CREATE OR REPLACE PROCEDURE
+basket_confirm_sp
+    (p_idbasket IN bb_basket.idbasket%TYPE,
+    p_subtotal IN bb_basket.subtotal%TYPE,
+    p_shipping IN bb_basket.shipping%TYPE,
+    p_tax IN bb_basket.tax%TYPE,
+    p_total IN bb_basket.total%TYPE)
+    
+IS
+BEGIN
+    UPDATE bb_basket
+    SET orderplaced = 1,
+        subtotal = p_subtotal,
+        shipping = p_shipping,
+        tax = p_tax,
+        total = p_total
+    WHERE idbasket = p_idbasket;
+    
+    COMMIT;
+END;
+/
+
+
+2. Enter the following statements to create a new basket containing two items:  
+
+INSERT INTO BB_BASKET (IDBASKET, QUANTITY, IDSHOPPER,  
+			ORDERPLACED, SUBTOTAL, TOTAL,  
+			SHIPPING, TAX, DTCREATED, PROMO)  
+	VALUES (17, 2, 22, 0, 0, 0, 0, 0, '28-FEB-12', 0);  
+INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE,  
+			   QUANTITY, IDBASKET, OPTION1, OPTION2)  
+	VALUES (44, 7, 10.8, 3, 17, 2, 3);  
+INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE,  
+			   QUANTITY, IDBASKET, OPTION1, OPTION2)  
+VALUES (45, 8, 10.8, 3, 17, 2, 3);  
+
+3. Type and run COMMIT; to save the data from these statements.  
+
+SQL> COMMIT;
+
+Commit complete.
+
+
+4. Call the procedure with the following parameter values: 17, 64.80, 8.00, 1.94, 74.74.  As mentioned, these values represent the basket ID and the amounts for the subtotal,  shipping, tax, and total.  
+
+BEGIN -- as demonstrated in Figure 5-30 pg. 200 Casteel.
+    basket_confirm_sp(17, 64.80, 8.00, 1.94, 74.74);
+END;
+
+PL/SQL procedure successfully completed.
+
+5. Query the BB_BASKET table to confirm that the procedure was successful:  
+
+SELECT subtotal, shipping, tax, total, orderplaced  
+  FROM bb_basket  
+  WHERE idbasket = 17;
+
+
+SQL> SELECT subtotal, shipping, tax, total, orderplaced
+  2    FROM bb_basket
+  3    WHERE idbasket = 17;
+
+  SUBTOTAL   SHIPPING        TAX      TOTAL ORDERPLACED
+---------- ---------- ---------- ---------- -----------
+      64.8          8       1.94      74.74           1
+
+
+
+Assignment 5-5: Updating Order Status  
+
+Create a procedure named STATUS_SHIP_SP that allows an employee in the Shipping Department to update an order status to add shipping information. The BB_BASKETSTATUS  table lists events for each order so that a shopper can see the current status, date, and  comments as each stage of the order process is finished. The IDSTAGE column of the  BB_BASKETSTATUS table identifies each stage; the value 3 in this column indicates that an  order has been shipped.  
+
+The procedure should allow adding a row with an IDSTAGE of 3, date shipped, tracking  number, and shipper. The BB_STATUS_SEQ sequence is used to provide a value for the primary  key column. Test the procedure with the following information:  
+
+Basket # = 3  
+Date shipped = 20-FEB-12  
+Shipper = UPS  
+Tracking # = ZW2384YXK4957 
+
+
+Assignment 5-6: Returning Order Status Information  
+Create a procedure that returns the most recent order status information for a specified basket.  This procedure should determine the most recent ordering-stage entry in the BB_BASKETSTATUS  table and return the data. Use an IF or CASE clause to return a stage description instead  of an IDSTAGE number, which means little to shoppers. The IDSTAGE column of the  BB_BASKETSTATUS table identifies each stage as follows:  
+
+	•1—Submitted and received  
+	•2—Confirmed, processed, sent to shipping  
+	•3—Shipped  
+	•4—Cancelled  
+	•5—Back-ordered 
+The procedure should accept a basket ID number and return the most recent status  description and date the status was recorded. If no status is available for the specified basket  ID, return a message stating that no status is available. Name the procedure STATUS_SP. Test  the procedure twice with the basket ID 4 and then 6. 
+
+
+Assignment 5-7: Identifying Customers  
+
+Brewbean’s wants to offer an incentive of free shipping to customers who haven’t returned to  the site since a specified date. Create a procedure named PROMO_SHIP_SP that determines  who these customers are and then updates the BB_PROMOLIST table accordingly. The  procedure uses the following information:  
+
+•Date cutoff—Any customers who haven’t shopped on the site since this date  should be included as incentive participants. Use the basket creation date to  reflect shopper activity dates.
+  
+•Month—A three-character month (such as APR) should be added to the promotion table to indicate which month free shipping is effective.  
+
+•Year—A four-digit year indicates the year the promotion is effective.  
+
+•promo_flag—1 represents free shipping.  
+
+The BB_PROMOLIST table also has a USED column, which contains the default value N  and is updated to Y when the shopper uses the promotion. Test the procedure with the cutoff  date 15-FEB-12. Assign free shipping for the month APR and the year 2012. 
+
+
+Assignment 5-8: Adding Items to a Basket  
+
+As a shopper selects products on the Brewbean’s site, a procedure is needed to add a newly  selected item to the current shopper’s basket. Create a procedure named BASKET_ADD_SP that  accepts a product ID, basket ID, price, quantity, size code option (1 or 2), and form code option  (3 or 4) and uses this information to add a new item to the BB_BASKETITEM table. The table’s  PRIMARY KEY column is generated by BB_IDBASKETITEM_SEQ. Run the procedure with the  following values:  
+•Basket ID—14  
+•Product ID—8  
+•Price—10.80  
+•Quantity—1  
+•Size code—2  
+•Form code—4 
+
+
+
+
+Stop NOT 5-9, leave it.
+
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+Yolanda Gunter Key Terms Ch 5 - Casteel
+
+
+subprogram (named program unit) - block that performs a specific task that can be named and reused 
+
+
+actual parameters - values from the application that are passed to parameters
+
+formal parameters - values passed to parameters in procedure declarations
+
+positional method - when invoking a  procedure, the values are listed in the order in which parameters are declared in  the procedure
+
+named association, associates a value for each parameter by name  in the calling statement
+
+variable scope - specifies the area of a block that can identity a particular variable
+
+autonomous transactions,  which are transactions created in another transaction called a “parent transaction.”  Autonomous transaction can be treated independently of the parent transaction. 
+
+
+
+

@@ -1,0 +1,286 @@
+Yolanda Gunter Hands On 2
+
+Assignment 2-1: Using Scalar Variables
+Create a PL/SQL block containing the following variables:
+
+Name 		Data Type 	Option 		Initial Value  
+lv_test_date 	DATE 				December 10, 2012  
+lv_test_num 	NUMBER(3) 	CONSTANT 	10  
+lv_test_txt 	VARCHAR2(10)
+
+Assign your last name as the value of the text variable in the executable section of the block. Include statements in the block to display each variable's value onscreen.
+
+DECLARE
+	lv_test_date DATE := TO_DATE('10-DEC-2012', 'DD-MON-YYYY');
+	lv_test_num CONSTANT NUMBER(3) := 10;
+	lv_test_txt VARCHAR2(10);
+
+BEGIN
+	lv_test_txt := 'Gunter';
+
+	DBMS_OUTPUT.PUT_LINE('Test Date: ' || TO_CHAR(lv_test_date, 'Month DD, YYYY'));
+    	DBMS_OUTPUT.PUT_LINE('Test Number: ' || lv_test_num);
+    	DBMS_OUTPUT.PUT_LINE('Test Text: ' || lv_test_txt);
+
+END;
+
+Assignment 2-2: Creating a Flowchart
+The Brewbean's application needs a block that determines whether a customer is rated high, mid, or low based on his or her total purchases. The block needs to determine the rating and then display the results onscreen. The code rates the customer high if total purchases are greater than $200, mid if greater than $100, and low if $100 or lower. Develop a flowchart to outline the conditional processing steps needed for this block.
+
+(Flowchart attached as MS .docx)
+
+
+Assignment 2-3: Using IF Statements
+Create a block using an IF statement to perform the actions described in Assignment 2-2. Use a scalar variable for the total purchase amount, and initialize this variable to different values to test your block.
+
+DECLARE
+	lv_total_purch NUMBER(6,2) := 100.00;
+    	lv_rating VARCHAR2(6);
+
+BEGIN
+	IF lv_total_purch > 200 THEN
+        lv_rating := 'HIGH';
+    ELSIF lv_total_purch > 100 THEN
+        lv_rating := 'MID';
+    ELSE 
+        lv_rating := 'LOW';
+    END IF;
+    
+    	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+
+END;
+/
+
+DECLARE
+	lv_total_purch NUMBER(6,2) := 300.00;
+    	lv_rating VARCHAR2(6);
+
+BEGIN
+	IF lv_total_purch > 200 THEN
+        lv_rating := 'HIGH';
+    ELSIF lv_total_purch > 100 THEN
+        lv_rating := 'MID';
+    ELSE 
+        lv_rating := 'LOW';
+    END IF;
+    
+    	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+
+END;
+/
+
+DECLARE
+	lv_total_purch NUMBER(6,2) := 170.00;
+    	lv_rating VARCHAR2(6);
+
+BEGIN
+	IF lv_total_purch > 200 THEN
+        lv_rating := 'HIGH';
+    ELSIF lv_total_purch > 100 THEN
+        lv_rating := 'MID';
+    ELSE 
+        lv_rating := 'LOW';
+    END IF;
+    
+    	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+
+END;
+
+Assignment 2-4: Using CASE Statements
+Create a block using a CASE statement to perform the actions described in Assignment 2-2. Use a scalar variable for the total purchase amount, and initialize this variable to different values to test your block.
+
+
+DECLARE
+	lv_total_purch NUMBER(6,2) := 50.00;
+    	lv_rating VARCHAR2(6);
+
+BEGIN
+	CASE
+       	   WHEN lv_total_purch > 200 THEN
+              lv_rating := 'HIGH';
+           WHEN lv_total_purch > 100 THEN
+              lv_rating := 'MID';
+           ELSE 
+              lv_rating := 'LOW';
+    	END CASE;
+    
+	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+
+END;
+/
+
+DECLARE
+	lv_total_purch NUMBER(6,2) := 170.00;
+    	lv_rating VARCHAR2(6);
+
+BEGIN
+	CASE
+       	   WHEN lv_total_purch > 200 THEN
+              lv_rating := 'HIGH';
+           WHEN lv_total_purch > 100 THEN
+              lv_rating := 'MID';
+           ELSE 
+              lv_rating := 'LOW';
+    	END CASE;
+    
+	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+
+END;
+/
+
+DECLARE
+	lv_total_purch NUMBER(6,2) := 500.00;
+    	lv_rating VARCHAR2(6);
+
+BEGIN
+	CASE
+       	   WHEN lv_total_purch > 200 THEN
+              lv_rating := 'HIGH';
+           WHEN lv_total_purch > 100 THEN
+              lv_rating := 'MID';
+           ELSE 
+              lv_rating := 'LOW';
+    	END CASE;
+    
+	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+
+END;
+
+
+Assignment 2-5: Using a Boolean Variable
+Brewbean's needs program code to indicate whether an amount is still due on an account when a payment is received. Create a PL/SQL block using a Boolean variable to indicate whether an amount is still due. Declare and initialize two variables to provide input for the account balance and the payment
+amount received. A TRUE Boolean value should indicate an amount is still owed, and a FALSE value should indicate the account is paid in full. Use output statements to confirm that the Boolean variable is working correctly.
+
+DECLARE
+    lv_accnt_bal NUMBER(6,2) := 200.00;
+    lv_payment NUMBER(6,2) := 210.00;
+    lv_amount_owed_bln BOOLEAN;
+
+BEGIN
+    lv_amount_owed_bln := (lv_accnt_bal - lv_payment) > 0; 
+        
+    IF lv_amount_owed_bln THEN
+        DBMS_OUTPUT.PUT_LINE('Amount Owed On Account!');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Account Paid In Full!');
+    END IF;
+
+END;
+/
+
+
+DECLARE
+    lv_accnt_bal NUMBER(6,2) := 300.00;
+    lv_payment NUMBER(6,2) := 210.00;
+    lv_amount_owed_bln BOOLEAN;
+
+BEGIN
+    lv_amount_owed_bln := (lv_accnt_bal - lv_payment) > 0; 
+        
+    IF lv_amount_owed_bln THEN
+        DBMS_OUTPUT.PUT_LINE('Amount Owed On Account!');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Account Paid In Full!');
+    END IF;
+
+END;
+
+
+Assignment 2-6: Using Looping Statements
+Create a block using a loop that determines the number of items that can be purchased based on the item prices and the total available to spend. Include one initialized variable to represent the price and another to represent the total available to spend. (You could solve it with division, but you need to practice using loop structures.) The block should include statements to display the total number of items that can be purchased and the total amount spent.
+
+DECLARE
+    lv_num_items NUMBER(3) := 0;
+    lv_item_price NUMBER(6,2) := 742.00;
+    lv_account_bal NUMBER(8,2) := 3000.00;
+    lv_amount_spent NUMBER(8,2) := 0.00;  
+
+BEGIN
+	WHILE (lv_amount_spent + lv_item_price) <= lv_account_bal LOOP
+        lv_num_items := lv_num_items + 1;
+        lv_amount_spent := lv_amount_spent + lv_item_price;
+	END LOOP;
+
+	DBMS_OUTPUT.PUT_LINE('Total number of items that can be purchased: ' || lv_num_items);
+	DBMS_OUTPUT.PUT_LINE('Total amount spent: ' || lv_amount_spent);
+	
+END;
+
+
+Assignment 2-7: Creating a Flowchart
+Brewbean's determines shipping costs based on the number of items ordered and club membership status. The applicable rates are shown in the following chart. Develop a flowchart to outline the condition-processing steps needed to handle this calculation.  
+
+Quantity of Items 	Nonmember Shipping Cost		 Member Shipping Cost  
+Up to 3 			$5.00 				$3.00  
+4–6 				$7.50 				$5.00  
+7–10 				$10.00 				$7.00  
+More than 10 			$12.00 				$9.00  
+
+(Flowchart attached as MS .docx)
+
+Assignment 2-8: Using IF Statements
+Create a block to accomplish the task outlined in Assignment 2-7. Include a variable containing a Y or N to indicate membership status and a variable to represent the number of items purchased. Test with a variety of values.
+
+DECLARE
+	lv_membership CHAR(1) := 'N';
+    	lv_num_items NUMBER(3) := 12;
+	lv_shipping_cost NUMBER(6,2);
+
+BEGIN
+	IF lv_membership = 'N' THEN
+		IF lv_num_items <= 3 THEN
+			lv_shipping_cost := 5.00;
+            	ELSIF lv_num_items <= 6 THEN
+			lv_shipping_cost := 7.50;
+		ELSIF lv_num_items <= 10 THEN
+			lv_shipping_cost := 10.00;
+		ELSE lv_shipping_cost := 12.00;
+		END IF;
+	ELSE
+		IF lv_num_items <= 3 THEN
+			lv_shipping_cost := 3.00;
+            	ELSIF lv_num_items <= 6 THEN
+			lv_shipping_cost := 5.00;
+		ELSIF lv_num_items <= 10 THEN
+			lv_shipping_cost := 7.00;
+		ELSE lv_shipping_cost := 9.00;
+		END IF;
+	END IF;
+
+    	DBMS_OUTPUT.PUT_LINE('Current Member?: ' || lv_membership);
+
+END;
+
+
+DECLARE
+	lv_membership CHAR(1) := 'Y';
+    	lv_num_items NUMBER(3) := 2;
+	lv_shipping_cost NUMBER(6,2);
+
+BEGIN
+	IF lv_membership = 'N' THEN
+		IF lv_num_items <= 3 THEN
+			lv_shipping_cost := 5.00;
+            	ELSIF lv_num_items <= 6 THEN
+			lv_shipping_cost := 7.50;
+		ELSIF lv_num_items <= 10 THEN
+			lv_shipping_cost := 10.00;
+		ELSE lv_shipping_cost := 12.00;
+		END IF;
+	ELSE
+		IF lv_num_items <= 3 THEN
+			lv_shipping_cost := 3.00;
+            	ELSIF lv_num_items <= 6 THEN
+			lv_shipping_cost := 5.00;
+		ELSIF lv_num_items <= 10 THEN
+			lv_shipping_cost := 7.00;
+		ELSE lv_shipping_cost := 9.00;
+		END IF;
+	END IF;
+
+    	DBMS_OUTPUT.PUT_LINE('Current Member?: ' || lv_membership);
+
+END;
+
+
+

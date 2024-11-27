@@ -1,0 +1,23 @@
+Yolanda Gunter Key Terms Ch 1 - Casteel
+
+1. Structured Query Language (SQL) - the native programming language used by database developers for creating statements for a database server's processes to store, query, and later update data in a MySQL relational database hosted on a database server.
+
+2. Procedural Language - a type of programming language where you give the computer a set of instructions to follow in a specific order. It’s like writing a recipe where each step must be done in sequence, one after the other, to get the right result. In PL/SQL, it helps developers control how a database works.
+
+3. Database - simply a huge spreadsheet with data used by a large organization like a school system, bank, or college and managed by a database system like Oracle PeopleSoft
+
+4. Database Server - database server is a powerful computer that stores and manages huge amounts of information. It handles requests from other computers (clients) to get, add, or change data. Imagine it as the brain of a library where all the books (data) are kept, and people come to borrow or read them.
+
+5. Application Model - a way to organize how different parts of a computer program (or app) work together. It shows how the app gets its information, how that information is processed, and how users interact with it.
+
+6. Two-Tier Application Model - splits an app into two parts: the user interface (what you see and use on the screen) and the database server (where all the data is stored). It’s like having two layers—one for what you use, and another for where the information is kept.
+
+7. Three-Tier Application Model - adds one more layer to the two-tier model. It has three parts: the user interface, a middle layer (which processes the data and handles business logic), and the database server. It’s like having an extra helper between what you see on the screen and the place where data is stored.
+
+8. Named Program Unit - a block of code that has a name and performs a specific task in a program. Think of it like a named tool in a toolbox—you use it when you need to get a specific job done, and you can call it by name to use it.
+
+9. Stored Program Units - blocks of code saved inside the database. They are like instructions that are written, stored, and ready to be used whenever needed. Instead of writing the same code again and again, you save it in the database and use it whenever it’s needed.
+
+10. Application Event - something that happens inside a computer program that triggers a response. It’s like ringing a doorbell that makes the sound go off. In programming, events can include things like clicking a button or submitting a form, which causes the app to do something next.
+
+

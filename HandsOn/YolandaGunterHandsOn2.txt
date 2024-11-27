@@ -1,0 +1,283 @@
+SQL> spool
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn2.txt
+SQL> DECLARE
+  2  	lv_test_date DATE := TO_DATE('10-DEC-2012', 'DD-MON-YYYY');
+  3  	lv_test_num CONSTANT NUMBER(3) := 10;
+  4  	lv_test_txt VARCHAR2(10);
+  5  
+  6  BEGIN
+  7  	lv_test_txt := 'Gunter';
+  8  
+  9  	DBMS_OUTPUT.PUT_LINE('Test Date: ' || TO_CHAR(lv_test_date, 'Month DD, YYYY'));
+ 10      	DBMS_OUTPUT.PUT_LINE('Test Number: ' || lv_test_num);
+ 11      	DBMS_OUTPUT.PUT_LINE('Test Text: ' || lv_test_txt);
+ 12  
+ 13  END;
+ 14  /
+Test Date: December  10, 2012                                                                       
+Test Number: 10                                                                                     
+Test Text: Gunter                                                                                   
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_total_purch NUMBER(6,2) := 100.00;
+  3      	lv_rating VARCHAR2(6);
+  4  
+  5  BEGIN
+  6  	IF lv_total_purch > 200 THEN
+  7          lv_rating := 'HIGH';
+  8      ELSIF lv_total_purch > 100 THEN
+  9          lv_rating := 'MID';
+ 10      ELSE
+ 11          lv_rating := 'LOW';
+ 12      END IF;
+ 13  
+ 14      	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+ 15  
+ 16  END;
+ 17  /
+Customer Rating: LOW                                                                                
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_total_purch NUMBER(6,2) := 300.00;
+  3      	lv_rating VARCHAR2(6);
+  4  
+  5  BEGIN
+  6  	IF lv_total_purch > 200 THEN
+  7          lv_rating := 'HIGH';
+  8      ELSIF lv_total_purch > 100 THEN
+  9          lv_rating := 'MID';
+ 10      ELSE
+ 11          lv_rating := 'LOW';
+ 12      END IF;
+ 13  
+ 14      	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+ 15  
+ 16  END;
+ 17  /
+Customer Rating: HIGH                                                                               
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_total_purch NUMBER(6,2) := 170.00;
+  3      	lv_rating VARCHAR2(6);
+  4  
+  5  BEGIN
+  6  	IF lv_total_purch > 200 THEN
+  7          lv_rating := 'HIGH';
+  8      ELSIF lv_total_purch > 100 THEN
+  9          lv_rating := 'MID';
+ 10      ELSE
+ 11          lv_rating := 'LOW';
+ 12      END IF;
+ 13  
+ 14      	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+ 15  
+ 16  END;
+ 17  /
+Customer Rating: MID                                                                                
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_total_purch NUMBER(6,2) := 50.00;
+  3      	lv_rating VARCHAR2(6);
+  4  
+  5  BEGIN
+  6  	CASE
+  7         	   WHEN lv_total_purch > 200 THEN
+  8                lv_rating := 'HIGH';
+  9             WHEN lv_total_purch > 100 THEN
+ 10                lv_rating := 'MID';
+ 11             ELSE
+ 12                lv_rating := 'LOW';
+ 13      	END CASE;
+ 14  
+ 15  	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+ 16  
+ 17  END;
+ 18  /
+Customer Rating: LOW                                                                                
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_total_purch NUMBER(6,2) := 170.00;
+  3      	lv_rating VARCHAR2(6);
+  4  
+  5  BEGIN
+  6  	CASE
+  7         	   WHEN lv_total_purch > 200 THEN
+  8                lv_rating := 'HIGH';
+  9             WHEN lv_total_purch > 100 THEN
+ 10                lv_rating := 'MID';
+ 11             ELSE
+ 12                lv_rating := 'LOW';
+ 13      	END CASE;
+ 14  
+ 15  	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+ 16  
+ 17  END;
+ 18  /
+Customer Rating: MID                                                                                
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_total_purch NUMBER(6,2) := 500.00;
+  3      	lv_rating VARCHAR2(6);
+  4  
+  5  BEGIN
+  6  	CASE
+  7         	   WHEN lv_total_purch > 200 THEN
+  8                lv_rating := 'HIGH';
+  9             WHEN lv_total_purch > 100 THEN
+ 10                lv_rating := 'MID';
+ 11             ELSE
+ 12                lv_rating := 'LOW';
+ 13      	END CASE;
+ 14  
+ 15  	DBMS_OUTPUT.PUT_LINE('Customer Rating: ' || lv_rating);
+ 16  
+ 17  END;
+ 18  /
+Customer Rating: HIGH                                                                               
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_accnt_bal NUMBER(6,2) := 200.00;
+  3      lv_payment NUMBER(6,2) := 210.00;
+  4      lv_amount_owed_bln BOOLEAN;
+  5  
+  6  BEGIN
+  7      lv_amount_owed_bln := (lv_accnt_bal - lv_payment) > 0;
+  8  
+  9      IF lv_amount_owed_bln THEN
+ 10          DBMS_OUTPUT.PUT_LINE('Amount Owed On Account!');
+ 11      ELSE
+ 12          DBMS_OUTPUT.PUT_LINE('Account Paid In Full!');
+ 13      END IF;
+ 14  
+ 15  END;
+ 16  /
+Account Paid In Full!                                                                               
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_accnt_bal NUMBER(6,2) := 300.00;
+  3      lv_payment NUMBER(6,2) := 210.00;
+  4      lv_amount_owed_bln BOOLEAN;
+  5  
+  6  BEGIN
+  7      lv_amount_owed_bln := (lv_accnt_bal - lv_payment) > 0;
+  8  
+  9      IF lv_amount_owed_bln THEN
+ 10          DBMS_OUTPUT.PUT_LINE('Amount Owed On Account!');
+ 11      ELSE
+ 12          DBMS_OUTPUT.PUT_LINE('Account Paid In Full!');
+ 13      END IF;
+ 14  
+ 15  END;
+ 16  /
+Amount Owed On Account!                                                                             
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      lv_num_items NUMBER(3) := 0;
+  3      lv_item_price NUMBER(6,2) := 742.00;
+  4      lv_account_bal NUMBER(8,2) := 3000.00;
+  5      lv_amount_spent NUMBER(8,2) := 0.00;
+  6  
+  7  BEGIN
+  8  	WHILE (lv_amount_spent + lv_item_price) <= lv_account_bal LOOP
+  9          lv_num_items := lv_num_items + 1;
+ 10          lv_amount_spent := lv_amount_spent + lv_item_price;
+ 11  	END LOOP;
+ 12  
+ 13  	DBMS_OUTPUT.PUT_LINE('Total number of items that can be purchased: ' || lv_num_items);
+ 14  	DBMS_OUTPUT.PUT_LINE('Total amount spent: ' || lv_amount_spent);
+ 15  
+ 16  END;
+ 17  
+ 18  /
+Total number of items that can be purchased: 4                                                      
+Total amount spent: 2968                                                                            
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_membership CHAR(1) := 'N';
+  3      	lv_num_items NUMBER(3) := 12;
+  4  	lv_shipping_cost NUMBER(6,2);
+  5  
+  6  BEGIN
+  7  	IF lv_membership = 'N' THEN
+  8  		IF lv_num_items <= 3 THEN
+  9  			lv_shipping_cost := 5.00;
+ 10              	ELSIF lv_num_items <= 6 THEN
+ 11  			lv_shipping_cost := 7.50;
+ 12  		ELSIF lv_num_items <= 10 THEN
+ 13  			lv_shipping_cost := 10.00;
+ 14  		ELSE lv_shipping_cost := 12.00;
+ 15  		END IF;
+ 16  	ELSE
+ 17  		IF lv_num_items <= 3 THEN
+ 18  			lv_shipping_cost := 3.00;
+ 19              	ELSIF lv_num_items <= 6 THEN
+ 20  			lv_shipping_cost := 5.00;
+ 21  		ELSIF lv_num_items <= 10 THEN
+ 22  			lv_shipping_cost := 7.00;
+ 23  		ELSE lv_shipping_cost := 9.00;
+ 24  		END IF;
+ 25  	END IF;
+ 26  
+ 27      	DBMS_OUTPUT.PUT_LINE('Current Member?: ' || lv_membership);
+ 28  
+ 29  END;
+ 30  /
+Current Member?: N                                                                                  
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2  	lv_membership CHAR(1) := 'Y';
+  3      	lv_num_items NUMBER(3) := 2;
+  4  	lv_shipping_cost NUMBER(6,2);
+  5  
+  6  BEGIN
+  7  	IF lv_membership = 'N' THEN
+  8  		IF lv_num_items <= 3 THEN
+  9  			lv_shipping_cost := 5.00;
+ 10              	ELSIF lv_num_items <= 6 THEN
+ 11  			lv_shipping_cost := 7.50;
+ 12  		ELSIF lv_num_items <= 10 THEN
+ 13  			lv_shipping_cost := 10.00;
+ 14  		ELSE lv_shipping_cost := 12.00;
+ 15  		END IF;
+ 16  	ELSE
+ 17  		IF lv_num_items <= 3 THEN
+ 18  			lv_shipping_cost := 3.00;
+ 19              	ELSIF lv_num_items <= 6 THEN
+ 20  			lv_shipping_cost := 5.00;
+ 21  		ELSIF lv_num_items <= 10 THEN
+ 22  			lv_shipping_cost := 7.00;
+ 23  		ELSE lv_shipping_cost := 9.00;
+ 24  		END IF;
+ 25  	END IF;
+ 26  
+ 27      	DBMS_OUTPUT.PUT_LINE('Current Member?: ' || lv_membership);
+ 28  
+ 29  END;
+ 30  /
+Current Member?: Y                                                                                  
+
+PL/SQL procedure successfully completed.
+
+SQL> SPOOL OFF

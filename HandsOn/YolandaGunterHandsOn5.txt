@@ -1,0 +1,646 @@
+SQL> SPOOL;
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn5.txt
+SQL> SELECT * FROM bb_product;
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+
+ IDPRODUCT PRODUCTNAME               DESCRIPTION
+---------- ------------------------- ---------------------------------------------------------------
+         1 CapressoBar Modal #351    A fully programmable pump espresso machine and 12-cup coffee ma
+         2 Capresso Ultima           Coffee and Espresso and Cappuccino Machine. Brews from one espr
+         3 Eileen 4-cup French Press A unique coffeemaker from those proud craftsmen in windy Norman
+         4 Coffee Grinder            Avoid blade grinders! This mill grinder allows you to choose a
+         5 Sumatra                   Spicy and intense with herbal aroma.
+         6 Guatamala                 heavy body, spicy twist, aromatic and smokey flavor.
+         7 Columbia                  dry, nutty flavor and smoothness
+         8 Brazil                    well-balanced mellow flavor, a medium body with hints of cocoa
+         9 Ethiopia                  distinctive berry-like flavor and aroma, reminds many of a frui
+        10 Espresso                  dense, caramel-like sweetness with a soft acidity. Roasted some
+
+10 rows selected.
+
+SQL> CREATE OR REPLACE
+  2  PROCEDURE prod_name_sp
+  3      (p_prodid IN bb_product.idproduct%TYPE,
+  4       p_descrip IN bb_product.description%TYPE)
+  5  IS
+  6  BEGIN
+  7      UPDATE bb_product
+  8      SET description = p_descrip
+  9      WHERE idproduct = p_prodid;
+ 10      COMMIT;
+ 11  END;
+ 12  /
+
+Procedure created.
+
+SQL> SELECT * FROM bb_product
+  2  WHERE idproduct = 1;
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+
+ IDPRODUCT PRODUCTNAME               DESCRIPTION
+---------- ------------------------- ---------------------------------------------------------------
+         1 CapressoBar Modal #351    A fully programmable pump espresso machine and 12-cup coffee ma
+
+SQL> DECLARE
+  2      lv_prodid   bb_product.idproduct%TYPE;   -- Declare a variable for product ID
+  3      lv_descrip  bb_product.description%TYPE; -- Declare a variable for the new description
+  4  BEGIN
+  5      lv_prodid := 1;                          -- Assign value to the product ID variable
+  6      lv_descrip := 'CapressoBar Model #388';  -- Assign value to the description variable
+  7  
+  8      prod_name_sp(lv_prodid, lv_descrip);     -- Call the procedure with the variables
+  9      lv_prodid   bb_product.idproduct%TYPE;   -- Declare a variable for product ID
+ 10  end;
+ 11  /
+    lv_prodid   bb_product.idproduct%TYPE;   -- Declare a variable for product ID
+                *
+ERROR at line 9:
+ORA-06550: line 9, column 17:
+PLS-00103: Encountered the symbol "BB_PRODUCT" when expecting one of the following:
+:= . ( @ % ;
+The symbol ":=" was substituted for "BB_PRODUCT" to continue.
+
+
+SQL> DECLARE
+  2      lv_prodid   bb_product.idproduct%TYPE;
+  3      lv_descrip  bb_product.description%TYPE;
+  4  BEGIN
+  5      lv_prodid := 1;
+  6      lv_descrip := 'CapressoBar Model #388';
+  7  
+  8      prod_name_sp(lv_prodid, lv_descrip);
+  9  END;
+ 10  /
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT * FROM bb_product;
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+
+ IDPRODUCT PRODUCTNAME               DESCRIPTION
+---------- ------------------------- ---------------------------------------------------------------
+         1 CapressoBar Modal #351    CapressoBar Model #388
+         2 Capresso Ultima           Coffee and Espresso and Cappuccino Machine. Brews from one espr
+         3 Eileen 4-cup French Press A unique coffeemaker from those proud craftsmen in windy Norman
+         4 Coffee Grinder            Avoid blade grinders! This mill grinder allows you to choose a
+         5 Sumatra                   Spicy and intense with herbal aroma.
+         6 Guatamala                 heavy body, spicy twist, aromatic and smokey flavor.
+         7 Columbia                  dry, nutty flavor and smoothness
+         8 Brazil                    well-balanced mellow flavor, a medium body with hints of cocoa
+         9 Ethiopia                  distinctive berry-like flavor and aroma, reminds many of a frui
+        10 Espresso                  dense, caramel-like sweetness with a soft acidity. Roasted some
+
+10 rows selected.
+
+SQL> PROCEDURE prod_add_sp
+SP2-0734: unknown command beginning "PROCEDURE ..." - rest of line ignored.
+SQL>     (p_prodname IN bb_product.productname%TYPE,
+  2       p_descrip IN bb_product.description%TYPE,
+  3       p_prodimg IN bb_product.productimage%TYPE,
+  4       p_price IN bb_product.price%TYPE,
+  5       p_active IN bb_product.active%TYPE)
+  6  IS
+  7  BEGIN
+  8      INSERT INTO bb_product (productname, description, productimage, price, active)
+  9      VALUES (p_prodname, p_descrip, p_prodimg, p_price, p_active);
+    (p_prodname IN bb_product.productname%TYPE,
+     *
+ERROR at line 1:
+ORA-00928: missing SELECT keyword
+
+
+SQL>     COMMIT;
+
+Commit complete.
+
+SQL> END;
+SP2-0042: unknown command "END" - rest of line ignored.
+SQL> CREATE OR REPLACE
+  2  PROCEDURE prod_add_sp
+  3      (p_prodname IN bb_product.productname%TYPE,
+  4       p_descrip IN bb_product.description%TYPE,
+  5       p_prodimg IN bb_product.productimage%TYPE,
+  6       p_price IN bb_product.price%TYPE,
+  7       p_active IN bb_product.active%TYPE)
+  8  IS
+  9  BEGIN
+ 10      INSERT INTO bb_product (productname, description, productimage, price, active)
+ 11      VALUES (p_prodname, p_descrip, p_prodimg, p_price, p_active);
+ 12      COMMIT;
+ 13  END;
+ 14  /
+
+Procedure created.
+
+SQL> SELECT * FROM bb_product;
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+
+ IDPRODUCT PRODUCTNAME               DESCRIPTION
+---------- ------------------------- ---------------------------------------------------------------
+         1 CapressoBar Modal #351    CapressoBar Model #388
+         2 Capresso Ultima           Coffee and Espresso and Cappuccino Machine. Brews from one espr
+         3 Eileen 4-cup French Press A unique coffeemaker from those proud craftsmen in windy Norman
+         4 Coffee Grinder            Avoid blade grinders! This mill grinder allows you to choose a
+         5 Sumatra                   Spicy and intense with herbal aroma.
+         6 Guatamala                 heavy body, spicy twist, aromatic and smokey flavor.
+         7 Columbia                  dry, nutty flavor and smoothness
+         8 Brazil                    well-balanced mellow flavor, a medium body with hints of cocoa
+         9 Ethiopia                  distinctive berry-like flavor and aroma, reminds many of a frui
+        10 Espresso                  dense, caramel-like sweetness with a soft acidity. Roasted some
+
+10 rows selected.
+
+SQL> DECLARE
+  2      lv_prodname bb_product.productname%TYPE;
+  3      lv_descrip bb_product.description%TYPE;
+  4      lv_prodimg bb_product.productimage%TYPE;
+  5      lv_price bb_product.price%TYPE;
+  6      lv_active bb_product.active%TYPE;
+  7  BEGIN
+  8       prod_add_sp('Roasted Blend', 'Well-balanced mix of roasted beans,
+  9       a medium body', 'roasted.jpg',9.50,1);
+ 10  END;
+ 11  /
+DECLARE
+*
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("YEMGUNTER"."BB_PRODUCT"."IDPRODUCT")
+ORA-06512: at "YEMGUNTER.PROD_ADD_SP", line 9
+ORA-06512: at line 8
+
+
+SQL> DECLARE
+  2      lv_prodname bb_product.productname%TYPE;
+  3      lv_descrip bb_product.description%TYPE;
+  4      lv_prodimg bb_product.productimage%TYPE;
+  5      lv_price bb_product.price%TYPE;
+  6      lv_active bb_product.active%TYPE;
+  7  BEGIN
+  8      prod_add_sp(
+  9      p_prodname => 'Roasted Blend',
+ 10      p_descrip => 'Well-balanced mix of roasted beans, a medium body',
+ 11      p_prodimg => 'roasted.jpg',
+ 12      p_price => 9.50,
+ 13      p_active => 1);
+ 14  END;
+ 15  /
+DECLARE
+*
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("YEMGUNTER"."BB_PRODUCT"."IDPRODUCT")
+ORA-06512: at "YEMGUNTER.PROD_ADD_SP", line 9
+ORA-06512: at line 8
+
+
+SQL> CREATE OR REPLACE
+  2  PROCEDURE prod_add_sp
+  3      (p_idproduct IN bb_product.idproduct%TYPE,
+  4  	p_prodname IN bb_product.productname%TYPE,
+  5       p_descrip IN bb_product.description%TYPE,
+  6       p_prodimg IN bb_product.productimage%TYPE,
+  7       p_price IN bb_product.price%TYPE,
+  8       p_active IN bb_product.active%TYPE)
+  9  IS
+ 10  BEGIN
+ 11      INSERT INTO bb_product (idproduct, productname, description, productimage, price, active)
+ 12      VALUES (p_idproduct, p_prodname, p_descrip, p_prodimg, p_price, p_active);
+ 13      COMMIT;
+ 14  END;
+ 15  /
+
+Procedure created.
+
+SQL> DECLARE
+  2      lv_prodname bb_product.productname%TYPE;
+  3      lv_descrip bb_product.description%TYPE;
+  4      lv_prodimg bb_product.productimage%TYPE;
+  5      lv_price bb_product.price%TYPE;
+  6      lv_active bb_product.active%TYPE;
+  7  BEGIN
+  8      prod_add_sp(
+  9      p_prodname => 'Roasted Blend',
+ 10      p_descrip => 'Well-balanced mix of roasted beans, a medium body',
+ 11      p_prodimg => 'roasted.jpg',
+ 12      p_price => 9.50,
+ 13      p_active => 1);
+ 14  END;
+ 15  /
+DECLARE
+*
+ERROR at line 1:
+ORA-00001: unique constraint (YEMGUNTER.PROD_ID_PK) violated
+ORA-06512: at "YEMGUNTER.PROD_ADD_SP", line 9
+ORA-06512: at line 8
+
+
+SQL> DECLARE
+  2      lv_prodname bb_product.productname%TYPE;
+  3      lv_descrip bb_product.description%TYPE;
+  4      lv_prodimg bb_product.productimage%TYPE;
+  5      lv_price bb_product.price%TYPE;
+  6      lv_active bb_product.active%TYPE;
+  7  BEGIN
+  8      prod_add_sp(
+  9      p_prodname => 'Roasted Blend',
+ 10      p_descrip => 'Well-balanced mix of roasted beans, a medium body',
+ 11      p_prodimg => 'roasted.jpg',
+ 12      p_price => 9.50,
+ 13      p_active => 1);
+ 14  END;
+ 15  /
+DECLARE
+*
+ERROR at line 1:
+ORA-00001: unique constraint (YEMGUNTER.PROD_ID_PK) violated
+ORA-06512: at "YEMGUNTER.PROD_ADD_SP", line 9
+ORA-06512: at line 8
+
+
+SQL> CREATE OR REPLACE
+  2  PROCEDURE prod_add_sp
+  3      (p_idproduct IN bb_product.idproduct%TYPE,
+  4  	p_prodname IN bb_product.productname%TYPE,
+  5       p_descrip IN bb_product.description%TYPE,
+  6       p_prodimg IN bb_product.productimage%TYPE,
+  7       p_price IN bb_product.price%TYPE,
+  8       p_active IN bb_product.active%TYPE)
+  9  IS
+ 10  BEGIN
+ 11      INSERT INTO bb_product (idproduct, productname, description, productimage, price, active)
+ 12      VALUES (p_idproduct, p_prodname, p_descrip, p_prodimg, p_price, p_active);
+ 13      COMMIT;
+ 14  END;
+ 15  /
+
+Procedure created.
+
+SQL> DECLARE
+  2      lv_prodname bb_product.productname%TYPE;
+  3      lv_descrip bb_product.description%TYPE;
+  4      lv_prodimg bb_product.productimage%TYPE;
+  5      lv_price bb_product.price%TYPE;
+  6      lv_active bb_product.active%TYPE;
+  7  BEGIN
+  8      prod_add_sp(
+  9      p_idproduct => 11,
+ 10      p_prodname => 'Roasted Blend',
+ 11      p_descrip => 'Well-balanced mix of roasted beans, a medium body',
+ 12      p_prodimg => 'roasted.jpg',
+ 13      p_price => 9.50,
+ 14      p_active => 1);
+ 15  END;
+ 16  /
+DECLARE
+*
+ERROR at line 1:
+ORA-00001: unique constraint (YEMGUNTER.PROD_ID_PK) violated
+ORA-06512: at "YEMGUNTER.PROD_ADD_SP", line 10
+ORA-06512: at line 8
+
+
+SQL> SELECT * FROM bb_product;
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+rows will be truncated
+
+
+ IDPRODUCT PRODUCTNAME               DESCRIPTION
+---------- ------------------------- ---------------------------------------------------------------
+         1 CapressoBar Modal #351    CapressoBar Model #388
+         2 Capresso Ultima           Coffee and Espresso and Cappuccino Machine. Brews from one espr
+         3 Eileen 4-cup French Press A unique coffeemaker from those proud craftsmen in windy Norman
+         4 Coffee Grinder            Avoid blade grinders! This mill grinder allows you to choose a
+         5 Sumatra                   Spicy and intense with herbal aroma.
+         6 Guatamala                 heavy body, spicy twist, aromatic and smokey flavor.
+         7 Columbia                  dry, nutty flavor and smoothness
+         8 Brazil                    well-balanced mellow flavor, a medium body with hints of cocoa
+         9 Ethiopia                  distinctive berry-like flavor and aroma, reminds many of a frui
+        10 Espresso                  dense, caramel-like sweetness with a soft acidity. Roasted some
+        11 Roasted Blend             Well-balanced mix of roasted beans, a medium body
+
+11 rows selected.
+
+SQL> PL/SQL procedure successfully completed.
+SP2-0734: unknown command beginning "PL/SQL pro..." - rest of line ignored.
+SQL> SELECT * FROM BB_TAX;
+
+   IDSTATE ST    TAXRATE
+---------- -- ----------
+         1 VA       .045
+         2 NC        .03
+         3 SC        .06
+
+SQL> CREATE OR REPLACE PROCEDURE
+  2  tax_cost_sp
+  3      (p_state IN bb_tax.state%TYPE,
+  4      p_subtotal IN NUMBER,
+  5  	p_taxtotal OUT NUMBER)
+  6  IS
+  7  BEGIN
+  8      SELECT (taxrate * p_subtotal)
+  9          INTO p_tax
+ 10      FROM bb_tax
+ 11      WHERE state = p_state;
+ 12  
+ 13  EXCEPTION
+ 14      WHEN NO-DATA_FOUND THEN
+ 15      p_tax := 0;
+ 16  END tax_cost_sp;
+ 17  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> CREATE OR REPLACE PROCEDURE
+  2  tax_cost_sp
+  3      (p_state IN bb_tax.state%TYPE,
+  4      p_subtotal IN NUMBER,
+  5  	p_tax OUT NUMBER)
+  6  IS
+  7  BEGIN
+  8      SELECT (taxrate * p_subtotal)
+  9          INTO p_tax
+ 10      FROM bb_tax
+ 11      WHERE state = p_state;
+ 12  
+ 13  EXCEPTION
+ 14      WHEN NO-DATA_FOUND THEN
+ 15      p_tax := 0;
+ 16  END tax_cost_sp;
+ 17  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> DROP PROCEDURE tax_cost_sp;
+DROP PROCEDURE tax_cost_sp
+*
+ERROR at line 1:
+ORA-04043: object TAX_COST_SP does not exist
+
+
+SQL> CREATE OR REPLACE PROCEDURE
+  2  tax_cost_sp
+  3      (p_state IN bb_tax.state%TYPE,
+  4      p_subtotal IN NUMBER,
+  5  	p_tax OUT NUMBER)
+  6  IS
+  7  BEGIN
+  8      SELECT (taxrate * p_subtotal)
+  9          INTO p_tax
+ 10      FROM bb_tax
+ 11      WHERE state = p_state;
+ 12  
+ 13  EXCEPTION
+ 14      WHEN NO_DATA_FOUND THEN
+ 15      p_tax := 0;
+ 16  END tax_cost_sp;
+ 17  /
+
+Procedure created.
+
+SQL> DECLARE
+  2      lv_state bb_tax.state%TYPE := 'VA';
+  3      lv_subtotal NUMBER := 100;
+  4      lv_tax NUMBER;
+  5  BEGIN
+  6      tax_cost_sp(
+  7          p_state => lv_state,
+  8          p_subtotal => lv_subtotal,
+  9          p_tax => lv_tax);
+ 10  
+ 11      DBMS_OUTPUT.PUT_LINE('Tax Amount: $' || TO_CHAR(lv_tax, '99.00'));
+ 12  END;
+ 13  /
+Tax Amount: $  4.50
+
+PL/SQL procedure successfully completed.
+
+SQL> CREATE OR REPLACE PROCEDURE
+  2  basket_confirm_sp
+  3      (p_idbasket IN bb_basket.idbasket%TYPE,
+  4      p_subtotal IN bb_basket.subtotal%TYPE,
+  5      p_shipping IN bb.basket.shipping%TYPE,
+  6      p_tax IN bb.basket.tax%TYPE,
+  7      p_total IN bb.basket.total%TYPE)
+  8  
+  9  IS
+ 10  BEGIN
+ 11      UPDATE bb_basket
+ 12      SET orderplaced = 1,
+ 13          subtotal = p_subtotal,
+ 14          shipping = p_shipping,
+ 15          tax = p_tax
+ 16          total = p_total
+ 17      WHERE idbasket = p_idbasket;
+ 18  
+ 19      COMMIT;
+ 20  END;
+ 21  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> CREATE OR REPLACE PROCEDURE
+  2  basket_confirm_sp
+  3      (p_idbasket IN bb_basket.idbasket%TYPE,
+  4      p_subtotal IN bb_basket.subtotal%TYPE,
+  5      p_shipping IN bb_basket.shipping%TYPE,
+  6      p_tax IN bb_basket.tax%TYPE,
+  7      p_total IN bb_basket.total%TYPE)
+  8  
+  9  IS
+ 10  BEGIN
+ 11      UPDATE bb_basket
+ 12      SET orderplaced = 1,
+ 13          subtotal = p_subtotal,
+ 14          shipping = p_shipping,
+ 15          tax = p_tax,
+ 16          total = p_total
+ 17      WHERE idbasket = p_idbasket;
+ 18  
+ 19      COMMIT;
+ 20  END;
+ 21  /
+
+Procedure created.
+
+SQL> INSERT INTO BB_BASKET (IDBASKET, QUANTITY, IDSHOPPER, ORDERPLACED, SUBTOTAL, TOTAL, SHIPPING, TAX, DTCREATED, PROMO)
+  2  VALUES (17, 2, 22, 0, 0, 0, 0, 0, '28-FEB-12', 0);
+INSERT INTO BB_BASKET (IDBASKET, QUANTITY, IDSHOPPER, ORDERPLACED, SUBTOTAL, TOTAL, SHIPPING, TAX, DTCREATED, PROMO)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (YEMGUNTER.BSKT_ID_PK) violated
+
+
+SQL> 
+SQL> INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE, QUANTITY, IDBASKET, OPTION1, OPTION2)
+  2  VALUES (44, 7, 10.8, 3, 17, 2, 3);
+INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE, QUANTITY, IDBASKET, OPTION1, OPTION2)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (YEMGUNTER.BSKTITEM_ID_PK) violated
+
+
+SQL> 
+SQL> INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE, QUANTITY, IDBASKET, OPTION1, OPTION2)
+  2  VALUES (45, 8, 10.8, 3, 17, 2, 3);
+INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE, QUANTITY, IDBASKET, OPTION1, OPTION2)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (YEMGUNTER.BSKTITEM_ID_PK) violated
+
+
+SQL> rollBACK;
+
+Rollback complete.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> BEGIN -- as demonstrated in Figure 5-30 pg. 200 Casteel.
+  2      basket_confirm_sp(17, 64.80, 8.00, 1.94, 74.74);
+  3  END;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT subtotal, shipping, tax, total, orderplaced
+  2    FROM bb_basket
+  3    WHERE idbasket = 17;
+
+  SUBTOTAL   SHIPPING        TAX      TOTAL ORDERPLACED
+---------- ---------- ---------- ---------- -----------
+      64.8          8       1.94      74.74           1
+
+SQL> spool off;
