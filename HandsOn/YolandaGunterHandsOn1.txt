@@ -1,6 +1,9 @@
 SQL> 
 SQL> SPOOL
 currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn1.txt
+
+Assignment 1-1: Reviewing SQL and Data in the Brewbean’s Database 
+
 SQL> SELECT idProduct, productname, price, active, type, idDepartment, stock
   2  FROM bb_product;
 
@@ -18,6 +21,8 @@ SQL> SELECT idProduct, productname, price, active, type, idDepartment, stock
         10 Espresso                          10          1 C            1         50                
 
 10 rows selected.
+
+3. Enter the query shown in Figure 1-23 and check your data against the listing shown. Note  that ANSI standard joins introduced in Oracle 9i are used.
 
 SQL> SELECT idShopper, b.idBasket, b.orderplaced, b.dtordered, b.dtcreated
   2  FROM bb_shopper s INNER JOIN bb_basket b
@@ -41,6 +46,9 @@ SQL> SELECT idShopper, b.idBasket, b.orderplaced, b.dtordered, b.dtcreated
         27         16           0           24-FEB-12                                               
 
 14 rows selected.
+
+4. Enter the query shown in Figure 1-24 and check your data for idProduct 5 and idProduct 6  against the listing shown. The full results should contain 24 rows of output. 
+
 
 SQL> SELECT idProduct, p.productname, pc.categoryname, pd.optionname
   2  FROM bb_product p INNER JOIN bb_productoption
@@ -79,36 +87,7 @@ SQL> SELECT idProduct, p.productname, pc.categoryname, pd.optionname
 
 24 rows selected.
 
-SQL> // Next run your own statements
-
- IDPRODUCT PRODUCTNAME               CATEGORYNAME              OPTIONNAME                           
----------- ------------------------- ------------------------- -------------------------            
-         5 Sumatra                   Size                      1/2 LB.                              
-         5 Sumatra                   Size                      1 LB.                                
-         5 Sumatra                   Form                      Whole Bean                           
-         5 Sumatra                   Form                      Regular Grind                        
-         6 Guatamala                 Size                      1/2 LB.                              
-         6 Guatamala                 Size                      1 LB.                                
-         6 Guatamala                 Form                      Whole Bean                           
-         6 Guatamala                 Form                      Regular Grind                        
-         7 Columbia                  Size                      1/2 LB.                              
-         7 Columbia                  Size                      1 LB.                                
-         7 Columbia                  Form                      Whole Bean                           
-         7 Columbia                  Form                      Regular Grind                        
-         8 Brazil                    Size                      1/2 LB.                              
-         8 Brazil                    Size                      1 LB.                                
-         8 Brazil                    Form                      Whole Bean                           
-         8 Brazil                    Form                      Regular Grind                        
-         9 Ethiopia                  Size                      1/2 LB.                              
-         9 Ethiopia                  Size                      1 LB.                                
-         9 Ethiopia                  Form                      Whole Bean                           
-         9 Ethiopia                  Form                      Regular Grind                        
-        10 Espresso                  Size                      1/2 LB.                              
-        10 Espresso                  Size                      1 LB.                                
-        10 Espresso                  Form                      Whole Bean                           
-        10 Espresso                  Form                      Regular Grind                        
-
-24 rows selected.
+1. Produce an unduplicated list of all product IDs for all products that have been sold. Sort the list. 
 
 SQL> SELECT DISTINCT idProduct
   2  FROM bb_basketitem
@@ -125,6 +104,8 @@ SQL> SELECT DISTINCT idProduct
         10                                                                                          
 
 7 rows selected.
+
+2. Show the basket ID, product ID, product name, and description for all items ordered. (Do it  two ways—one with an ANSI join and one with a traditional join.) 
 
 SQL> SELECT bi.idbasket, idproduct, p.productname, p.description
   2  FROM bb_basketitem bi
@@ -227,105 +208,6 @@ dry, nutty flavor and smoothness
 
 28 rows selected.
 
-SQL> SELECT bi.idbasket, bi.idproduct, p.productname, p.description
-  2  FROM bb_basketitem bi, bb_product p
-  3  WHERE bi.idproduct = p.idproduct;
-
-  IDBASKET  IDPRODUCT PRODUCTNAME                                                                   
----------- ---------- -------------------------                                                     
-DESCRIPTION                                                                                         
-----------------------------------------------------------------------------------------------------
-         3          6 Guatamala                                                                     
-heavy body, spicy twist, aromatic and smokey flavor.                                                
-                                                                                                    
-         3          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-         4          4 Coffee Grinder                                                                
-Avoid blade grinders! This mill grinder allows you to choose a fine grind to a coarse grind.        
-                                                                                                    
-         5          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-         5          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-         5          9 Ethiopia                                                                      
-distinctive berry-like flavor and aroma, reminds many of a fruity, memorable wine.                  
-                                                                                                    
-         5         10 Espresso                                                                      
-dense, caramel-like sweetness with a soft acidity. Roasted somewhat darker than traditional Italian.
-                                                                                                    
-         6         10 Espresso                                                                      
-dense, caramel-like sweetness with a soft acidity. Roasted somewhat darker than traditional Italian.
-                                                                                                    
-         6          2 Capresso Ultima                                                               
-Coffee and Espresso and Cappuccino Machine. Brews from one espresso to two six ounce cups of coffee 
-                                                                                                    
-         7          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-         7          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-         8          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-         8          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-         9          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-         9          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-
-  IDBASKET  IDPRODUCT PRODUCTNAME                                                                   
----------- ---------- -------------------------                                                     
-DESCRIPTION                                                                                         
-----------------------------------------------------------------------------------------------------
-        10          6 Guatamala                                                                     
-heavy body, spicy twist, aromatic and smokey flavor.                                                
-                                                                                                    
-        10          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-        10          4 Coffee Grinder                                                                
-Avoid blade grinders! This mill grinder allows you to choose a fine grind to a coarse grind.        
-                                                                                                    
-        11          9 Ethiopia                                                                      
-distinctive berry-like flavor and aroma, reminds many of a fruity, memorable wine.                  
-                                                                                                    
-        12          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-        12          9 Ethiopia                                                                      
-distinctive berry-like flavor and aroma, reminds many of a fruity, memorable wine.                  
-                                                                                                    
-        12          6 Guatamala                                                                     
-heavy body, spicy twist, aromatic and smokey flavor.                                                
-                                                                                                    
-        12          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-        13          9 Ethiopia                                                                      
-distinctive berry-like flavor and aroma, reminds many of a fruity, memorable wine.                  
-                                                                                                    
-        15          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-        15          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-        16          8 Brazil                                                                        
-well-balanced mellow flavor, a medium body with hints of cocoa and a mild, nut-like aftertaste      
-                                                                                                    
-        16          7 Columbia                                                                      
-dry, nutty flavor and smoothness                                                                    
-                                                                                                    
-
-28 rows selected.
 
 SQL> SELECT bi.idbasket, bi.idproduct, p.productname, p.description
   2  FROM bb_basketitem bi, bb_product p
@@ -426,6 +308,9 @@ dry, nutty flavor and smoothness
                                                                                                     
 
 28 rows selected.
+
+
+3. Modify the queries in Step 2 to include the customer’s last name. 
 
 SQL> SELECT idbasket, idproduct, p.productname, p.description, s.lastname
   2  FROM bb_shopper s JOIN bb_basket b USING (idshopper)
@@ -708,6 +593,9 @@ Somners
 
 28 rows selected.
 
+4. Display all orders (basket ID, shopper ID, and date ordered) placed in February 2012. The  date should be displayed in this format: February 12, 2012. 
+
+
 SQL> SELECT idBasket, idShopper, TO_CHAR(dtordered, 'Month DD, YYYY')
   2  FROM bb_basket
   3  WHERE TO_CHAR(dtordered, 'Mon YYYY') = 'Feb 2012';
@@ -722,6 +610,8 @@ SQL> SELECT idBasket, idShopper, TO_CHAR(dtordered, 'Month DD, YYYY')
         12         25 February  19, 2012                                                            
 
 6 rows selected.
+
+5. Display the total quantity sold by product ID.
 
 SQL> SELECT idproduct, SUM(quantity)
   2  FROM bb_basketitem
@@ -739,6 +629,10 @@ SQL> SELECT idproduct, SUM(quantity)
 
 7 rows selected.
 
+
+6. Modify the query in Step 5 to show only products that have sold less than a quantity of 3. 
+
+
 SQL> SELECT idproduct, SUM(quantity)
   2  FROM bb_basketitem
   3  GROUP BY bb_basketitem.idproduct
@@ -748,6 +642,10 @@ SQL> SELECT idproduct, SUM(quantity)
 ---------- -------------                                                                            
          2             1                                                                            
          4             2                                                                            
+
+
+7. List all active coffee products (product ID, name, and price) for all coffee items priced above  the overall average of coffee items. 
+
 
 SQL> SELECT idproduct, productname, price
   2  FROM bb_product
@@ -759,6 +657,10 @@ SQL> SELECT idproduct, productname, price
 ---------- ------------------------- ----------                                                     
          9 Ethiopia                          15                                                     
 
+
+8. Create a table named CONTACTS that includes the following columns:
+
+
 SQL> CREATE TABLE contacts
   2  (con_id NUMBER(4) PRIMARY KEY,
   3  company_name VARCHAR2(30) NOT NULL,
@@ -768,6 +670,9 @@ SQL> CREATE TABLE contacts
   7  CONSTRAINT con_cont_ck CHECK (con_cnt > 0));
 
 Table created.
+
+9. Add two rows of data to the table, using data values you create. Make sure the default option on the LAST—DATE column is used in the second row added. Also, issue a command to save the data in the table permanently.
+
 
 SQL> INSERT INTO contacts (con_id, company_name, email, last_date, con_cnt)
   2  VALUES (1001, 'Tech Solutions', 'contact@techsolutions.com', TO_DATE('2024-10-24', 'YYYY-MM-DD'), 5);
@@ -783,6 +688,8 @@ SQL>
 SQL> COMMIT;
 
 Commit complete.
+
+10. Issue a command to change the e-mail value for the first row added to the table. Show a query on the table to confirm that the change was completed. Then issue a command to undo the change.
 
 SQL> UPDATE contacts
   2  SET email = 'support@techsolutions.com'

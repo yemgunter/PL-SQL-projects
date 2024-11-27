@@ -1,5 +1,9 @@
 SQL> spool
 currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn2.txt
+
+Assignment 2-1: Using Scalar Variables
+
+
 SQL> DECLARE
   2  	lv_test_date DATE := TO_DATE('10-DEC-2012', 'DD-MON-YYYY');
   3  	lv_test_num CONSTANT NUMBER(3) := 10;
@@ -19,6 +23,8 @@ Test Number: 10
 Test Text: Gunter                                                                                   
 
 PL/SQL procedure successfully completed.
+
+Assignment 2-3: Using IF Statements
 
 SQL> DECLARE
   2  	lv_total_purch NUMBER(6,2) := 100.00;
@@ -82,6 +88,8 @@ SQL> DECLARE
 Customer Rating: MID                                                                                
 
 PL/SQL procedure successfully completed.
+
+Assignment 2-4: Using CASE Statements
 
 SQL> DECLARE
   2  	lv_total_purch NUMBER(6,2) := 50.00;
@@ -149,6 +157,9 @@ Customer Rating: HIGH
 
 PL/SQL procedure successfully completed.
 
+Assignment 2-5: Using a Boolean Variable
+
+
 SQL> DECLARE
   2      lv_accnt_bal NUMBER(6,2) := 200.00;
   3      lv_payment NUMBER(6,2) := 210.00;
@@ -189,6 +200,8 @@ Amount Owed On Account!
 
 PL/SQL procedure successfully completed.
 
+Assignment 2-6: Using Looping Statements
+
 SQL> DECLARE
   2      lv_num_items NUMBER(3) := 0;
   3      lv_item_price NUMBER(6,2) := 742.00;
@@ -211,6 +224,9 @@ Total number of items that can be purchased: 4
 Total amount spent: 2968                                                                            
 
 PL/SQL procedure successfully completed.
+
+Assignment 2-8: Using IF Statements
+
 
 SQL> DECLARE
   2  	lv_membership CHAR(1) := 'N';
