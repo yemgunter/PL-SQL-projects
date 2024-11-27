@@ -1,0 +1,39 @@
+Yolanda Gunter Key Terms Ch 4 - Casteel
+
+
+1. cursor (“context area”) - bookmark that keeps track of section of memory where list of data in database is.
+
+
+2. Implicit cursors - automatic bookmarks created by Oracle when you run a simple command, like getting data from a table. You don’t have to set them up.
+
+
+
+3. Explicit cursors - bookmarks that you create and control yourself. You set them up when you want to manage data more carefully, like when you need to check each piece of information in a specific way.
+
+ 
+
+4. CURSOR FOR loop - a special loop that makes it easy to go through all the data using a cursor. It’s like telling the program, “Keep moving through the list and do something with each item until you reach the end.”
+
+
+
+5. Parameters (Cursors with Parameters) - extra pieces of information you can give to a cursor to make it more specific, like adding directions to your bookmark so that you only look at certain parts of the list.
+
+ 
+
+6. Cursor Variables - flexible bookmarks that let you change which data you’re looking at, even after the program starts running.
+
+
+7. exception handler - catches errors that happen and decides what to do, like showing a message or fixing a problem so the program doesn’t crash.
+
+
+
+8. predefined exceptions - common errors that Oracle already knows about and can handle for you.
+
+
+9. undefined exceptions (“unnamed Oracle error”) - errors that don’t have a name or a ready-made fix in Oracle that you weren’t prepared for, so you have to figure out what to do.
+
+
+10. user-defined exceptions - errors that you set up and name yourself in your program, like putting up warning signs for problems you know might happen so you can handle them in a specific way.
+
+
+
