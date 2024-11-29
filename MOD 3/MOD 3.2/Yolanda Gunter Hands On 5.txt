@@ -14,34 +14,37 @@ The procedure needs two IN parameters to identify the product  ID and supply the
 1. In SQL Developer, create the following procedure: 
 
 CREATE OR REPLACE PROCEDURE prod_name_sp  
-(p_idproduct IN bb_product.idproduct%TYPE,  
-p_descrip IN bb_product.description%TYPE) 
-  IS  
+(p_prodid IN bb_product.idproduct%TYPE,  
+p_descrip IN bb_product.description%TYPE)  
+  IS 
+
 BEGIN  
   UPDATE bb_product  
      SET description = p_descrip  
      WHERE idproduct = p_idproduct;  
   COMMIT;  
-END prod_name_sp;  
+END;  
 
 2. Before testing the procedure, verify the current description value for product ID 1 with  SELECT * FROM bb_product;.  
 
+SELECT idproduct, productname, description
+FROM bb_product
+WHERE idproduct = 1;
+
 3. Call the procedure with parameter values of 1 for the product ID and CapressoBar Model  #388 for the description.  
 
-DECLARE
-    lv_idproduct   bb_product.idproduct%TYPE;   
-    lv_descrip  bb_product.description%TYPE; 
 BEGIN
-    lv_idproduct := 1;                         
-    lv_descrip := 'CapressoBar Model #388';  
-
-    prod_name_sp(lv_idproduct, lv_descrip);     
+    prod_name_sp(1, 'CapressoBar Model #388');
 END;
+
 
 4. Verify that the update was successful by querying the table with SELECT * FROM  bb_product;. 
 
 
 SELECT * FROM bb_product;
+
+SELECT idproduct, productname, description
+FROM bb_product
 
 
 Assignment 5-2: Using a Procedure with IN Parameters  
@@ -50,9 +53,8 @@ Follow these steps to create a procedure that allows a company employee to add a
   
 1. In SQL Developer, create a procedure named PROD_ADD_SP that adds a row for a new  product in the BB_PRODUCT table. Keep in mind that the user provides values for the  product name, description, image filename, price, and active status. Address the input  values or parameters in the same order as in the preceding sentence.  
 
-CREATE OR REPLACE 
-PROCEDURE prod_add_sp  
-    (p_idproduct IN bb_product.idproduct%TYPE,  --need idproduct due to it being primary key
+CREATE OR REPLACE PROCEDURE prod_add_sp  
+    (p_prodid IN bb_product.idproduct%TYPE,  --need idproduct due to it being primary key
      p_prodname IN bb_product.productname%TYPE,  
      p_descrip IN bb_product.description%TYPE,
      p_prodimg IN bb_product.productimage%TYPE,
@@ -61,29 +63,20 @@ PROCEDURE prod_add_sp
 IS  
 BEGIN  
     INSERT INTO bb_product (idproduct, productname, description, productimage, price, active)  
-    VALUES (p_idproduct, p_prodname, p_descrip, p_prodimg, p_price, p_active);
+    VALUES (bb_prodid_seq.nextval, p_prodname, p_descrip, p_prodimg, p_price, p_active);
     COMMIT;  
-END prod_add_sp;
+END;
 
 
 
 2. Call the procedure with these parameter values: ('Roasted Blend', 'Well-balanced  mix of roasted beans, a medium body', 'roasted.jpg',9.50,1).  
 
-DECLARE 
-    lv_prodname bb_product.productname%TYPE;  
-    lv_descrip bb_product.description%TYPE;
-    lv_prodimg bb_product.productimage%TYPE;
-    lv_price bb_product.price%TYPE;
-    lv_active bb_product.active%TYPE; 
+
 BEGIN
-    prod_add_sp(
-    p_idproduct => 11,  -- giving idproduct a value as primary key
-    p_prodname => 'Roasted Blend', 
-    p_descrip => 'Well-balanced mix of roasted beans, a medium body',
-    p_prodimg => 'roasted.jpg',
-    p_price => 9.50,
-    p_active => 1);
+  prod_add_sp('Roasted Blend', 'Well-balanced  mix of roasted beans, a medium body', 'roasted.jpg',9.50,1);
 END;
+
+
 
 
 3. Check whether the update was successful by querying the BB_PRODUCT table. 
@@ -123,7 +116,7 @@ SELECT * FROM BB_TAX;
 
 CREATE OR REPLACE PROCEDURE
 tax_cost_sp
-    (p_state IN bb_tax.state%TYPE,
+    (p_state IN bb_tax.st%TYPE,
     p_subtotal IN NUMBER,
 	p_tax OUT NUMBER)
 IS
@@ -136,7 +129,7 @@ BEGIN
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
     p_tax := 0;
-END tax_cost_sp;
+END;
 
 
 2. Call the procedure with the values VA for the state and $100 for the subtotal. Display the  tax amount the procedure returns. (It should be $4.50.) 
@@ -191,16 +184,17 @@ END;
 
 2. Enter the following statements to create a new basket containing two items:  
 
-INSERT INTO BB_BASKET (IDBASKET, QUANTITY, IDSHOPPER,  
-			ORDERPLACED, SUBTOTAL, TOTAL,  
-			SHIPPING, TAX, DTCREATED, PROMO)  
+
+INSERT INTO BB_BASKET (IDBASKET, QUANTITY, IDSHOPPER,  ORDERPLACED, SUBTOTAL, TOTAL,  SHIPPING, TAX, DTCREATED, PROMO)  
 	VALUES (17, 2, 22, 0, 0, 0, 0, 0, '28-FEB-12', 0);  
-INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE,  
-			   QUANTITY, IDBASKET, OPTION1, OPTION2)  
+
+INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE,  QUANTITY, IDBASKET, OPTION1, OPTION2)  
 	VALUES (44, 7, 10.8, 3, 17, 2, 3);  
-INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE,  
-			   QUANTITY, IDBASKET, OPTION1, OPTION2)  
-VALUES (45, 8, 10.8, 3, 17, 2, 3);  
+
+INSERT INTO BB_BASKETITEM (IDBASKETITEM, IDPRODUCT, PRICE,  QUANTITY, IDBASKET, OPTION1, OPTION2)  
+	VALUES (45, 8, 10.8, 3, 17, 2, 3); 
+
+Casteel, Joan. Oracle 11g: PL/SQL Programming (p. 211). Cengage Textbook. Kindle Edition. 
 
 3. Type and run COMMIT; to save the data from these statements.  
 
@@ -238,7 +232,7 @@ Assignment 5-5: Updating Order Status
 
 Create a procedure named STATUS_SHIP_SP that allows an employee in the Shipping Department to update an order status to add shipping information. The BB_BASKETSTATUS  table lists events for each order so that a shopper can see the current status, date, and  comments as each stage of the order process is finished. The IDSTAGE column of the  BB_BASKETSTATUS table identifies each stage; the value 3 in this column indicates that an  order has been shipped.  
 
-The procedure should allow adding a row with an IDSTAGE of 3, date shipped, tracking  number, and shipper. The BB_STATUS_SEQ sequence is used to provide a value for the primary  key column. Test the procedure with the following information:  
+The procedure should allow adding a row with an IDSTAGE of 3, date shipped, tracking  number, and shipper. The BB_STATUS_SEQ sequence is used to provide a value for the primary key column. Test the procedure with the following information:  
 
 Basket # = 3  
 Date shipped = 20-FEB-12  
@@ -246,7 +240,32 @@ Shipper = UPS
 Tracking # = ZW2384YXK4957 
 
 
+CREATE OR REPLACE PROCEDURE status_ship_sp
+    (p_id IN bb_basketstatus.idbasket%TYPE,
+    p_date IN bb_basketstatus.dtstage%TYPE,
+    p_shipper IN bb_basketstatus.shipper%TYPE,
+    p_shipnum IN bb_basketstatus.shipper%TYPE)
+    
+IS
+BEGIN
+    INSERT INTO bb_basketstatus
+        (idstatus,idbasket, idstage, dtstage, shipper, shippingnum)
+        VALUES (bb_status_seq.nextval, p_id, 3, p_date, p_shipper, p_shipnum);
+    COMMIT;
+END;
+
+
+ BEGIN
+     status_ship_sp(3, '20-FEB-12', 'UPS', 'ZW2384YKK4957');
+ END;
+ /
+
+
+
+
+
 Assignment 5-6: Returning Order Status Information  
+
 Create a procedure that returns the most recent order status information for a specified basket.  This procedure should determine the most recent ordering-stage entry in the BB_BASKETSTATUS  table and return the data. Use an IF or CASE clause to return a stage description instead  of an IDSTAGE number, which means little to shoppers. The IDSTAGE column of the  BB_BASKETSTATUS table identifies each stage as follows:  
 
 	•1—Submitted and received  
@@ -254,7 +273,78 @@ Create a procedure that returns the most recent order status information for a s
 	•3—Shipped  
 	•4—Cancelled  
 	•5—Back-ordered 
+
 The procedure should accept a basket ID number and return the most recent status  description and date the status was recorded. If no status is available for the specified basket  ID, return a message stating that no status is available. Name the procedure STATUS_SP. Test  the procedure twice with the basket ID 4 and then 6. 
+
+DESCRIBE bb_basketstatus; --review table 
+
+SELECT * from bb_basketstatus;
+
+CREATE OR REPLACE PROCEDURE status_sp
+    (p_id IN bb_basketstatus.idbasket%TYPE,
+    p_status OUT bb_basketstatus.notes%TYPE,
+    p_date OUT bb_basketstatus.dtstage%TYPE)
+    
+IS
+    lv_stagedescrip bb_basketstatus.idstage%TYPE;
+    
+BEGIN 
+    SELECT idstage, dtstage
+        INTO lv_stagedescrip, p_date
+    FROM (SELECT idstage, dtstage
+            FROM bb_basketstatus
+            WHERE idbasket = p_id
+            ORDER BY dtstage DESC)
+    WHERE ROWNUM = 1;
+    
+    CASE lv_stagedescrip
+        WHEN 1 THEN p_status := 'Submitted and received';
+        WHEN 2 THEN p_status := 'Confirmed, processed, sent to shipping';
+        WHEN 3 THEN p_status := 'Shipped';
+        WHEN 4 THEN p_status := 'Cancelled';
+        WHEN 5 THEN p_status := 'Back-ordered';
+        ELSE p_status := 'No status is available';
+    END CASE;
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+    p_status := 'No status is available';
+END;
+/
+
+
+DECLARE
+    lv_stagedescrip VARCHAR2(50);
+    lv_statusdate DATE;
+    
+BEGIN
+    status_sp
+    (p_id => 4,
+    p_status => lv_stagedescrip, 
+    p_date => lv_statusdate);
+    
+    DBMS_OUTPUT.PUT_LINE('Status: ' || lv_stagedescrip);
+    DBMS_OUTPUT.PUT_LINE('Date: ' || TO_CHAR(lv_statusdate, 'DD-MON-YYYY'));
+    
+END;
+/
+
+
+DECLARE
+    lv_stagedescrip VARCHAR2(50);
+    lv_statusdate DATE;
+    
+BEGIN
+    status_sp
+    (p_id => 6,
+    p_status => lv_stagedescrip, 
+    p_date => lv_statusdate);
+    
+    DBMS_OUTPUT.PUT_LINE('Status: ' || lv_stagedescrip);
+    DBMS_OUTPUT.PUT_LINE('Date: ' || TO_CHAR(lv_statusdate, 'DD-MON-YYYY'));
+    
+END;
+/
 
 
 Assignment 5-7: Identifying Customers  
@@ -272,15 +362,96 @@ Brewbean’s wants to offer an incentive of free shipping to customers who haven
 The BB_PROMOLIST table also has a USED column, which contains the default value N  and is updated to Y when the shopper uses the promotion. Test the procedure with the cutoff  date 15-FEB-12. Assign free shipping for the month APR and the year 2012. 
 
 
+CREATE OR REPLACE PROCEDURE PROMO_SHIP_SP(
+    p_cutoff_date IN DATE,
+    p_month IN VARCHAR2,
+    p_year IN NUMBER) 
+IS
+BEGIN
+    -- Insert into BB_PROMOLIST for customers who haven't shopped since the cutoff date
+    INSERT INTO BB_PROMOLIST (idshopper, promo_flag, month, year, used)
+    SELECT DISTINCT b.idshopper, 1, p_month, p_year, 'N'
+    FROM bb_basket b
+    WHERE b.dtcreated < p_cutoff_date
+    AND NOT EXISTS (
+        SELECT 1 
+        FROM bb_promolist p
+        WHERE p.idshopper = b.idshopper
+            AND p.promo_flag = 1
+            AND p.month = p_month
+            AND p.year = p_year
+            AND p.used = 'N');
+            
+    UPDATE bb_promolist
+    SET month = p_month,
+        year = p_year
+    WHERE promo_flag = 1
+        AND used = 'N';
+        
+    COMMIT;
+END;
+/
+
+
+BEGIN
+    promo_ship_sp(TO_DATE('15-FEB-12', 'DD-MON-YY'), 'APR', 2012);
+END;
+/
+
+SELECT *
+FROM bb_promolist
+WHERE promo_flag = 1
+    AND month = 'APR'
+    AND year = 2012;
+
+
 Assignment 5-8: Adding Items to a Basket  
 
 As a shopper selects products on the Brewbean’s site, a procedure is needed to add a newly  selected item to the current shopper’s basket. Create a procedure named BASKET_ADD_SP that  accepts a product ID, basket ID, price, quantity, size code option (1 or 2), and form code option  (3 or 4) and uses this information to add a new item to the BB_BASKETITEM table. The table’s  PRIMARY KEY column is generated by BB_IDBASKETITEM_SEQ. Run the procedure with the  following values:  
+
 •Basket ID—14  
 •Product ID—8  
 •Price—10.80  
 •Quantity—1  
 •Size code—2  
 •Form code—4 
+
+
+create or replace PROCEDURE basket_add_sp
+    (p_id IN bb_basketitem.idbasketitem%TYPE, --need idbasket due to it being primary key
+    p_prodid IN bb_basketitem.idproduct%TYPE,
+    p_price IN bb_basketitem.price%TYPE,
+    p_quantity IN bb_basketitem.quantity%TYPE,
+    p_sizecode IN bb_basketitem.option1%TYPE,
+    p_formcode IN bb_basketitem.option2%TYPE)
+
+IS
+BEGIN
+    -- Insert new item into BB_BASKETITEM table
+    INSERT INTO bb_basketitem(idbasketitem, idbasket, idproduct, price,
+        quantity, option1, option2)
+        VALUES (bb_idbasketitem_seq.nextval, p_id, p_prodid, p_price,
+            p_quantity, p_sizecode, p_formcode);
+
+    COMMIT;
+END;
+/
+
+
+
+BEGIN 
+    basket_add_sp
+        (p_basketitemid => 14,
+        p_prodid => 8,
+        p_price     => 10.80,
+        p_quantity  => 1,
+        p_sizecode  => 2,
+        p_formcode  => 4);
+END;
+/
+
+
+
 
 
 
