@@ -1,20 +1,38 @@
 Yolanda Gunter Key Terms Ch 5 - Casteel
 
 
-subprogram (named program unit) - block that performs a specific task that can be named and reused 
+1. Procedure
+A procedure is like a recipe. It’s a set of instructions that does a specific job. Once it’s created, you can use it over and over without rewriting the steps.
+
+2. Subprogram (Named Program Unit)
+A subprogram is like a mini-program within a bigger program. It has a name, and you can run it to do one specific task.
+
+3. Actual Parameters
+These are the real-world values or pieces of information you give to a procedure when you use it. For example, if you have a procedure to add numbers, the actual numbers you want to add are the actual parameters.
+
+4. Formal Parameters
+These are placeholders in the procedure’s instructions. Think of them as empty cups that get filled with the actual parameters when the procedure is run.
+
+5. Positional Method
+This is like filling in a form by putting answers in the right blanks. When you use a procedure, you give the values in the same order the procedure expects them.
+
+6. Named Association
+This is like labeling each blank on a form before filling it in. When using a procedure, you can say, "This value is for this specific blank," instead of relying on the order.
+
+7. Variable Scope
+This tells you where a variable (a named piece of information) can be used. For example, if you write a note in your notebook, only someone reading that notebook can see the note.
+
+8. Parent Transaction
+This is the main project or task you’re working on. Other smaller tasks (called autonomous transactions) might be part of it, but this is the big one they all connect to.
+
+9. Autonomous Transactions
+These are smaller tasks that can run on their own, even though they are part of a bigger task (the parent transaction). Think of it like running a side job that doesn’t affect your main job.
+
+10. RAISE_APPLICATION_ERROR
+This is like setting off an alarm. If something goes wrong in your procedure, this command lets you create a custom error message to tell people what happened.
 
 
-actual parameters - values from the application that are passed to parameters
 
-formal parameters - values passed to parameters in procedure declarations
-
-positional method - when invoking a  procedure, the values are listed in the order in which parameters are declared in  the procedure
-
-named association, associates a value for each parameter by name  in the calling statement
-
-variable scope - specifies the area of a block that can identity a particular variable
-
-autonomous transactions,  which are transactions created in another transaction called a “parent transaction.”  Autonomous transaction can be treated independently of the parent transaction. 
 
 
 
