@@ -1,0 +1,13 @@
+Yolanda Gunter Key Terms Ch 6 - Casteel
+
+
+
+function - is a program unit that performs a task, can receive input  values, and returns values to the calling environment.
+
+
+
+“user-defined functions” - functions I'd have to make myself that isn't an Oracle-supplied function
+
+
+
+
