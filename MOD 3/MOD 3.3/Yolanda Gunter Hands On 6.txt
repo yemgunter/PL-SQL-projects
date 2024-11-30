@@ -1,0 +1,67 @@
+ The main difference between  functions and procedures is that a function is part of an expression. Unlike procedures, it  can’t serve as an entire statement. This difference is important because it means functions can be used in both SQL commands and PL/SQL statements. (Procedures can’t be used in  SQL statements.) 
+
+
+
+The syntax for creating a function is much like the syntax for creating a procedure with  one important difference—a RETURN statement must be used to handle the value the  function is to return. This statement is included in both the function header and body  (executable sections of the block).
+
+
+CREATE OR REPLACE FUNCTION function_name
+	(parameter1_name mode data%TYPE,
+	parameter2_name mode data%TYPE,
+	.....)
+	RETURN return_value_data type
+IS|AS
+	declaration section
+BEGIN
+	executable section
+	RETURN variable_name;
+EXCEPTION
+	exception handlers
+END;
+
+Keep in mind that a function is part of an expression because the returned value needs to be held in a  variable, so it can’t be invoked in a stand-alone fashion, as with a procedure. 
+
+
+
+Assignment 6-1  Formatting Numbers as Currency
+
+
+
+
+
+
+
+Assignment 6-2  Calculating a Shopper's Total Spending
+
+
+
+
+
+
+Assignment 6-3  Calculating a Shoppers Total Number of Orders
+
+
+
+
+
+
+Assignment 6-4  Identifying the Weekday for an Order Date
+
+
+
+
+
+Assignment 6-5 Calculating Days Between Ordering and Shipping
+
+
+
+
+
+Assignment 6-6 Adding Descriptions for Order Status Codes
+
+
+
+
+
+
+Assignment 6-7 Calculating an Order's Tax Amount
