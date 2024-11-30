@@ -25,33 +25,189 @@ Keep in mind that a function is part of an expression because the returned value
 
 Assignment 6-1  Formatting Numbers as Currency
 
+Many of the Brewbean’s application pages and reports generated from the database display  dollar amounts. Follow these steps to create a function that formats the number provided as  an argument with a dollar sign, commas, and two decimal places: 
+
+Casteel, Joan. Oracle 11g: PL/SQL Programming (p. 243). Cengage Textbook. Kindle Edition. 
 
 
 
+CREATE OR REPLACE FUNCTION dollar_fmt_sf  
+    (p_num NUMBER)  
+    RETURN VARCHAR2  
+IS  
+    lv_amt_txt VARCHAR2(20);  
+BEGIN  
+    lv_amt_txt := TO_CHAR(p_num,'$99,999.99');  
+    RETURN lv_amt_txt;  
+END; 
+/
+
+--test the function w this anonymous block
+
+DECLARE  
+    lv_amt_num NUMBER(8,2) := 9999.55;  
+BEGIN 
+    DBMS_OUTPUT.PUT_LINE(dollar_fmt_sf(lv_amt_num));  
+END; 
+/
+
+--test the function with this SQL statement
+
+SELECT dollar_fmt_sf(shipping), dollar_fmt_sf(total)  
+FROM bb_basket  
+WHERE idBasket = 3;
 
 
 
 Assignment 6-2  Calculating a Shopper's Total Spending
 
+Many of the reports generated from the system calculate the total dollars in a shopper’s  purchases. Follow these steps to create a function named TOT_PURCH_SF that accepts a  shopper ID as input and returns the total dollars the shopper has spent with Brewbean’s. Use the function in a SELECT statement that shows the shopper ID and total purchases for every  shopper in the database.  
+
+1. Develop and run a CREATE FUNCTION statement to create the TOT_PURCH_SF function.  The function code needs a formal parameter for the shopper ID and to sum the TOTAL  column of the BB_BASKET table.  
+
+2. Develop a SELECT statement, using the BB_SHOPPER table, to produce a list of each  shopper in the database and his or her total purchases. 
+
+Casteel, Joan. Oracle 11g: PL/SQL Programming (p. 245). Cengage Textbook. Kindle Edition. 
 
 
+CREATE OR REPLACE FUNCTION tot_purch_sf
+    (p_id NUMBER) 
+    RETURN NUMBER --declares the data type of the return value
+IS
+    lv_tot_num NUMBER(8,2);
+BEGIN
+    SELECT SUM(total)
+        INTO lv_tot_num
+        FROM bb_basket
+        WHERE idshopper = p_id;
+    RETURN lv_tot_num;
+END;
+/
 
+---test the function with this SQL statement
+SELECT idshopper, tot_purch_sf(idshopper)
+FROM bb_shopper;
+/
 
 
 Assignment 6-3  Calculating a Shoppers Total Number of Orders
 
+Another commonly used statistic in reports is the total number of orders a shopper has placed.  Follow these steps to create a function named NUM_PURCH_SF that accepts a shopper ID and  returns a shopper’s total number of orders. Use the function in a SELECT statement to display  the number of orders for shopper 23.  
 
+1. Develop and run a CREATE FUNCTION statement to create the NUM_PURCH_SF function.  The function code needs to tally the number of orders (using an Oracle built-in function)  by shopper. Keep in mind that the ORDERPLACED column contains a 1 if an order has  been placed.  
 
+2. Create a SELECT query by using the NUM_PURCH_SF function on the IDSHOPPER column  of the BB_SHOPPER table. Be sure to select only shopper 23. 
 
+Casteel, Joan. Oracle 11g: PL/SQL Programming (p. 245). Cengage Textbook. Kindle Edition. 
+
+CREATE OR REPLACE FUNCTION num_purch_sf
+    (p_id NUMBER)
+    RETURN NUMBER 
+IS
+    lv_tot_num NUMBER(5); --declare a variable to hold return value
+BEGIN
+    SELECT COUNT(idbasket) --Oracle built-in function for tally
+        INTO lv_tot_num
+        FROM bb_basket
+        WHERE idshopper = p_id
+            AND orderplaced = 1;
+    RETURN lv_tot_num;
+END;
+/
+
+--use this SQL query to test out the function using only shopper 23
+SELECT num_purch_sf(idshopper) 
+FROM bb_shopper
+WHERE idshopper = 23;
+/
 
 
 Assignment 6-4  Identifying the Weekday for an Order Date
 
+The day of the week that baskets are created is often analyzed to determine consumer shopping patterns. Create a function named DAY_ORD_SF that accepts an order date and  returns the weekday. Use the function in a SELECT statement to display each basket ID and the  weekday the order was created. Write a second SELECT statement, using this function to  display the total number of orders for each weekday. (Hint: Call the TO_CHAR function to retrieve  the weekday from a date.)  
 
+1. Develop and run a CREATE FUNCTION statement to create the DAY_ORD_SF function. Use  the DTCREATED column of the BB_BASKET table as the date the basket is created. Call  the TO_CHAR function with the DAY option to retrieve the weekday for a date value.  
+
+2. Create a SELECT statement that lists the basket ID and weekday for every basket.  
+
+3. Create a SELECT statement, using a GROUP BY clause to list the total number of baskets  per weekday. Based on the results, what’s the most popular shopping day? 
+
+CREATE OR REPLACE FUNCTION day_ord_sf
+    (p_daycreated bb_basket.dtcreated%TYPE)
+    RETURN VARCHAR2  --declares the data type of the return value weekday
+IS
+    lv_weekday VARCHAR2(10); --declare a variable to hold return value weekday
+BEGIN
+    lv_weekday := TO_CHAR(p_daycreated, 'DAY'); --use TO_CHAR to format weekday
+    RETURN lv_weekday;
+END;
+/
+
+
+Column idbasket Heading 'Basket ID' Format 99999;
+Column day_ord_sf(dtcreated) Heading 'Weekday Created' Format A15;
+
+SELECT idbasket, day_ord_sf(dtcreated)
+FROM bb_basket;
+
+SELECT day_ord_sf(dtcreated)AS WEEKDAY, COUNT(idbasket) AS "TOTAL ORDERS"
+FROM bb_basket
+GROUP BY day_ord_sf(dtcreated)
 
 
 
 Assignment 6-5 Calculating Days Between Ordering and Shipping
+
+An analyst in the quality assurance office reviews the time elapsed between receiving an order  and shipping the order. 
+
+Any orders that haven’t been shipped within a day of the order being  placed are investigated. 
+
+Create a function named ORD_SHIP_SF that calculates the number of  days between the basket’s creation date and the shipping date. 
+
+The function should return a  character string that states OK if the order was shipped within a day or CHECK if it wasn’t. 
+
+If the  order hasn’t shipped, return the string Not shipped. 
+
+The IDSTAGE column of the  BB_BASKETSTATUS table indicates a shipped item with the value 5, and the DTSTAGE column is the shipping date. 
+
+The DTORDERED column of the BB_BASKET table is the order  date. 
+
+Review data in the BB_BASKETSTATUS table, and create an anonymous block to test all  three outcomes the function should handle. 
+
+--Assignment 6-5 Calculating Days Between Ordering and Shipping
+
+CREATE OR REPLACE FUNCTION ord_ship_sf
+    (p_basketid bb_basketstatus.idbasket%TYPE) --
+    RETURN VARCHAR2
+IS
+    lv_shipstatus bb_basketstatus.idstage%TYPE; --variable for shipped item status
+    lv_dateordered bb_basket.dtordered%TYPE; --variable for order date
+    lv_dateshipped bb_basketstatus.dtstage%TYPE; --variable for shipping date
+    lv_days NUMBER(2); --variable for difference in days
+BEGIN
+    SELECT b.dtordered, bs.dtstage
+        INTO lv_dateordered, lv_dateshipped
+        FROM bb_basket b, bb_basketstatus bs
+        WHERE b.idbasket = bs.idbasket
+            AND bs.idbasket = p_basketid
+            AND bs.idstage = 5; --only get orders with shipped status
+    
+    lv_days := lv_dateshipped - lv_dateordered; --variable for calculation of diff between dates 
+    
+    IF lv_days > 1 THEN --results of calculations
+        lv_shipstatus := 'CHECK';
+    ELSE
+        lv_shipstatus := 'OK';
+    END IF;
+    RETURN lv_shipstatus; 
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN --what to do if order status is not 5 (shipped)
+        lv_shipstatus := 'Not Shipped';
+        RETURN lv_shipstatus;
+END;
+/
+
 
 
 
@@ -59,8 +215,22 @@ Assignment 6-5 Calculating Days Between Ordering and Shipping
 
 Assignment 6-6 Adding Descriptions for Order Status Codes
 
+When a shopper returns to the Web site to check an order’s status, information from the  BB_BASKETSTATUS table is displayed. However, only the status code is available in the  BB_BASKETSTATUS table, not the status description.
+
+Create a function named STATUS_DESC_SF  that accepts a stage ID and returns the status description. 
+
+The descriptions for stage IDs  are listed in Table 6-3. 
+
+Test the function in a SELECT statement that retrieves all rows in the  BB_BASKETSTATUS table for basket 4 and displays the stage ID and its description. 
 
 
+Table 6-3 Basket Stage Descriptions:
+Stage 	ID Description  
+1 	Order submitted  
+2 	Accepted, sent to shipping  
+3 	Back-ordered  
+4 	Cancelled  
+5 	Shipped
 
 
 
