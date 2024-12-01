@@ -1,6 +1,6 @@
- The main difference between  functions and procedures is that a function is part of an expression. Unlike procedures, it  can’t serve as an entire statement. This difference is important because it means functions can be used in both SQL commands and PL/SQL statements. (Procedures can’t be used in  SQL statements.) 
+Chapter 6 Functions Notes
 
-
+The main difference between  functions and procedures is that a function is part of an expression. Unlike procedures, it  can’t serve as an entire statement. This difference is important because it means functions can be used in both SQL commands and PL/SQL statements. (Procedures can’t be used in  SQL statements.) 
 
 The syntax for creating a function is much like the syntax for creating a procedure with  one important difference—a RETURN statement must be used to handle the value the  function is to return. This statement is included in both the function header and body  (executable sections of the block).
 
@@ -21,7 +21,10 @@ END;
 
 Keep in mind that a function is part of an expression because the returned value needs to be held in a  variable, so it can’t be invoked in a stand-alone fashion, as with a procedure. 
 
-
+----------------------------
+----------------------------
+----------------------------
+----------------------------
 
 Assignment 6-1  Formatting Numbers as Currency
 
@@ -57,7 +60,10 @@ SELECT dollar_fmt_sf(shipping), dollar_fmt_sf(total)
 FROM bb_basket  
 WHERE idBasket = 3;
 
-
+----------------------------
+----------------------------
+----------------------------
+----------------------------
 
 Assignment 6-2  Calculating a Shopper's Total Spending
 
@@ -89,6 +95,10 @@ SELECT idshopper, tot_purch_sf(idshopper)
 FROM bb_shopper;
 /
 
+----------------------------
+----------------------------
+----------------------------
+----------------------------
 
 Assignment 6-3  Calculating a Shoppers Total Number of Orders
 
@@ -120,6 +130,11 @@ SELECT num_purch_sf(idshopper)
 FROM bb_shopper
 WHERE idshopper = 23;
 /
+
+----------------------------
+----------------------------
+----------------------------
+----------------------------
 
 
 Assignment 6-4  Identifying the Weekday for an Order Date
@@ -154,6 +169,10 @@ SELECT day_ord_sf(dtcreated)AS WEEKDAY, COUNT(idbasket) AS "TOTAL ORDERS"
 FROM bb_basket
 GROUP BY day_ord_sf(dtcreated)
 
+----------------------------
+----------------------------
+----------------------------
+----------------------------
 
 
 Assignment 6-5 Calculating Days Between Ordering and Shipping
@@ -174,43 +193,70 @@ The DTORDERED column of the BB_BASKET table is the order  date.
 
 Review data in the BB_BASKETSTATUS table, and create an anonymous block to test all  three outcomes the function should handle. 
 
---Assignment 6-5 Calculating Days Between Ordering and Shipping
 
 CREATE OR REPLACE FUNCTION ord_ship_sf
-    (p_basketid bb_basketstatus.idbasket%TYPE) --
-    RETURN VARCHAR2
+  (p_basket_id bb_basketstatus.idbasket%TYPE)
+  RETURN VARCHAR2 
 IS
-    lv_shipstatus bb_basketstatus.idstage%TYPE; --variable for shipped item status
-    lv_dateordered bb_basket.dtordered%TYPE; --variable for order date
-    lv_dateshipped bb_basketstatus.dtstage%TYPE; --variable for shipping date
-    lv_days NUMBER(2); --variable for difference in days
+  lv_ship_date bb_basketstatus.dtstage%TYPE;
+  lv_order_date bb_basket.dtordered%TYPE;
 BEGIN
-    SELECT b.dtordered, bs.dtstage
-        INTO lv_dateordered, lv_dateshipped
-        FROM bb_basket b, bb_basketstatus bs
-        WHERE b.idbasket = bs.idbasket
-            AND bs.idbasket = p_basketid
-            AND bs.idstage = 5; --only get orders with shipped status
+  SELECT s.dtstage, b.dtordered
+    INTO lv_ship_date, lv_order_date
+  FROM bb_basketstatus s
+    NATURAL JOIN bb_basket b
+  WHERE idbasket = basket_id
+    AND idstage = 5; -- Only retrieve orders shipped
     
-    lv_days := lv_dateshipped - lv_dateordered; --variable for calculation of diff between dates 
-    
-    IF lv_days > 1 THEN --results of calculations
-        lv_shipstatus := 'CHECK';
-    ELSE
-        lv_shipstatus := 'OK';
-    END IF;
-    RETURN lv_shipstatus; 
-    
+  -- Check shipping status based on data and date differences
+  IF lv_ship_date IS NULL OR lv_order_date IS NULL THEN
+    RETURN 'Not Shipped';
+  ELSIF (lv_ship_date - lv_order_date > 1) THEN
+    RETURN 'CHECK'; -- For more than one day to ship
+  ELSE
+    RETURN 'OK'; -- For one day or less to ship
+  END IF;
+
 EXCEPTION
-    WHEN NO_DATA_FOUND THEN --what to do if order status is not 5 (shipped)
-        lv_shipstatus := 'Not Shipped';
-        RETURN lv_shipstatus;
+  WHEN NO_DATA_FOUND THEN
+    RETURN 'Not Shipped'; -- For when no data is found
 END;
 /
 
+DECLARE
+    basket_id NUMBER := 3; --variable for assigned Basket ID
+    result VARCHAR2(20); --variable for function results
+BEGIN
+  result := ord_ship_sf(basket_id); --call function and store result 
+    
+  DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || 'status is: ' || result);
+END;
+/
 
+DECLARE
+    basket_id NUMBER := 4; --variable for assigned Basket ID
+    result VARCHAR2(20); --variable for function results
+BEGIN
+  result := ord_ship_sf(basket_id); --call function and store result 
+    
+  DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || 'status is: ' || result);
+END;
+/
 
+DECLARE
+    basket_id NUMBER := 12; --variable for assigned Basket ID
+    result VARCHAR2(20); --variable for function results
+BEGIN
+  result := ord_ship_sf(basket_id); --call function and store result 
+    
+  DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || ' status is: ' || result);
+END;
+/
 
+----------------------------
+----------------------------
+----------------------------
+----------------------------
 
 
 Assignment 6-6 Adding Descriptions for Order Status Codes
@@ -233,5 +279,114 @@ Stage 	ID Description
 5 	Shipped
 
 
+CREATE OR REPLACE FUNCTION status_desc_sf
+    (p_stage_id bb_basketstatus.idstage%TYPE)
+    RETURN VARCHAR2
+IS
+    stage_descrip VARCHAR2(30); -- variable for stage id description
+BEGIN
+    CASE p_stage_id
+        WHEN 1 THEN stage_descrip := 'Order Submitted';
+        WHEN 2 THEN stage_descrip := 'Accepted, sent to shipping';
+        WHEN 3 THEN stage_descrip := 'Back-ordered';
+        WHEN 4 THEN stage_descrip := 'Cancelled';
+        WHEN 5 THEN stage_descrip := 'Shipped';
+        ELSE stage_descrip := 'No info on order'; -- if no stage id for order
+    END CASE;
+    
+    RETURN stage_descrip; -- return stage description
+END; 
+/
+
+SELECT idstage, status_desc_sf(idstage)
+FROM bb_basketstatus
+WHERE idbasket = 4;
+
+
+----------------------------
+----------------------------
+----------------------------
+----------------------------
+
 
 Assignment 6-7 Calculating an Order's Tax Amount
+
+
+Create a function named TAX_CALC_SF that accepts a basket ID, calculates the tax amount  by using the basket subtotal, and returns the correct tax amount for the order. 
+
+The tax is  determined by the shipping state, which is stored in the BB_BASKET table. 
+
+The BB_TAX table  contains the tax rate for states that require taxes on Internet purchases. 
+
+If the state isn’t listed  in the tax table or no shipping state is assigned to the basket, a tax amount of zero should be  applied to the order. 
+
+Use the function in one SELECT statement that (A) displays the shipping costs for  a basket that has tax applied and (B) displays a basket with no shipping state. 
+
+
+---Assignment 6-7 Calculating an Order's Tax Amount
+CREATE OR REPLACE FUNCTION tax_calc_sf
+    (p_basketid bb_basket.idbasket%TYPE)
+    RETURN NUMBER
+IS
+    lv_tax_amount NUMBER := 0; --variable for tax total
+    lv_subtotal bb_basket.subtotal%TYPE; --variable for basket subtotal
+    lv_ship_state bb_basket.shipstate%TYPE; --variable for shipping state
+    lv_taxrate bb_tax.taxrate%TYPE := 0; --variable for state taxrate
+BEGIN
+
+   BEGIN
+    SELECT subtotal, shipstate --get basket subtotal and shipping state
+    INTO lv_subtotal, lv_ship_state
+    FROM bb_basket
+    WHERE idbasket = p_basketid;
+   EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+   END;
+   
+   BEGIN
+    SELECT taxrate --get tax rate for shipping state
+    INTO lv_taxrate
+    FROM bb_tax
+    WHERE state = lv_ship_state;
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        lv_tax_amount := 0;  
+  END;
+    lv_tax_amount := lv_subtotal * lv_taxrate;
+    RETURN lv_tax_amount;
+END; 
+/
+
+
+SELECT idbasket "Basket ID", 
+    shipstate "Ship State", 
+    subtotal "Subtotal",
+    taxrate "Taxrate",
+    tax_calc_sf(idbasket) "Tax Amount"
+FROM bb_basket, bb_tax
+WHERE idbasket = 4;
+
+SELECT idbasket "Basket ID", 
+    b.shipstate "Ship State", 
+    subtotal "Subtotal",
+    t.taxrate "Taxrate",
+    tax_calc_sf(idbasket) "Tax Amount"
+FROM bb_basket b, bb_tax t
+WHERE idbasket = 3;
+
+
+SELECT idbasket "Basket ID", 
+    b.shipstate "Ship State", 
+    subtotal "Subtotal",
+    t.taxrate "Taxrate",
+    tax_calc_sf(idbasket) "Tax Amount"
+FROM bb_basket b, bb_tax t
+WHERE idbasket = 6;
+
+
+
+
+
+
+
