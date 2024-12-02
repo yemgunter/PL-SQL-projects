@@ -1,13 +1,38 @@
 Yolanda Gunter Key Terms Ch 6 - Casteel
 
 
-
-function - is a program unit that performs a task, can receive input  values, and returns values to the calling environment.
-
+1. Function -  a small program written to perform a specific task. It can take inputs (values provided to it), does some processing, and then gives back an output (result) to wherever it was called from. Think of it as a helper tool for your database tasks.
 
 
-“user-defined functions” - functions I'd have to make myself that isn't an Oracle-supplied function
+2. Oracle Built-in Functions -  pre-made tools provided by Oracle that you can use directly in your code. They’re already written and ready to perform common tasks like formatting dates, rounding numbers, or converting text.
 
 
+3. User-Defined Functions -  custom tools you create yourself to handle tasks that Oracle doesn’t already provide. You design them to do exactly what you need for your specific situation.
+
+
+4. RETURN Statement (Functions) - sends the result back to where the function was called. It’s the function’s way of saying, “Here’s your answer!”
+
+
+5. Formal Parameters - placeholders written into the function or procedure when it’s being designed. They define what kind of inputs the function expects to receive, but they don’t yet hold actual values.
+
+
+
+6. Actual Parameters -  the real values or variables you pass to the function when you use it. For example, if a function is designed to calculate the square of a number, the number you provide when calling the function is the actual parameter.
+
+
+
+7. Passed by Reference - when something is passed by reference, the function uses a direct link (a pointer) to the original value you provided. This means any changes the function makes will directly affect your original value.
+
+
+
+8. Passed by Value - when something is passed by value, a copy of your value is sent to the function. The function works on the copy, so your original value stays unchanged.
+
+
+
+9. Compiler Hint - a special request you write in your code to guide Oracle on how to process it more efficiently. It doesn’t change the outcome, but it might make things faster or handle resources better.
+
+
+
+10. Purity Level - how a function interacts with the database and variables. For example, does the function change the database, or does it just read data? It’s a way to understand the function’s "side effects" on the system.
 
 
