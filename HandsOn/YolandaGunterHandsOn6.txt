@@ -1,0 +1,502 @@
+SQL> spool;
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn6.txt
+SQL> 
+SQL> 
+SQL> -- Assignment 6-1  Formatting Numbers as Currency
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION dollar_fmt_sf
+  2      (p_num NUMBER)
+  3      RETURN VARCHAR2
+  4  IS
+  5      lv_amt_txt VARCHAR2(20);
+  6  BEGIN
+  7      lv_amt_txt := TO_CHAR(p_num,'$99,999.99');
+  8      RETURN lv_amt_txt;
+  9  END;
+ 10  /
+
+Function created.
+
+SQL> DECLARE
+  2      lv_amt_num NUMBER(8,2) := 9999.55;
+  3  BEGIN
+  4      DBMS_OUTPUT.PUT_LINE(dollar_fmt_sf(lv_amt_num));
+  5  END;
+  6  /
+$9,999.55
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT dollar_fmt_sf(shipping), dollar_fmt_sf(total)
+  2  FROM bb_basket
+  3  WHERE idBasket = 3;
+
+DOLLAR_FMT_SF(SHIPPING)
+----------------------------------------------------------------------------------------------------
+DOLLAR_FMT_SF(TOTAL)
+----------------------------------------------------------------------------------------------------
+      $5.00
+     $32.40
+
+SQL> 
+SQL> --Assignment 6-2  Calculating a Shopper's Total Spending
+SQL> CREATE OR REPLACE FUNCTION tot_purch_sf
+  2      (p_id NUMBER)
+  3      RETURN NUMBER --declares the data type of the return value
+  4  IS
+  5      lv_tot_num NUMBER(8,2);
+  6  BEGIN
+  7      SELECT SUM(total)
+  8          INTO lv_tot_num
+  9          FROM bb_basket
+ 10          WHERE idshopper = p_id;
+ 11      RETURN lv_tot_num;
+ 12  END;
+ 13  /
+
+Function created.
+
+SQL> --test the function
+SQL> SELECT idshopper, tot_purch_sf(idshopper)
+  2  FROM bb_shopper;
+
+ IDSHOPPER TOT_PURCH_SF(IDSHOPPER)
+---------- -----------------------
+        21                   66.76
+        22                  210.21
+        23                   81.75
+        24                    61.1
+        25                   83.66
+        26                       0
+        27                   43.38
+
+7 rows selected.
+
+SQL> 
+SQL> --- Assignment 6-3  Calculating a Shoppers Total Number of Orders
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION num_purch_sf
+  2      (p_id NUMBER)
+  3      RETURN NUMBER
+  4  IS
+  5      lv_tot_num NUMBER(5); --declare a variable to hold return value
+  6  BEGIN
+  7      SELECT COUNT(idbasket) --Oracle built-in function for tally
+  8          INTO lv_tot_num
+  9          FROM bb_basket
+ 10          WHERE idshopper = p_id
+ 11              AND orderplaced = 1;
+ 12      RETURN lv_tot_num;
+ 13  END;
+ 14  /
+
+Function created.
+
+SQL> --use this SQL query to test out the function using only shopper 23
+SQL> SELECT num_purch_sf(idshopper)
+  2  FROM bb_shopper
+  3  WHERE idshopper = 23;
+
+NUM_PURCH_SF(IDSHOPPER)
+-----------------------
+                      3
+
+SQL> --Assignment 6-4  Identifying the Weekday for an Order Date
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION day_ord_sf
+  2      (p_daycreated bb_basket.dtcreated%TYPE)
+  3      RETURN VARCHAR2  --declares the data type of the return value weekday
+  4  IS
+  5      lv_weekday VARCHAR2(10); --declare a variable to hold return value weekday
+  6  BEGIN
+  7      lv_weekday := TO_CHAR(p_daycreated, 'DAY'); --use TO_CHAR to format weekday
+  8      RETURN TRIM(lv_weekday);
+  9  END;
+ 10  /
+
+Function created.
+
+
+SQL> --format the columns in the queries
+SQL> Column idbasket Heading 'Basket ID' Format 99999;
+SQL> Column day_ord_sf(dtcreated) Heading 'Weekday Created' Format A10;
+SQL> SELECT idbasket, day_ord_sf(dtcreated)
+  2  FROM bb_basket;
+
+Basket ID Weekday Cr
+--------- ----------
+        3 MONDAY
+        4 SUNDAY
+        5 SUNDAY
+        6 THURSDAY
+        7 THURSDAY
+        8 THURSDAY
+        9 FRIDAY
+       10 TUESDAY
+       11 MONDAY
+       12 SUNDAY
+       13 THURSDAY
+       14 FRIDAY
+       15 TUESDAY
+       16 FRIDAY
+
+14 rows selected.
+
+SQL> SELECT day_ord_sf(dtcreated)AS WEEKDAY, COUNT(idbasket) AS "TOTAL ORDERS"
+  2  FROM bb_basket
+  3  GROUP BY day_ord_sf(dtcreated);
+
+WEEKDAY
+----------------------------------------------------------------------------------------------------
+TOTAL ORDERS
+------------
+THURSDAY
+           4
+
+FRIDAY
+           3
+
+TUESDAY
+           2
+
+MONDAY
+           2
+
+SUNDAY
+           3
+
+
+SQL> Column column_name Heading 'Total Orders' Format 99999;
+SQL> Column day_ord_sf(dtcreated) Heading 'Weekday' Format A15;
+SQL> 
+SQL> SELECT day_ord_sf(dtcreated)AS WEEKDAY, COUNT(idbasket) AS "TOTAL ORDERS"
+  2  FROM bb_basket
+  3  GROUP BY day_ord_sf(dtcreated);
+
+WEEKDAY
+----------------------------------------------------------------------------------------------------
+TOTAL ORDERS
+------------
+THURSDAY
+           4
+
+FRIDAY
+           3
+
+TUESDAY
+           2
+
+MONDAY
+           2
+
+SUNDAY
+           3
+
+
+SQL> ---THURSDAY is the most popular shipping day.
+SQL> 
+SQL> 
+SQL> --Assignment 6-5 Calculating Days Between Ordering and Shipping
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION ord_ship_sf
+  2      (p_basketid bb_basketstatus.idbasket%TYPE) --
+  3      RETURN VARCHAR2
+  4  IS
+  5      lv_shipstatus bb_basketstatus.idstage%TYPE; --variable for shipped item status
+  6      lv_dateordered bb_basket.dtordered%TYPE; --variable for order date
+  7      lv_dateshipped bb_basketstatus.dtstage%TYPE; --variable for shipping date
+  8      lv_days NUMBER(2); --variable for difference in days
+  9  BEGIN
+ 10      SELECT b.dtordered, bs.dtstage
+ 11          INTO lv_dateordered, lv_dateshipped
+ 12          FROM bb_basket b, bb_basketstatus bs
+ 13          WHERE b.idbasket = bs.idbasket
+ 14              AND bs.idbasket = p_basketid
+ 15              AND bs.idstage = 5; --only get orders with shipped status
+ 16  
+ 17      lv_days := lv_dateshipped - lv_dateordered; --variable for calculation of diff between dates
+ 18  
+ 19      IF lv_days > 1 THEN --results of calculations
+ 20          lv_shipstatus := 'CHECK';
+ 21      ELSE
+ 22          lv_shipstatus := 'OK';
+ 23      END IF;
+ 24      RETURN lv_shipstatus;
+ 25  
+ 26  EXCEPTION
+ 27      WHEN NO_DATA_FOUND THEN --what to do if order status is not 5 (shipped)
+ 28          lv_shipstatus := 'Not Shipped';
+ 29          RETURN lv_shipstatus;
+ 30  END;
+ 31  /
+
+Function created.
+
+SQL> SET SERVEROUTPUT ON;
+SQL> SET LINESIZE 100;
+SQL> SET PAGESIZE 50;
+SQL> SET TRIMSPOOL ON;
+SQL> SET ECHO ON;
+SQL> Column Table_Name heading 'Table Name' format A15 truncate;
+SQL> Column Column_Name Heading 'Column Name' Format A15 truncate;
+SQL> Column Constraint_Name Heading 'Constraint Name' Format A15 truncate;
+SQL> Column Constraint_Type Heading 'Constraint Type' Format A15 truncate;
+SQL> 
+SQL> --Review data in the BB_BASKETSTATUS table
+SQL> SELECT b.idbasket, b.dtordered, bs.idstage, bs.dtstage
+  2  FROM bb_basket b, bb_basketstatus bs
+  3  WHERE b.idbasket = bs.idbasket;
+
+Basket ID DTORDERED    IDSTAGE DTSTAGE
+--------- --------- ---------- ---------
+        3 23-JAN-12          5 25-JAN-12
+        3 23-JAN-12          1 24-JAN-12
+        4 12-FEB-12          5 14-FEB-12
+        4 12-FEB-12          1 13-FEB-12
+       12 19-FEB-12          3
+
+SQL> SELECT idstatus, idbasket, idstage, dtstage, notes
+  2  FROM bb_basketstatus;
+
+  IDSTATUS Basket ID    IDSTAGE DTSTAGE   NOTES
+---------- --------- ---------- --------- --------------------------------------------------
+         1         3          1 24-JAN-12
+         2         3          5 25-JAN-12 Customer called to confirm shipment
+         3         4          1 13-FEB-12
+         4         4          5 14-FEB-12
+        15        12          3
+
+SQL> spool:
+SQL> spool;
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn6.txt
+SQL> BEGIN
+  2    DBMS_OUTPUT.PUT_LINE('This output will be appended to the file.');
+  3  END;
+  4  /
+This output will be appended to the file.
+
+PL/SQL procedure successfully completed.
+
+SQL> clear screen;
+SQL> 
+SQL> --Assignment 6-5 Calculating Days Between Ordering and Shipping
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION ord_ship_sf
+  2    (p_basket_id bb_basketstatus.idbasket%TYPE)
+  3    RETURN VARCHAR2
+  4  IS
+  5    lv_ship_date bb_basketstatus.dtstage%TYPE;
+  6    lv_order_date bb_basket.dtordered%TYPE;
+  7  BEGIN
+  8    SELECT bs.dtstage, b.dtordered
+  9      INTO lv_ship_date, lv_order_date
+ 10    FROM bb_basketstatus bs
+ 11      NATURAL JOIN bb_basket b
+ 12    WHERE idbasket = p_basket_id
+ 13      AND idstage = 5; -- Only retrieve orders shipped
+ 14  
+ 15    -- Check shipping status based on data and date differences
+ 16    IF lv_ship_date IS NULL OR lv_order_date IS NULL THEN
+ 17      RETURN 'Not Shipped';
+ 18    ELSIF (lv_ship_date - lv_order_date > 1) THEN
+ 19      RETURN 'CHECK'; -- For more than one day to ship
+ 20    ELSE
+ 21      RETURN 'OK'; -- For one day or less to ship
+ 22    END IF;
+ 23  
+ 24  EXCEPTION
+ 25    WHEN NO_DATA_FOUND THEN
+ 26      RETURN 'Not Shipped'; -- For when no data is found
+ 27  END;
+ 28  /
+
+Function created.
+
+SQL> DECLARE
+  2      basket_id NUMBER := 3; --variable for assigned Basket ID
+  3      result VARCHAR2(20); --variable for function results
+  4  BEGIN
+  5    result := ord_ship_sf(basket_id); --call function and store result
+  6  
+  7    DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || ' status is: ' || result);
+  8  END;
+  9  /
+Basket ID: 3 status is: CHECK
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      basket_id NUMBER := 5; --variable for assigned Basket ID
+  3      result VARCHAR2(20); --variable for function results
+  4  BEGIN
+  5    result := ord_ship_sf(basket_id); --call function and store result
+  6  
+  7    DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || ' status is: ' || result);
+  8  END;
+  9  /
+Basket ID: 5 status is: Not Shipped
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      basket_id NUMBER := 12; --variable for assigned Basket ID
+  3      result VARCHAR2(20); --variable for function results
+  4  BEGIN
+  5    result := ord_ship_sf(basket_id); --call function and store result
+  6  
+  7    DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || ' status is: ' || result);
+  8  END;
+  9  /
+Basket ID: 12 status is: Not Shipped
+
+PL/SQL procedure successfully completed.
+
+SQL> spool;
+currently spooling to C:\Users\yolan\Documents\ITSE-1345\HandsOn\YolandaGunterHandsOn6.txt
+SQL> DECLARE
+  2      basket_id NUMBER := 12; --variable for assigned Basket ID
+  3      result VARCHAR2(20); --variable for function results
+  4  BEGIN
+  5    result := ord_ship_sf(basket_id); --call function and store result
+  6  
+  7    DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || ' status is: ' || result);
+  8  END;
+  9  
+ 10  /
+Basket ID: 12 status is: Not Shipped
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      basket_id NUMBER := 4; --variable for assigned Basket ID
+  3      result VARCHAR2(20); --variable for function results
+  4  BEGIN
+  5    result := ord_ship_sf(basket_id); --call function and store result
+  6  
+  7    DBMS_OUTPUT.PUT_LINE('Basket ID: ' || basket_id || ' status is: ' || result);
+  8  END;
+  9  /
+Basket ID: 4 status is: CHECK
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> --Assignment 6-6 Adding Descriptions for Order Status Codes
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION status_desc_sf
+  2      (p_stage_id bb_basketstatus.idstage%TYPE)
+  3      RETURN VARCHAR2
+  4  IS
+  5      stage_descrip VARCHAR2(30); -- variable for stage id description
+  6  BEGIN
+  7      CASE p_stage_id
+  8          WHEN 1 THEN stage_descrip := 'Order Submitted';
+  9          WHEN 2 THEN stage_descrip := 'Accepted, sent to shipping';
+ 10          WHEN 3 THEN stage_descrip := 'Back-ordered';
+ 11          WHEN 4 THEN stage_descrip := 'Cancelled';
+ 12          WHEN 5 THEN stage_descrip := 'Shipped';
+ 13          ELSE stage_descrip := 'No info on order'; -- if no stage id for order
+ 14      END CASE;
+ 15  
+ 16      RETURN stage_descrip; -- return stage description
+ 17  END;
+ 18  /
+
+Function created.
+
+SQL> Column idstage clear;
+SQL> Column status_desc_sf(idstage) Format A30 truncate;
+SQL> SELECT idstage, status_desc_sf(idstage)
+  2  FROM bb_basketstatus
+  3  WHERE idbasket = 4;
+
+   IDSTAGE STATUS_DESC_SF(IDSTAGE)
+---------- ------------------------------
+         1 Order Submitted
+         5 Shipped
+
+
+
+SQL> ---Assignment 6-7 Calculating an Order's Tax Amount
+SQL> CREATE OR REPLACE FUNCTION tax_calc_sf
+  2      (p_basketid bb_basket.idbasket%TYPE)
+  3      RETURN NUMBER
+  4  IS
+  5      lv_tax_amount NUMBER := 0; --variable for tax total
+  6      lv_subtotal bb_basket.subtotal%TYPE; --variable for basket subtotal
+  7      lv_ship_state bb_basket.shipstate%TYPE; --variable for shipping state
+  8      lv_taxrate bb_tax.taxrate%TYPE := 0; --variable for state taxrate
+  9  BEGIN
+ 10  
+ 11     BEGIN
+ 12      SELECT subtotal, shipstate --get basket subtotal and shipping state
+ 13      INTO lv_subtotal, lv_ship_state
+ 14      FROM bb_basket
+ 15      WHERE idbasket = p_basketid;
+ 16     EXCEPTION
+ 17      WHEN NO_DATA_FOUND THEN
+ 18          RETURN 0;
+ 19     END;
+ 20  
+ 21     BEGIN
+ 22      SELECT taxrate --get tax rate for shipping state
+ 23      INTO lv_taxrate
+ 24      FROM bb_tax
+ 25      WHERE state = lv_ship_state;
+ 26    EXCEPTION
+ 27      WHEN NO_DATA_FOUND THEN
+ 28          lv_tax_amount := 0;
+ 29  
+ 30    END;
+ 31  
+ 32      lv_tax_amount := lv_subtotal * lv_taxrate;
+ 33      RETURN lv_tax_amount;
+ 34  END;
+ 35  /
+
+Function created.
+
+SQL> SELECT idbasket "Basket ID",
+  2      shipstate "Ship State",
+  3      subtotal "Subtotal",
+  4      taxrate "Taxrate",
+  5      tax_calc_sf(idbasket) "Tax Amount"
+  6  FROM bb_basket, bb_tax
+  7  WHERE idbasket = 4;
+
+ Basket ID Sh   Subtotal    Taxrate Tax Amount
+---------- -- ---------- ---------- ----------
+         4 NC       28.5       .045       .855
+         4 NC       28.5        .03       .855
+         4 NC       28.5        .06       .855
+
+SQL> SELECT idbasket "Basket ID",
+  2      b.shipstate "Ship State",
+  3      subtotal "Subtotal",
+  4      t.taxrate "Taxrate",
+  5      tax_calc_sf(idbasket) "Tax Amount"
+  6  FROM bb_basket b, bb_tax t
+  7  WHERE idbasket = 3;
+
+ Basket ID Sh   Subtotal    Taxrate Tax Amount
+---------- -- ---------- ---------- ----------
+         3          26.6       .045          0
+         3          26.6        .03          0
+         3          26.6        .06          0
+
+SQL> SELECT idbasket "Basket ID",
+  2      b.shipstate "Ship State",
+  3      subtotal "Subtotal",
+  4      t.taxrate "Taxrate",
+  5      tax_calc_sf(idbasket) "Tax Amount"
+  6  FROM bb_basket b, bb_tax t
+  7  WHERE idbasket = 6;
+
+ Basket ID Sh   Subtotal    Taxrate Tax Amount
+---------- -- ---------- ---------- ----------
+         6 VA     149.99       .045    6.74955
+         6 VA     149.99        .03    6.74955
+         6 VA     149.99        .06    6.74955
+
+SQL> spool off;
