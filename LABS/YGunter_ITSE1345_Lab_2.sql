@@ -178,8 +178,6 @@ BEGIN
 END;
 
 ---Part 7 ---
-
----Part 7 ---
  
 DECLARE
     -- Named parameters with variable name for student ID and course ID
@@ -247,102 +245,94 @@ END;
  
 --- Part 8 ---
 
-FORGOT TO PLACE CASE BELOW!!!!
-
-/* DECLARE
-    -- Variables to store student details
-    v_Full_Name VARCHAR2(50);
-    v_Sex Student.SEX%TYPE;
-    v_Major Student.MAJOR%TYPE;
-    v_Major_Type VARCHAR2(15);
+DECLARE
+    -- Variables for student details
+    lv_Full_Name VARCHAR2(30);
+    lv_Sex VARCHAR2(15);
+    lv_Major Student.MAJOR%TYPE;
+    lv_Major_Type VARCHAR2(25);
 BEGIN
-    -- Loop through each student in the Student table
+    -- Loop through Student table for gender data
     FOR student_rec IN (SELECT FNAME || ' ' || LNAME AS Full_Name, SEX, MAJOR FROM Student) LOOP
-        v_Full_Name := student_rec.Full_Name;
-        v_Sex := student_rec.SEX;
-        v_Major := student_rec.MAJOR;
+        lv_Full_Name := student_rec.Full_Name;
+        lv_Sex := student_rec.SEX;
+        lv_Major := student_rec.MAJOR;
 
-        -- Determine the student's gender
-        IF v_Sex = 'M' THEN
-            DBMS_OUTPUT.PUT_LINE(v_Full_Name || ' is male.');
+        -- Pull data on student's gender
+        IF lv_Sex = 'M' THEN 
+            lv_Sex := ' is a male';
         ELSE
-            DBMS_OUTPUT.PUT_LINE(v_Full_Name || ' is female.');
+            lv_Sex := ' is a female';
         END IF;
 
-        -- Determine the student's major category using CASE
-        v_Major_Type := CASE
-            WHEN v_Major = 'Math' THEN 'Math Major'
-            WHEN v_Major = 'English' THEN 'English Major'
-            WHEN v_Major = 'CompSci' THEN 'Computer Science Major'
-            WHEN v_Major = 'Geography' THEN 'Geography Major'
-            ELSE 'Other Major'
-        END;
+        -- Pull data on student's major
+    CASE
+        WHEN lv_Major = 'Math' THEN lv_Major_Type := 'Math Major';
+        WHEN lv_Major = 'English' THEN lv_Major_Type := 'English Major';
+        WHEN lv_Major = 'CompSci' THEN lv_Major_Type := 'Computer Science Major';
+        WHEN lv_Major = 'Geography' THEN lv_Major_Type := 'Geography Major';
+        ELSE lv_Major_Type := 'Undeclared Major';
+     END CASE;
 
-        DBMS_OUTPUT.PUT_LINE(v_Full_Name || ' is a ' || v_Major_Type || '.');
+        DBMS_OUTPUT.PUT_LINE(lv_Full_Name || lv_Sex ||  ' declared as a ' || lv_Major_Type || '.');
     END LOOP;
 END;
-*/
+
 
 --- Part 9 ----
 
-Need to clear above with CASE syntax^^^
-
-/*
 DECLARE
-    -- Variables to store student details
-    v_Full_Name VARCHAR2(50);
-    v_Sex Student.SEX%TYPE;
-    v_Major Student.MAJOR%TYPE;
-    v_Major_Type VARCHAR2(15);
+    -- Variables for student details
+    lv_Full_Name VARCHAR2(30);
+    lv_Sex VARCHAR2(15);
+    lv_Major Student.MAJOR%TYPE;
+    lv_Major_Type VARCHAR2(25);
 BEGIN
-    -- Loop through each student in the Student table
+    -- Loop through Student table for gender data
     FOR student_rec IN (SELECT FNAME || ' ' || LNAME AS Full_Name, SEX, MAJOR FROM Student) LOOP
-        v_Full_Name := student_rec.Full_Name;
-        v_Sex := student_rec.SEX;
-        v_Major := student_rec.MAJOR;
+        lv_Full_Name := student_rec.Full_Name;
+        lv_Sex := student_rec.SEX;
+        lv_Major := student_rec.MAJOR;
 
-        -- Determine the student's gender
-        IF v_Sex = 'M' THEN
-            DBMS_OUTPUT.PUT_LINE(v_Full_Name || ' is male.');
+        -- Pull data on student's gender
+        IF lv_Sex = 'M' THEN 
+            lv_Sex := ' is a male';
         ELSE
-            DBMS_OUTPUT.PUT_LINE(v_Full_Name || ' is female.');
+            lv_Sex := ' is a female';
         END IF;
 
-        -- Determine the student's major category using IF-ELSE constructs
-        IF v_Major = 'Math' THEN
-            v_Major_Type := 'Math Major';
-        ELSIF v_Major = 'English' THEN
-            v_Major_Type := 'English Major';
-        ELSIF v_Major = 'CompSci' THEN
-            v_Major_Type := 'Computer Science Major';
-        ELSIF v_Major = 'Geography' THEN
-            v_Major_Type := 'Geography Major';
+        -- Pull data on student's major using IF and ELSE IF
+        IF lv_Major = 'Math' THEN
+            lv_Major_Type := 'Math Major';
+        ELSIF lv_Major = 'English' THEN
+            lv_Major_Type := 'English Major';
+        ELSIF lv_Major = 'CompSci' THEN
+            lv_Major_Type := 'Computer Science Major';
+        ELSIF lv_Major = 'Geography' THEN
+            lv_Major_Type := 'Geography Major';
         ELSE
-            v_Major_Type := 'Other Major';
+            lv_Major_Type := 'Undeclared Major';
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE(v_Full_Name || ' is a ' || v_Major_Type || '.');
+        DBMS_OUTPUT.PUT_LINE(lv_Full_Name || lv_Sex ||  ' declared as a ' || lv_Major_Type || '.');
     END LOOP;
 END;
-*/
-
+/
 
 ---Part 10 ---
 
-Finish prior two above 8 & 9 first then clearn 10 up!
-
-/*
+CREATE TABLE Temp_Student AS SELECT * FROM Student;
 
 DECLARE
     -- Variables to handle temporary table and loop counter
-    v_Counter NUMBER := 0;
-    v_Total_Rows NUMBER;
+    lv_Counter NUMBER := 0;
+    lv_Total_Rows NUMBER;
 BEGIN
     -- Create a temporary table for the student data
-    EXECUTE IMMEDIATE 'CREATE GLOBAL TEMPORARY TABLE Temp_Student AS SELECT * FROM Student WHERE 1=0';
+    
 
     -- Get the total number of rows in the Student table
-    SELECT COUNT(*) INTO v_Total_Rows FROM Student;
+    SELECT COUNT(*) INTO lv_Total_Rows FROM Student;
 
     -- Loop through each student and insert into the temporary table
     FOR student_rec IN (SELECT * FROM Student) LOOP
@@ -350,22 +340,21 @@ BEGIN
         VALUES (student_rec.STU_ID, student_rec.LNAME, student_rec.FNAME, student_rec.MI, student_rec.SEX, student_rec.MAJOR, student_rec.HOME_STATE);
 
         -- Increment the counter
-        v_Counter := v_Counter + 1;
+        lv_Counter := lv_Counter + 1;
 
         -- Output progress
         DBMS_OUTPUT.PUT_LINE('Inserted student ID ' || student_rec.STU_ID || ' into temporary table.');
 
         -- Exit the loop when the counter matches the total rows
-        IF v_Counter = v_Total_Rows THEN
+        IF lv_Counter = lv_Total_Rows THEN
             EXIT;
         END IF;
     END LOOP;
 
     -- Output final results
-    DBMS_OUTPUT.PUT_LINE('Total students processed: ' || v_Counter);
+    DBMS_OUTPUT.PUT_LINE('Total students processed: ' || lv_Counter);
 
-    -- Optional: Drop the temporary table
-    EXECUTE IMMEDIATE 'DROP TABLE Temp_Student';
 END;
 
-*/
+
+SELECT * FROM Temp_Student;
