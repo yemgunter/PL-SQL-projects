@@ -1,0 +1,1004 @@
+SQL> spool;
+currently spooling to C:\Users\yolan\OneDrive\Documents\GitHub\pl-sql-projects\LABS\YGunter_ITSE1345_Lab_2.txt
+SQL> 
+SQL> 
+SQL> --Yolanda Gunter ITSE 1345 Lab 2
+SQL> ----01----
+SQL> CREATE TABLE Theater (
+  2      lv_row NUMBER(10)
+  3  );
+
+Table created.
+
+SQL> CREATE SEQUENCE th_list_seq
+  2      INCREMENT BY 1
+  3      START WITH 1;
+
+Sequence created.
+
+
+SQL> DECLARE
+  2      list# NUMBER := th_list_seq.nextval;
+  3      C_XYZ CONSTANT NUMBER(10) := 10;
+  4      V_Counter1 BINARY_INTEGER;
+  5      V_Row_number Theater.lv_row%TYPE;
+  6      lv_StringA VARCHAR2(50); -- can't use the keyword String
+  7  
+  8  BEGIN
+  9      NULL;
+ 10  
+ 11  END;
+ 12  /
+
+PL/SQL procedure successfully completed.
+
+SQL> ----02----
+SQL> 
+SQL> 
+SQL> CREATE TABLE Student (
+  2      Stu_ID NUMBER(5) PRIMARY KEY,
+  3      Lname VARCHAR2(15),
+  4      Fname VARCHAR2(15),
+  5      Mi CHAR(1),
+  6      Sex CHAR(1),
+  7      Major VARCHAR2(15),
+  8      Home_State VARCHAR2(10));
+
+Table created.
+
+SQL> CREATE TABLE Course (
+  2      Course_ID VARCHAR2(10) PRIMARY KEY,
+  3      Section# VARCHAR2(5),
+  4      C_NAME VARCHAR2(25),
+  5      C_Description VARCHAR2(50));
+
+Table created.
+
+SQL> CREATE TABLE Student_Course (
+  2      Stu_ID NUMBER(5),
+  3      Course_ID VARCHAR2(10),
+  4      Section# VARCHAR2(5),
+  5      PRIMARY KEY (Stu_ID, Course_ID, Section#),
+  6      FOREIGN KEY (Stu_ID) REFERENCES Student(Stu_ID),
+  7      FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID));
+
+Table created.
+
+SQL> BEGIN
+  2      --data for the Student table
+  3      INSERT INTO Student VALUES (10011, 'Schmitt', 'Peter', 'M', 'M', 'History', 'Ok.');
+  4      INSERT INTO Student VALUES (10012, 'Jones', 'Samson', 'A', 'M', 'English', 'Fl');
+  5      INSERT INTO Student VALUES (10013, 'Peters', 'Amy', 'A', 'F', 'English', 'Me');
+  6      INSERT INTO Student VALUES (10014, 'Johnson', 'John', 'J', 'M', 'CompSci', 'Ca');
+  7      INSERT INTO Student VALUES (10015, 'Penders', 'Alton', 'P', 'F', 'Math', 'Ga');
+  8      INSERT INTO Student VALUES (10016, 'Allen', 'Diana', 'J', 'F', 'Geography', 'Minn');
+  9      INSERT INTO Student VALUES (10017, 'Gillis', 'Jennifer', NULL, 'F', 'CompSci', 'Tx');
+ 10      INSERT INTO Student VALUES (10018, 'Johns', 'Roberta', NULL, 'F', 'CompSci', 'Tx');
+ 11      INSERT INTO Student VALUES (10019, 'Wise', 'Paula', NULL, 'M', 'Math', 'Cal');
+ 12      INSERT INTO Student VALUES (10020, 'Evan', 'Richmond', NULL, 'M', 'English', 'Tx');
+ 13  
+ 14      --data for the Course table
+ 15      INSERT INTO Course VALUES ('COSC1301', '001', 'Intro to Comp.', 'First Computer Course');
+ 16      INSERT INTO Course VALUES ('ITSE2356', '001', 'Intro to DBA', 'Database Course');
+ 17      INSERT INTO Course VALUES ('GEOG1791', '002', 'World Geography', 'Second Geography Course');
+ 18      INSERT INTO Course VALUES ('COSC1315', '001', 'Intro to Prog.', 'Second Computer Course');
+ 19      INSERT INTO Course VALUES ('ITSE1345', '001', 'Intro to DB Prog.', 'Second Database Course');
+ 20      INSERT INTO Course VALUES ('ENGL2024', '002', 'English Literature', 'Second English Course');
+ 21      INSERT INTO Course VALUES ('MATH1102', '001', 'Calculus II', 'Second Math Course');
+ 22      INSERT INTO Course VALUES ('ENGL1001', '001', 'American Literature', 'First English Course');
+ 23      INSERT INTO Course VALUES ('MATH1011', '001', 'Trig and Algebra', 'First Math Course');
+ 24      INSERT INTO Course VALUES ('GEOG1010', '001', 'Texas Geography', 'First Geography Course');
+ 25  
+ 26      --data for the Student_Course table
+ 27      INSERT INTO Student_Course VALUES (10011, 'MATH1101', '001');
+ 28      INSERT INTO Student_Course VALUES (10012, 'ENGL2617', '002');
+ 29      INSERT INTO Student_Course VALUES (10013, 'ENGL1001', '001');
+ 30      INSERT INTO Student_Course VALUES (10013, 'ENGL2024', '002');
+ 31      INSERT INTO Student_Course VALUES (10013, 'GEOG1010', '001');
+ 32      INSERT INTO Student_Course VALUES (10014, 'COSC1315', '001');
+ 33      INSERT INTO Student_Course VALUES (10015, 'MATH1101', '001');
+ 34      INSERT INTO Student_Course VALUES (10016, 'GEOG1010', '001');
+ 35      INSERT INTO Student_Course VALUES (10016, 'GEOG1791', '002');
+ 36      INSERT INTO Student_Course VALUES (10017, 'COSC1315', '001');
+ 37      INSERT INTO Student_Course VALUES (10017, 'ITSE2356', '001');
+ 38      INSERT INTO Student_Course VALUES (10018, 'COSC1315', '001');
+ 39      INSERT INTO Student_Course VALUES (10019, 'ITSE2356', '001');
+ 40      INSERT INTO Student_Course VALUES (10020, 'ENGL2024', '002');
+ 41  END;
+ 42  /
+
+
+SQL> BEGIN
+  2      INSERT INTO Course VALUES ('MATH1011', '001', 'Trig and Algebra', 'First Math Course');
+  3  END;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> BEGIN
+  2      --data for the Student table
+  3      INSERT INTO Student VALUES (10011, 'Schmitt', 'Peter', 'M', 'M', 'History', 'Ok.');
+  4      INSERT INTO Student VALUES (10012, 'Jones', 'Samson', 'A', 'M', 'English', 'Fl');
+  5      INSERT INTO Student VALUES (10013, 'Peters', 'Amy', 'A', 'F', 'English', 'Me');
+  6      INSERT INTO Student VALUES (10014, 'Johnson', 'John', 'J', 'M', 'CompSci', 'Ca');
+  7      INSERT INTO Student VALUES (10015, 'Penders', 'Alton', 'P', 'F', 'Math', 'Ga');
+  8      INSERT INTO Student VALUES (10016, 'Allen', 'Diana', 'J', 'F', 'Geography', 'Minn');
+  9      INSERT INTO Student VALUES (10017, 'Gillis', 'Jennifer', NULL, 'F', 'CompSci', 'Tx');
+ 10      INSERT INTO Student VALUES (10018, 'Johns', 'Roberta', NULL, 'F', 'CompSci', 'Tx');
+ 11      INSERT INTO Student VALUES (10019, 'Wise', 'Paula', NULL, 'M', 'Math', 'Cal');
+ 12      INSERT INTO Student VALUES (10020, 'Evan', 'Richmond', NULL, 'M', 'English', 'Tx');
+ 13  END;
+ 14  /
+
+PL/SQL procedure successfully completed.
+
+SQL> BEGIN
+  2      --data for the Course table
+  3      INSERT INTO Course VALUES ('COSC1301', '001', 'Intro to Comp.', 'First Computer Course');
+  4      INSERT INTO Course VALUES ('ITSE2356', '001', 'Intro to DBA', 'Database Course');
+  5      INSERT INTO Course VALUES ('GEOG1791', '002', 'World Geography', 'Second Geography Course');
+  6      INSERT INTO Course VALUES ('COSC1315', '001', 'Intro to Prog.', 'Second Computer Course');
+  7      INSERT INTO Course VALUES ('ITSE1345', '001', 'Intro to DB Prog.', 'Second Database Course');
+  8      INSERT INTO Course VALUES ('ENGL2024', '002', 'English Literature', 'Second English Course');
+  9      INSERT INTO Course VALUES ('MATH1102', '001', 'Calculus II', 'Second Math Course');
+ 10      INSERT INTO Course VALUES ('ENGL1001', '001', 'American Literature', 'First English Course');
+ 11      INSERT INTO Course VALUES ('MATH1011', '001', 'Trig and Algebra', 'First Math Course');
+ 12      INSERT INTO Course VALUES ('GEOG1010', '001', 'Texas Geography', 'First Geography Course');
+ 13  END;
+ 14  /
+
+
+SQL> BEGIN
+  2      --data for the Student_Course table
+  3      INSERT INTO Student_Course VALUES (10011, 'MATH1101', '001');
+  4      INSERT INTO Student_Course VALUES (10012, 'ENGL2617', '002');
+  5      INSERT INTO Student_Course VALUES (10013, 'ENGL1001', '001');
+  6      INSERT INTO Student_Course VALUES (10013, 'ENGL2024', '002');
+  7      INSERT INTO Student_Course VALUES (10013, 'GEOG1010', '001');
+  8      INSERT INTO Student_Course VALUES (10014, 'COSC1315', '001');
+  9      INSERT INTO Student_Course VALUES (10015, 'MATH1101', '001');
+ 10      INSERT INTO Student_Course VALUES (10016, 'GEOG1010', '001');
+ 11      INSERT INTO Student_Course VALUES (10016, 'GEOG1791', '002');
+ 12      INSERT INTO Student_Course VALUES (10017, 'COSC1315', '001');
+ 13      INSERT INTO Student_Course VALUES (10017, 'ITSE2356', '001');
+ 14      INSERT INTO Student_Course VALUES (10018, 'COSC1315', '001');
+ 15      INSERT INTO Student_Course VALUES (10019, 'ITSE2356', '001');
+ 16      INSERT INTO Student_Course VALUES (10020, 'ENGL2024', '002');
+ 17  END;
+ 18  /
+
+SQL> DROP TABLE Student_Course;
+
+Table dropped.
+
+SQL> CREATE TABLE Course (
+  2      Course_ID VARCHAR2(10) PRIMARY KEY,
+  3      Section# VARCHAR2(5),
+  4      C_NAME VARCHAR2(25),
+  5      C_Description VARCHAR2(50));
+
+Table created.
+
+SQL> CREATE TABLE Student_Course (
+  2      Stu_ID NUMBER(5),
+  3      Course_ID VARCHAR2(10),
+  4      Section# VARCHAR2(5),
+  5      PRIMARY KEY (Stu_ID, Course_ID, Section#),
+  6      FOREIGN KEY (Stu_ID) REFERENCES Student(Stu_ID),
+  7      FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID));
+
+Table created.
+
+SQL> BEGIN
+  2      --data for the Course table
+  3      INSERT INTO Course VALUES ('COSC1301', '001', 'Intro to Comp.', 'First Computer Course');
+  4      INSERT INTO Course VALUES ('ITSE2356', '001', 'Intro to DBA', 'Database Course');
+  5      INSERT INTO Course VALUES ('GEOG1791', '002', 'World Geography', 'Second Geography Course');
+  6      INSERT INTO Course VALUES ('COSC1315', '001', 'Intro to Prog.', 'Second Computer Course');
+  7      INSERT INTO Course VALUES ('ITSE1345', '001', 'Intro to DB Prog.', 'Second Database Course');
+  8      INSERT INTO Course VALUES ('ENGL2024', '002', 'English Literature', 'Second English Course');
+  9      INSERT INTO Course VALUES ('MATH1102', '001', 'Calculus II', 'Second Math Course');
+ 10      INSERT INTO Course VALUES ('ENGL1001', '001', 'American Literature', 'First English Course');
+ 11      INSERT INTO Course VALUES ('MATH1011', '001', 'Trig and Algebra', 'First Math Course');
+ 12      INSERT INTO Course VALUES ('GEOG1010', '001', 'Texas Geography', 'First Geography Course');
+ 13  END;
+ 14  /
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT * FROM Course;
+
+COURSE_ID  SECTI C_NAME                    C_DESCRIPTION
+---------- ----- ------------------------- --------------------------------------------------
+COSC1301   001   Intro to Comp.            First Computer Course
+ITSE2356   001   Intro to DBA              Database Course
+GEOG1791   002   World Geography           Second Geography Course
+COSC1315   001   Intro to Prog.            Second Computer Course
+ITSE1345   001   Intro to DB Prog.         Second Database Course
+ENGL2024   002   English Literature        Second English Course
+MATH1102   001   Calculus II               Second Math Course
+ENGL1001   001   American Literature       First English Course
+MATH1011   001   Trig and Algebra          First Math Course
+GEOG1010   001   Texas Geography           First Geography Course
+
+10 rows selected.
+
+SQL> SElECT * FROM Student;
+
+    STU_ID LNAME           FNAME           M S MAJOR           HOME_STATE
+---------- --------------- --------------- - - --------------- ----------
+     10011 Schmitt         Peter           M M History         Ok.
+     10012 Jones           Samson          A M English         Fl
+     10013 Peters          Amy             A F English         Me
+     10014 Johnson         John            J M CompSci         Ca
+     10015 Penders         Alton           P F Math            Ga
+     10016 Allen           Diana           J F Geography       Minn
+     10017 Gillis          Jennifer          F CompSci         Tx
+     10018 Johns           Roberta           F CompSci         Tx
+     10019 Wise            Paula             M Math            Cal
+     10020 Evan            Richmond          M English         Tx
+
+10 rows selected.
+
+SQL> SELECT * FROM Student_Course;
+
+no rows selected
+
+SQL> BEGIN
+  2      --data for the Student_Course table
+  3      INSERT INTO Student_Course VALUES (10011, 'MATH1101', '001');
+  4      INSERT INTO Student_Course VALUES (10012, 'ENGL2617', '002');
+  5      INSERT INTO Student_Course VALUES (10013, 'ENGL1001', '001');
+  6      INSERT INTO Student_Course VALUES (10013, 'ENGL2024', '002');
+  7      INSERT INTO Student_Course VALUES (10013, 'GEOG1010', '001');
+  8      INSERT INTO Student_Course VALUES (10014, 'COSC1315', '001');
+  9      INSERT INTO Student_Course VALUES (10015, 'MATH1101', '001');
+ 10      INSERT INTO Student_Course VALUES (10016, 'GEOG1010', '001');
+ 11      INSERT INTO Student_Course VALUES (10016, 'GEOG1791', '002');
+ 12      INSERT INTO Student_Course VALUES (10017, 'COSC1315', '001');
+ 13      INSERT INTO Student_Course VALUES (10017, 'ITSE2356', '001');
+ 14      INSERT INTO Student_Course VALUES (10018, 'COSC1315', '001');
+ 15      INSERT INTO Student_Course VALUES (10019, 'ITSE2356', '001');
+ 16      INSERT INTO Student_Course VALUES (10020, 'ENGL2024', '002');
+ 17  END;
+ 18  /
+
+SQL> SELECT * FROM Course;
+
+COURSE_ID  SECTI C_NAME                    C_DESCRIPTION
+---------- ----- ------------------------- --------------------------------------------------
+COSC1301   001   Intro to Comp.            First Computer Course
+ITSE2356   001   Intro to DBA              Database Course
+GEOG1791   002   World Geography           Second Geography Course
+COSC1315   001   Intro to Prog.            Second Computer Course
+ITSE1345   001   Intro to DB Prog.         Second Database Course
+ENGL2024   002   English Literature        Second English Course
+MATH1102   001   Calculus II               Second Math Course
+ENGL1001   001   American Literature       First English Course
+MATH1011   001   Trig and Algebra          First Math Course
+GEOG1010   001   Texas Geography           First Geography Course
+
+10 rows selected.
+
+
+SQL> Select * FROM Course;
+
+COURSE_ID  SECTI C_NAME                    C_DESCRIPTION
+---------- ----- ------------------------- --------------------------------------------------
+COSC1301   001   Intro to Comp.            First Computer Course
+ITSE2356   001   Intro to DBA              Database Course
+GEOG1791   002   World Geography           Second Geography Course
+COSC1315   001   Intro to Prog.            Second Computer Course
+ITSE1345   001   Intro to DB Prog.         Second Database Course
+ENGL2024   002   English Literature        Second English Course
+MATH1102   001   Calculus II               Second Math Course
+ENGL1001   001   American Literature       First English Course
+MATH1011   001   Trig and Algebra          First Math Course
+GEOG1010   001   Texas Geography           First Geography Course
+
+10 rows selected.
+
+SQL> SELECT * FROM Student;
+
+    STU_ID LNAME           FNAME           M S MAJOR           HOME_STATE
+---------- --------------- --------------- - - --------------- ----------
+     10011 Schmitt         Peter           M M History         Ok.
+     10012 Jones           Samson          A M English         Fl
+     10013 Peters          Amy             A F English         Me
+     10014 Johnson         John            J M CompSci         Ca
+     10015 Penders         Alton           P F Math            Ga
+     10016 Allen           Diana           J F Geography       Minn
+     10017 Gillis          Jennifer          F CompSci         Tx
+     10018 Johns           Roberta           F CompSci         Tx
+     10019 Wise            Paula             M Math            Cal
+     10020 Evan            Richmond          M English         Tx
+
+10 rows selected.
+
+SQL> CREATE TABLE Student (
+  2      Stu_ID NUMBER(8) PRIMARY KEY,
+  3      Lname VARCHAR2(12),
+  4      Fname VARCHAR2(12),
+  5      Mi CHAR(1),
+  6      Sex CHAR(1),
+  7      Major VARCHAR2(12),
+  8      Home_State VARCHAR2(12)
+  9  );
+
+Table created.
+
+SQL> INSERT INTO Student VALUES (10011, 'Schmitt', 'Peter', 'M', 'M', 'History', 'Ok.');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10012, 'Jones', 'Samson', 'A', 'M', 'English', 'Fl');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10013, 'Peters', 'Amy', 'A', 'F', 'English', 'Me');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10014, 'Johnson', 'John', 'J', 'M', 'CompSci', 'Ca');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10015, 'Penders', 'Alton', 'P', 'F', 'Math', 'Ga');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10016, 'Allen', 'Diana', 'J', 'F', 'Geography', 'Minn');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10017, 'Gillis', 'Jennifer', 'NULL', 'F', 'CompSci', 'Tx');
+INSERT INTO Student VALUES (10017, 'Gillis', 'Jennifer', 'NULL', 'F', 'CompSci', 'Tx')
+                                                         *
+ERROR at line 1:
+ORA-12899: value too large for column "SYSTEM"."STUDENT"."MI" (actual: 4, maximum: 1)
+
+
+SQL> INSERT INTO Student VALUES (10018, 'Johns', 'Roberta', 'NULL', 'F', 'CompSci', 'Tx');
+INSERT INTO Student VALUES (10018, 'Johns', 'Roberta', 'NULL', 'F', 'CompSci', 'Tx')
+                                                       *
+ERROR at line 1:
+ORA-12899: value too large for column "SYSTEM"."STUDENT"."MI" (actual: 4, maximum: 1)
+
+
+SQL> INSERT INTO Student VALUES (10019, 'Wise', 'Paula', 'NULL', 'M', 'Math', 'Cal');
+INSERT INTO Student VALUES (10019, 'Wise', 'Paula', 'NULL', 'M', 'Math', 'Cal')
+                                                    *
+ERROR at line 1:
+ORA-12899: value too large for column "SYSTEM"."STUDENT"."MI" (actual: 4, maximum: 1)
+
+
+SQL> INSERT INTO Student VALUES (10020, 'Evan', 'Richmond', 'NULL', 'M', 'English', 'Tx');
+INSERT INTO Student VALUES (10020, 'Evan', 'Richmond', 'NULL', 'M', 'English', 'Tx')
+                                                       *
+ERROR at line 1:
+ORA-12899: value too large for column "SYSTEM"."STUDENT"."MI" (actual: 4, maximum: 1)
+
+
+SQL> INSERT INTO Student VALUES (10017, 'Gillis', 'Jennifer', NULL, 'F', 'CompSci', 'Tx');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10018, 'Johns', 'Roberta', NULL, 'F', 'CompSci', 'Tx');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10019, 'Wise', 'Paula', NULL, 'M', 'Math', 'Cal');
+
+1 row created.
+
+SQL> INSERT INTO Student VALUES (10020, 'Evan', 'Richmond', NULL, 'M', 'English', 'Tx');
+
+1 row created.
+
+
+SQL> CREATE TABLE Course (
+  2      Course_ID VARCHAR2(12) PRIMARY KEY,
+  3      Section# VARCHAR2(10),
+  4      C_Name VARCHAR2(25),
+  5      C_Description VARCHAR2(30)
+  6  );
+
+Table created.
+
+SQL> 
+SQL> INSERT INTO Course VALUES ('COSC1301', '001', 'Intro to Comp.', 'First Computer Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('ITSE2356', '001', 'Intro to DBA', 'Database Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('GEOG1791', '002', 'World Geography', 'Second Geography Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('COSC1315', '001', 'Intro to Prog.', 'Second Computer Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('ITSE1345', '001', 'Intro to DB Prog.', 'Second Database Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('ENGL2024', '002', 'English Literature', 'Second English Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('MATH1102', '001', 'Calculus II', 'Second Math Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('ENGL1001', '001', 'American Literature', 'First English Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('MATH1011', '001', 'Trig and Algebra', 'First Math Course');
+
+1 row created.
+
+SQL> INSERT INTO Course VALUES ('GEOG1010', '001', 'Texas Geography', 'First Geography Course');
+
+1 row created.
+
+SQL> CREATE TABLE Student_Course (
+  2      Stu_ID NUMBER(10),
+  3      Course_ID VARCHAR2(10),
+  4      Section# VARCHAR2(12),
+  5      PRIMARY KEY (Stu_ID, Course_ID, Section#),
+  6      FOREIGN KEY (Stu_ID) REFERENCES Student(Stu_ID),
+  7      FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID)
+  8  );
+
+Table created.
+
+
+SQL> INSERT INTO Student_Course VALUES (10013, 'ENGL1001', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10013, 'ENGL2024', '002');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10013, 'GEOG1010', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10014, 'COSC1315', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10016, 'GEOG1010', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10016, 'GEOG1791', '002');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10017, 'COSC1315', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10017, 'ITSE2356', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10018, 'COSC1315', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10019, 'ITSE2356', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10020, 'ENGL2024', '002');
+
+1 row created.
+
+SQL> SELECT * FROM Student_Course;
+
+    STU_ID COURSE_ID  SECTION#
+---------- ---------- ------------
+     10013 ENGL1001   001
+     10013 ENGL2024   002
+     10013 GEOG1010   001
+     10014 COSC1315   001
+     10016 GEOG1010   001
+     10016 GEOG1791   002
+     10017 COSC1315   001
+     10017 ITSE2356   001
+     10018 COSC1315   001
+     10019 ITSE2356   001
+     10020 ENGL2024   002
+
+11 rows selected.
+
+SQL> SELECT * FROM Course;
+
+COURSE_ID    SECTION#   C_NAME                    C_DESCRIPTION
+------------ ---------- ------------------------- ------------------------------
+COSC1301     001        Intro to Comp.            First Computer Course
+ITSE2356     001        Intro to DBA              Database Course
+GEOG1791     002        World Geography           Second Geography Course
+COSC1315     001        Intro to Prog.            Second Computer Course
+ITSE1345     001        Intro to DB Prog.         Second Database Course
+ENGL2024     002        English Literature        Second English Course
+MATH1102     001        Calculus II               Second Math Course
+ENGL1001     001        American Literature       First English Course
+MATH1011     001        Trig and Algebra          First Math Course
+GEOG1010     001        Texas Geography           First Geography Course
+
+10 rows selected.
+
+SQL> SELECT * FROM Student;
+
+    STU_ID LNAME        FNAME        M S MAJOR        HOME_STATE
+---------- ------------ ------------ - - ------------ ------------
+     10011 Schmitt      Peter        M M History      Ok.
+     10012 Jones        Samson       A M English      Fl
+     10013 Peters       Amy          A F English      Me
+     10014 Johnson      John         J M CompSci      Ca
+     10015 Penders      Alton        P F Math         Ga
+     10016 Allen        Diana        J F Geography    Minn
+     10017 Gillis       Jennifer       F CompSci      Tx
+     10018 Johns        Roberta        F CompSci      Tx
+     10019 Wise         Paula          M Math         Cal
+     10020 Evan         Richmond       M English      Tx
+
+10 rows selected.
+
+
+SQL> UPDATE Course
+  2  SET Course_ID = 'MATH1101'
+  3  WHERE Course_ID = 'MATH1011';
+
+1 row updated.
+
+SQL> INSERT INTO Student_Course VALUES (10011, 'MATH1101', '001');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10012, 'ENGL2024', '002');
+
+1 row created.
+
+SQL> INSERT INTO Student_Course VALUES (10015, 'MATH1101', '001');
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> SELECT * FROM Student_Course;
+
+    STU_ID COURSE_ID  SECTION#
+---------- ---------- ------------
+     10013 ENGL1001   001
+     10013 ENGL2024   002
+     10013 GEOG1010   001
+     10014 COSC1315   001
+     10016 GEOG1010   001
+     10016 GEOG1791   002
+     10017 COSC1315   001
+     10017 ITSE2356   001
+     10018 COSC1315   001
+     10019 ITSE2356   001
+     10020 ENGL2024   002
+     10011 MATH1101   001
+     10012 ENGL2024   002
+     10015 MATH1101   001
+
+14 rows selected.
+
+
+SQL> DESC Student;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ STU_ID                                                NOT NULL NUMBER(8)
+ LNAME                                                          VARCHAR2(12)
+ FNAME                                                          VARCHAR2(12)
+ MI                                                             CHAR(1)
+ SEX                                                            CHAR(1)
+ MAJOR                                                          VARCHAR2(12)
+ HOME_STATE                                                     VARCHAR2(12)
+
+SQL> DESC Course;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ COURSE_ID                                             NOT NULL VARCHAR2(12)
+ SECTION#                                                       VARCHAR2(10)
+ C_NAME                                                         VARCHAR2(25)
+ C_DESCRIPTION                                                  VARCHAR2(30)
+
+SQL> DESC Student_Course;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ STU_ID                                                NOT NULL NUMBER(10)
+ COURSE_ID                                             NOT NULL VARCHAR2(10)
+ SECTION#                                              NOT NULL VARCHAR2(12)
+
+SQL> -----Lab 2 - Part 3
+SQL> 
+SQL> 
+SQL> DECLARE
+  2      -- Variables to store student details and course count
+  3      lv_Stu_ID      Student.STU_ID%TYPE;
+  4      lv_Full_Name   VARCHAR2(25);
+  5      Num_Courses   NUMBER(2);
+  6  BEGIN
+  7      -- Loop through all students in the Student table
+  8      FOR student_rec IN (SELECT STU_ID, FNAME || ' ' || LNAME AS Full_Name FROM Student) LOOP
+  9          -- Count the number of courses the student is enrolled in
+ 10          SELECT COUNT(*)
+ 11          INTO Num_Courses
+ 12          FROM Student_Course
+ 13          WHERE STU_ID = student_rec.STU_ID;
+ 14  
+ 15          -- Display the student's ID, full name, and course count
+ 16          DBMS_OUTPUT.PUT_LINE(
+ 17              'Student ID: ' || student_rec.STU_ID || ', Name: ' || student_rec.Full_Name ||
+ 18              ' is enrolled in ' || Num_Courses || ' course(s).'
+ 19          );
+ 20      END LOOP;
+ 21  END;
+ 22  /
+Student ID: 10011, Name: Peter Schmitt is enrolled in 1 course(s).
+Student ID: 10012, Name: Samson Jones is enrolled in 1 course(s).
+Student ID: 10013, Name: Amy Peters is enrolled in 3 course(s).
+Student ID: 10014, Name: John Johnson is enrolled in 1 course(s).
+Student ID: 10015, Name: Alton Penders is enrolled in 1 course(s).
+Student ID: 10016, Name: Diana Allen is enrolled in 2 course(s).
+Student ID: 10017, Name: Jennifer Gillis is enrolled in 2 course(s).
+Student ID: 10018, Name: Roberta Johns is enrolled in 1 course(s).
+Student ID: 10019, Name: Paula Wise is enrolled in 1 course(s).
+Student ID: 10020, Name: Richmond Evan is enrolled in 1 course(s).
+
+PL/SQL procedure successfully completed.
+
+SQL> -- Part 4 ---
+SQL> 
+SQL>  DECLARE
+  2      -- Variables to store total student
+  3      Num_Students   NUMBER(2);
+  4  BEGIN
+  5          -- Count the number of courses the student is enrolled in
+  6          SELECT COUNT(*)
+  7          INTO Num_Students
+  8          FROM Student;
+  9  
+ 10          DBMS_OUTPUT.PUT_LINE('Number of students enrolled is: ' || Num_Students);
+ 11  END;
+ 12  /
+Number of students enrolled is: 10
+
+PL/SQL procedure successfully completed.
+
+SQL> -- Part 5 ---
+SQL> 
+SQL>  DECLARE
+  2      -- Variable to store number of courses
+  3      Num_Courses NUMBER(5);
+  4  BEGIN
+  5      -- Count number of courses in the Student_Course table
+  6      SELECT COUNT(*)
+  7      INTO Num_Courses
+  8      FROM Student_Course;
+  9  
+ 10      -- Analyze if there are greater than or less than 10 courses
+ 11      IF Num_Courses > 10 THEN
+ 12          DBMS_OUTPUT.PUT_LINE('More than 10 courses have been established.');
+ 13      ELSE
+ 14          DBMS_OUTPUT.PUT_LINE('Less than 10 courses established.');
+ 15      END IF;
+ 16  END;
+ 17  /
+More than 10 courses have been established.
+
+PL/SQL procedure successfully completed.
+
+SQL> ---Part 6 ---
+SQL> 
+SQL> DECLARE
+  2      -- Variables to store student state and count
+  3      lv_Full_Name VARCHAR2(25);
+  4      lv_Home_State Student.HOME_STATE%TYPE;
+  5      InState_Count NUMBER(5) := 0;
+  6      OutState_Count NUMBER(5) := 0;
+  7  BEGIN
+  8      -- Loop through students in Student table
+  9      FOR student_rec IN (SELECT FNAME || ' ' || LNAME AS Full_Name, HOME_STATE FROM Student) LOOP
+ 10          -- Check if from Texas
+ 11          IF student_rec.HOME_STATE = 'Tx' THEN
+ 12              DBMS_OUTPUT.PUT_LINE(student_rec.Full_Name || ' is an in-state Texas student.');
+ 13              InState_Count := InState_Count + 1;
+ 14          ELSE
+ 15              DBMS_OUTPUT.PUT_LINE(student_rec.Full_Name || ' is not an in-state Texas student.');
+ 16              OutState_Count := OutState_Count + 1;
+ 17          END IF;
+ 18      END LOOP;
+ 19  
+ 20      -- Print the total counts of in-state and out-of-state students
+ 21      DBMS_OUTPUT.PUT_LINE('Total in-state Texas students: ' || InState_Count);
+ 22      DBMS_OUTPUT.PUT_LINE('Total out-of-state students: ' || OutState_Count);
+ 23  END;
+ 24  /
+Peter Schmitt is not an in-state Texas student.
+Samson Jones is not an in-state Texas student.
+Amy Peters is not an in-state Texas student.
+John Johnson is not an in-state Texas student.
+Alton Penders is not an in-state Texas student.
+Diana Allen is not an in-state Texas student.
+Jennifer Gillis is an in-state Texas student.
+Roberta Johns is an in-state Texas student.
+Paula Wise is not an in-state Texas student.
+Richmond Evan is an in-state Texas student.
+Total in-state Texas students: 3
+Total out-of-state students: 7
+
+PL/SQL procedure successfully completed.
+
+SQL> ---Part 7 ---
+SQL> 
+SQL> DECLARE
+  2      -- Named parameters with variable name for student ID and course ID
+  3      p_Stu_ID Student.STU_ID%TYPE := 10016;  -- Example student ID
+  4      p_Course_ID Course.COURSE_ID%TYPE := 'ITSE1345';  -- Example course ID
+  5  
+  6      -- Variable for count of resulting records
+  7      Num_Records NUMBER(1);
+  8      -- Variable for student full name for more personal touch
+  9      lv_Full_Name VARCHAR2(30);
+ 10  BEGIN
+ 11      -- Get student's full name
+ 12      SELECT FNAME || ' ' || LNAME AS Full_Name
+ 13      INTO lv_Full_Name
+ 14      FROM Student
+ 15      WHERE Stu_ID = p_Stu_ID;
+ 16  
+ 17      -- Check if student is registered for specified course
+ 18      SELECT COUNT(*)
+ 19      INTO Num_Records
+ 20      FROM Student_Course
+ 21      WHERE STU_ID = p_Stu_ID AND COURSE_ID = p_Course_ID;
+ 22  
+ 23      -- Output the result
+ 24      IF Num_Records > 0 THEN
+ 25          DBMS_OUTPUT.PUT_LINE('Student ID ' || p_Stu_ID || ' ' ||  lv_Full_Name ||  ' is registered in course ' || p_Course_ID || '.');
+ 26      ELSE
+ 27          DBMS_OUTPUT.PUT_LINE('Student ID ' || p_Stu_ID || ' ' || lv_Full_Name ||  ' is NOT registered in course ' || p_Course_ID || '.');
+ 28      END IF;
+ 29  END;
+ 30  /
+Student ID 10016 Diana Allen is NOT registered in course ITSE1345.
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2      -- Named parameters with variable name for student ID and course ID
+  3      p_Stu_ID Student.STU_ID%TYPE := 10018;  -- Example student ID
+  4      p_Course_ID Course.COURSE_ID%TYPE := 'COSC1315';  -- Example course ID
+  5  
+  6      -- Variable for count of resulting records
+  7      Num_Records NUMBER(1);
+  8      -- Variable for student full name for more personal touch
+  9      lv_Full_Name VARCHAR2(30);
+ 10  BEGIN
+ 11      -- Get student's full name
+ 12      SELECT FNAME || ' ' || LNAME AS Full_Name
+ 13      INTO lv_Full_Name
+ 14      FROM Student
+ 15      WHERE Stu_ID = p_Stu_ID;
+ 16  
+ 17      -- Check if student is registered for specified course
+ 18      SELECT COUNT(*)
+ 19      INTO Num_Records
+ 20      FROM Student_Course
+ 21      WHERE STU_ID = p_Stu_ID AND COURSE_ID = p_Course_ID;
+ 22  
+ 23      -- Output the result
+ 24      IF Num_Records > 0 THEN
+ 25          DBMS_OUTPUT.PUT_LINE('Student ID ' || p_Stu_ID || ' ' ||  lv_Full_Name ||  ' is registered in course ' || p_Course_ID || '.');
+ 26      ELSE
+ 27          DBMS_OUTPUT.PUT_LINE('Student ID ' || p_Stu_ID || ' ' || lv_Full_Name ||  ' is NOT registered in course ' || p_Course_ID || '.');
+ 28      END IF;
+ 29  END;
+ 30  /
+Student ID 10018 Roberta Johns is registered in course COSC1315.
+
+PL/SQL procedure successfully completed.
+
+
+SQL> --- Part 8 ---
+SQL> 
+SQL> 
+SQL> DECLARE
+  2      -- Variables for student details
+  3      lv_Full_Name VARCHAR2(30);
+  4      lv_Sex VARCHAR2(15);
+  5      lv_Major Student.MAJOR%TYPE;
+  6      lv_Major_Type VARCHAR2(25);
+  7  BEGIN
+  8      -- Loop through Student table for gender data
+  9      FOR student_rec IN (SELECT FNAME || ' ' || LNAME AS Full_Name, SEX, MAJOR FROM Student) LOOP
+ 10          lv_Full_Name := student_rec.Full_Name;
+ 11          lv_Sex := student_rec.SEX;
+ 12          lv_Major := student_rec.MAJOR;
+ 13  
+ 14          -- Pull data on student's gender
+ 15          IF lv_Sex = 'M' THEN
+ 16              lv_Sex := ' is a male';
+ 17          ELSE
+ 18              lv_Sex := ' is a female';
+ 19          END IF;
+ 20  
+ 21          -- Pull data on student's major
+ 22      CASE
+ 23          WHEN lv_Major = 'Math' THEN lv_Major_Type := 'Math Major';
+ 24          WHEN lv_Major = 'English' THEN lv_Major_Type := 'English Major';
+ 25          WHEN lv_Major = 'CompSci' THEN lv_Major_Type := 'Computer Science Major';
+ 26          WHEN lv_Major = 'Geography' THEN lv_Major_Type := 'Geography Major';
+ 27          ELSE lv_Major_Type := 'Undeclared Major';
+ 28       END CASE;
+ 29  
+ 30          DBMS_OUTPUT.PUT_LINE(lv_Full_Name || lv_Sex ||  ' declared as a ' || lv_Major_Type || '.');
+ 31      END LOOP;
+ 32  END;
+ 33  /
+Peter Schmitt is a male declared as a Undeclared Major.
+Samson Jones is a male declared as a English Major.
+Amy Peters is a female declared as a English Major.
+John Johnson is a male declared as a Computer Science Major.
+Alton Penders is a female declared as a Math Major.
+Diana Allen is a female declared as a Geography Major.
+Jennifer Gillis is a female declared as a Computer Science Major.
+Roberta Johns is a female declared as a Computer Science Major.
+Paula Wise is a male declared as a Math Major.
+Richmond Evan is a male declared as a English Major.
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> --- Part 9 ----
+SQL> 
+SQL> 
+SQL> DECLARE
+  2      -- Variables for student details
+  3      lv_Full_Name VARCHAR2(30);
+  4      lv_Sex VARCHAR2(15);
+  5      lv_Major Student.MAJOR%TYPE;
+  6      lv_Major_Type VARCHAR2(25);
+  7  BEGIN
+  8      -- Loop through Student table for gender data
+  9      FOR student_rec IN (SELECT FNAME || ' ' || LNAME AS Full_Name, SEX, MAJOR FROM Student) LOOP
+ 10          lv_Full_Name := student_rec.Full_Name;
+ 11          lv_Sex := student_rec.SEX;
+ 12          lv_Major := student_rec.MAJOR;
+ 13  
+ 14          -- Pull data on student's gender
+ 15          IF lv_Sex = 'M' THEN
+ 16              lv_Sex := ' is a male';
+ 17          ELSE
+ 18              lv_Sex := ' is a female';
+ 19          END IF;
+ 20  
+ 21          -- Pull data on student's major using IF and ELSE IF
+ 22          IF lv_Major = 'Math' THEN
+ 23              lv_Major_Type := 'Math Major';
+ 24          ELSIF lv_Major = 'English' THEN
+ 25              lv_Major_Type := 'English Major';
+ 26          ELSIF lv_Major = 'CompSci' THEN
+ 27              lv_Major_Type := 'Computer Science Major';
+ 28          ELSIF lv_Major = 'Geography' THEN
+ 29              lv_Major_Type := 'Geography Major';
+ 30          ELSE
+ 31              lv_Major_Type := 'Undeclared Major';
+ 32          END IF;
+ 33  
+ 34          DBMS_OUTPUT.PUT_LINE(lv_Full_Name || lv_Sex ||  ' declared as a ' || lv_Major_Type || '.');
+ 35      END LOOP;
+ 36  END;
+ 37  /
+Peter Schmitt is a male declared as a Undeclared Major.
+Samson Jones is a male declared as a English Major.
+Amy Peters is a female declared as a English Major.
+John Johnson is a male declared as a Computer Science Major.
+Alton Penders is a female declared as a Math Major.
+Diana Allen is a female declared as a Geography Major.
+Jennifer Gillis is a female declared as a Computer Science Major.
+Roberta Johns is a female declared as a Computer Science Major.
+Paula Wise is a male declared as a Math Major.
+Richmond Evan is a male declared as a English Major.
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> ---Part 10 ---
+SQL> 
+SQL> CREATE TABLE Temp_Student AS SELECT * FROM Student;
+
+Table created.
+
+SQL> 
+SQL> DECLARE
+  2      -- Variables to handle temporary table and loop counter
+  3      lv_Counter NUMBER := 0;
+  4      lv_Total_Rows NUMBER;
+  5  BEGIN
+  6      -- Create a temporary table for the student data
+  7  
+  8  
+  9      -- Get the total number of rows in the Student table
+ 10      SELECT COUNT(*) INTO lv_Total_Rows FROM Student;
+ 11  
+ 12      -- Loop through each student and insert into the temporary table
+ 13      FOR student_rec IN (SELECT * FROM Student) LOOP
+ 14          INSERT INTO Temp_Student (STU_ID, LNAME, FNAME, MI, SEX, MAJOR, HOME_STATE)
+ 15          VALUES (student_rec.STU_ID, student_rec.LNAME, student_rec.FNAME, student_rec.MI, student_rec.SEX, student_rec.MAJOR, student_rec.HOME_STATE);
+ 16  
+ 17          -- Increment the counter
+ 18          lv_Counter := lv_Counter + 1;
+ 19  
+ 20          -- Output progress
+ 21          DBMS_OUTPUT.PUT_LINE('Inserted student ID ' || student_rec.STU_ID || ' into temporary table.');
+ 22  
+ 23          -- Exit the loop when the counter matches the total rows
+ 24          IF lv_Counter = lv_Total_Rows THEN
+ 25              EXIT;
+ 26          END IF;
+ 27      END LOOP;
+ 28  
+ 29      -- Output final results
+ 30      DBMS_OUTPUT.PUT_LINE('Total students processed: ' || lv_Counter);
+ 31  
+ 32  
+ 33  END;
+ 34  /
+Inserted student ID 10011 into temporary table.
+Inserted student ID 10012 into temporary table.
+Inserted student ID 10013 into temporary table.
+Inserted student ID 10014 into temporary table.
+Inserted student ID 10015 into temporary table.
+Inserted student ID 10016 into temporary table.
+Inserted student ID 10017 into temporary table.
+Inserted student ID 10018 into temporary table.
+Inserted student ID 10019 into temporary table.
+Inserted student ID 10020 into temporary table.
+Total students processed: 10
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT * FROM Temp_Student;
+
+    STU_ID LNAME        FNAME        M S MAJOR        HOME_STATE
+---------- ------------ ------------ - - ------------ ------------
+     10011 Schmitt      Peter        M M History      Ok.
+     10012 Jones        Samson       A M English      Fl
+     10013 Peters       Amy          A F English      Me
+     10014 Johnson      John         J M CompSci      Ca
+     10015 Penders      Alton        P F Math         Ga
+     10016 Allen        Diana        J F Geography    Minn
+     10017 Gillis       Jennifer       F CompSci      Tx
+     10018 Johns        Roberta        F CompSci      Tx
+     10019 Wise         Paula          M Math         Cal
+     10020 Evan         Richmond       M English      Tx
+     10011 Schmitt      Peter        M M History      Ok.
+     10012 Jones        Samson       A M English      Fl
+     10013 Peters       Amy          A F English      Me
+     10014 Johnson      John         J M CompSci      Ca
+     10015 Penders      Alton        P F Math         Ga
+     10016 Allen        Diana        J F Geography    Minn
+     10017 Gillis       Jennifer       F CompSci      Tx
+     10018 Johns        Roberta        F CompSci      Tx
+     10019 Wise         Paula          M Math         Cal
+     10020 Evan         Richmond       M English      Tx
+
+20 rows selected.
+
+SQL> spool off;
