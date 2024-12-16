@@ -1,3 +1,5 @@
+Yolanda Gunter ITSE 1345 Lab 2
+
 ----01----
 
 CREATE TABLE Theater (

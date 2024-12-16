@@ -1,0 +1,25 @@
+Yolanda Gunter Key Terms Ch 9 - Casteel.txt
+
+
+1. trigger :  a block of PL/SQL code that runs automatically when a particular database  event occurs. It’s quite different from the procedures and functions you have built in previous  chapters. Procedures and functions are called specifically by name to run. A database trigger is fired  by an event, such as a DML statement: INSERT, UPDATE, and DELETE. It doesn’t matter to a  DML trigger where the DML action was generated from, whether it’s from an application or an  SQL command entered in SQL Developer. Any time the DML action is executed, the trigger  fires automatically. 
+
+2.  trigger event:  defines which DML statements on which table cause the  trigger to fire. The first item to specify is the DML event, such as INSERT, UPDATE,  or DELETE. You can include any or all of them.
+
+3. Trigger Body  The trigger body is a PL/SQL block. A trigger header isn’t followed by the IS keyword, as  in procedures and functions, so the DECLARE keyword must be used if you need to declare  any variables in the trigger body code. 
+
+4. Conditional predicates:  clauses you can use in a trigger to handle  different database-triggering events in a single trigger. They consist of an IF statement to  establish the condition and a predicate, which is a verb specifying the DML action.  Remember that you can list multiple DML events in a trigger,
+
+
+5. An INSTEAD OF trigger is a PL/SQL block that runs in place of a DML action on a  database view. Typically, it’s used to allow modifying data through a view that can’t be  modified.
+
+
+6. key-preserved table is one that’s involved in a join, and the original table’s keys  are included in the keys of the resulting join.
+
+7. System triggers are fired by database events, such as startup and shutdown, and  server error messages.
+
+8. User event triggers are fired by users performing database actions,  such as logons and logoffs, and issuing DML or DDL statements. 
+
+9. A mutating  table is one that’s modified by a DML action when a trigger is fired. For example, say the  Brewbean’s application includes pages where the manager can enter sales periods for  products.
+
+10. The ALTER TRIGGER statement is used to recompile, enable, or disable a trigger. If  a trigger body references a database object that’s modified, the trigger’s status is set  to INVALID and must be recompiled.
+

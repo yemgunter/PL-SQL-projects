@@ -1,0 +1,941 @@
+SQL> spool;
+currently spooling to C:\Users\yolan\OneDrive\Documents\GitHub\pl-sql-projects\HandsOn\YolandaGunterHandsOn7.txt
+
+SQL> 
+SQL> ----Assignment 7-1: Creating a Package ------
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2;
+  5   PROCEDURE basket_info_pp
+  6    (p_basket IN NUMBER,
+  7     p_shop OUT NUMBER,
+  8     p_date OUT DATE);
+  9  END;
+ 10  
+ 11  CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+ 12   FUNCTION ship_name_pf
+ 13     (p_basket IN NUMBER)
+ 14     RETURN VARCHAR2
+ 15    IS
+ 16     lv_name_txt VARCHAR2(25);
+ 17   BEGIN
+ 18    SELECT shipfirstname||' '||shiplastname
+ 19     INTO lv_name_txt
+ 20     FROM bb_basket
+ 21     WHERE idBasket = p_basket;
+ 22    RETURN lv_name_txt;
+ 23   EXCEPTION
+ 24     WHEN NO_DATA_FOUND THEN
+ 25       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 26   END ship_name_pf;
+ 27   PROCEDURE basket_inf_pp
+ 28    (p_basket IN NUMBER,
+ 29     p_shop OUT NUMBER,
+ 30     p_date OUT DATE)
+ 31    IS
+ 32   BEGIN
+ 33     SELECT idshopper, dtordered
+ 34      INTO p_shop, p_date
+ 35      FROM bb_basket
+ 36      WHERE idbasket = p_basket;
+ 37   EXCEPTION
+ 38     WHEN NO_DATA_FOUND THEN
+ 39       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 40   END basket_inf_pp;
+ 41  END;
+ 42  /
+
+Warning: Package created with compilation errors.
+
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2;
+  5   PROCEDURE basket_info_pp
+  6    (p_basket IN NUMBER,
+  7     p_shop OUT NUMBER,
+  8     p_date OUT DATE);
+  9  END;
+ 10  
+ 11  CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+ 12   FUNCTION ship_name_pf
+ 13     (p_basket IN NUMBER)
+ 14     RETURN VARCHAR2
+ 15    IS
+ 16     lv_name_txt VARCHAR2(25);
+ 17   BEGIN
+ 18    SELECT shipfirstname||' '||shiplastname
+ 19     INTO lv_name_txt
+ 20     FROM bb_basket
+ 21     WHERE idBasket = p_basket;
+ 22    RETURN lv_name_txt;
+ 23   EXCEPTION
+ 24     WHEN NO_DATA_FOUND THEN
+ 25       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 26   END ship_name_pf;
+ 27   PROCEDURE basket_info_pp
+ 28    (p_basket IN NUMBER,
+ 29     p_shop OUT NUMBER,
+ 30     p_date OUT DATE)
+ 31    IS
+ 32   BEGIN
+ 33     SELECT idshopper, dtordered
+ 34      INTO p_shop, p_date
+ 35      FROM bb_basket
+ 36      WHERE idbasket = p_basket;
+ 37   EXCEPTION
+ 38     WHEN NO_DATA_FOUND THEN
+ 39       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 40   END basket_info_pp;
+ 41  END;
+ 42  /
+
+Warning: Package created with compilation errors.
+
+SQL> ----Assignment 7-2: Creating a Package ------
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2;
+  5   PROCEDURE basket_info_pp
+  6    (p_basket IN NUMBER,
+  7     p_shop OUT NUMBER,
+  8     p_date OUT DATE);
+  9  END;
+ 10  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2
+  5    IS
+  6     lv_name_txt VARCHAR2(25);
+  7   BEGIN
+  8    SELECT shipfirstname||' '||shiplastname
+  9     INTO lv_name_txt
+ 10     FROM bb_basket
+ 11     WHERE idBasket = p_basket;
+ 12    RETURN lv_name_txt;
+ 13   EXCEPTION
+ 14     WHEN NO_DATA_FOUND THEN
+ 15       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 16   END ship_name_pf;
+ 17   PROCEDURE basket_info_pp
+ 18    (p_basket IN NUMBER,
+ 19     p_shop OUT NUMBER,
+ 20     p_date OUT DATE)
+ 21    IS
+ 22   BEGIN
+ 23     SELECT idshopper, dtordered
+ 24      INTO p_shop, p_date
+ 25      FROM bb_basket
+ 26      WHERE idbasket = p_basket;
+ 27   EXCEPTION
+ 28     WHEN NO_DATA_FOUND THEN
+ 29       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 30   END basket_info_pp;
+ 31  END;
+ 32  /
+
+Package body created.
+
+SQL> DECLARE
+  2      lv_shopper_id NUMBER;      -- Variable for OUT parameter (shopper ID)
+  3      lv_ord_date DATE;          -- Variable for OUT parameter (order date)
+  4      lv_recip_name VARCHAR2(25); -- Variable for function return value
+  5  BEGIN
+  6      -- Call function for recipient's name
+  7      lv_recip_name := order_info_pkg.ship_name_pf(12);
+  8      DBMS_OUTPUT.PUT_LINE(lv_recip_name);
+  9  
+ 10      -- Call  procedure for shopper ID and order date
+ 11      order_info_pkg.basket_info_pp(12, lv_shopper_id, lv_ord_date);
+ 12      DBMS_OUTPUT.PUT_LINE(lv_shopper_id);
+ 13      DBMS_OUTPUT.PUT_LINE(lv_ord_date);
+ 14  END;
+ 15  /
+25
+19-FEB-12
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT order_info_pkg.ship_name_pf(idbasket) AS recipient_name
+  2  FROM bb_basket
+  3  WHERE idbasket = 12;
+
+RECIPIENT_NAME
+----------------------------------------------------------------------------------------------------
+
+
+SQL> ----Assignment 7-3: Creating a Package with Private Program Units----
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2  --Take out function ship_name_pf
+  3   PROCEDURE basket_info_pp
+  4    (p_basket IN NUMBER,
+  5     p_shop OUT NUMBER,
+  6     p_date OUT DATE
+  7     p_ship_name OUT VARCHAR2);--variable to return name order shipped by
+  8  END;
+  9  /
+
+Warning: Package created with compilation errors.
+
+SQL> CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2
+  5    IS
+  6     lv_name_txt VARCHAR2(25);
+  7   BEGIN
+  8    SELECT shipfirstname||' '||shiplastname
+  9     INTO lv_name_txt
+ 10     FROM bb_basket
+ 11     WHERE idBasket = p_basket;
+ 12    RETURN lv_name_txt;
+ 13   EXCEPTION
+ 14     WHEN NO_DATA_FOUND THEN
+ 15       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 16   END ship_name_pf;
+ 17   PROCEDURE basket_info_pp
+ 18    (p_basket IN NUMBER,
+ 19     p_shop OUT NUMBER,
+ 20     p_date OUT DATE
+ 21     p_ship_name OUT VARCHAR2) --variable to return name order shipped by
+ 22    IS
+ 23   BEGIN
+ 24     SELECT idshopper, dtordered
+ 25      INTO p_shop, p_date
+ 26      FROM bb_basket
+ 27      WHERE idbasket = p_basket;
+ 28      p_ship_name := ship_name_pf(p_basket); -- for p_ship_name variable
+ 29   EXCEPTION
+ 30     WHEN NO_DATA_FOUND THEN
+ 31       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 32   END basket_info_pp;
+ 33  END;
+ 34  /
+
+Warning: Package Body created with compilation errors.
+
+SQL> DROP PACKAGE order_info_pkg;
+
+Package dropped.
+
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2  --Take out function ship_name_pf
+  3   PROCEDURE basket_info_pp
+  4    (p_basket IN NUMBER,
+  5     p_shop OUT NUMBER,
+  6     p_date OUT DATE
+  7     p_ship_name OUT VARCHAR2);--variable to return name order shipped by
+  8  END;
+  9  /
+
+Warning: Package created with compilation errors.
+
+SQL> CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2
+  5    IS
+  6     lv_name_txt VARCHAR2(25);
+  7   BEGIN
+  8    SELECT shipfirstname||' '||shiplastname
+  9     INTO lv_name_txt
+ 10     FROM bb_basket
+ 11     WHERE idBasket = p_basket;
+ 12    RETURN lv_name_txt;
+ 13   EXCEPTION
+ 14     WHEN NO_DATA_FOUND THEN
+ 15       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 16   END ship_name_pf;
+ 17   PROCEDURE basket_info_pp
+ 18    (p_basket IN NUMBER,
+ 19     p_shop OUT NUMBER,
+ 20     p_date OUT DATE
+ 21     p_ship_name OUT VARCHAR2) --variable to return name order shipped by
+ 22    IS
+ 23   BEGIN
+ 24     SELECT idshopper, dtordered
+ 25      INTO p_shop, p_date
+ 26      FROM bb_basket
+ 27      WHERE idbasket = p_basket;
+ 28      p_ship_name := ship_name_pf(p_basket); -- for p_ship_name variable
+ 29   EXCEPTION
+ 30     WHEN NO_DATA_FOUND THEN
+ 31       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 32   END basket_info_pp;
+ 33  END;
+ 34  /
+
+Warning: Package Body created with compilation errors.
+
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2  -- deleted function
+  3   PROCEDURE basket_info_pp
+  4    (p_basket IN NUMBER,
+  5     p_shop OUT NUMBER,
+  6     p_date OUT DATE,
+  7     p_ship out varchar); -- added out variable
+  8  END;
+  9  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2
+  5    IS
+  6     lv_name_txt VARCHAR2(25);
+  7   BEGIN
+  8    SELECT shipfirstname||' '||shiplastname
+  9     INTO lv_name_txt
+ 10     FROM bb_basket
+ 11     WHERE idBasket = p_basket;
+ 12    RETURN lv_name_txt;
+ 13   EXCEPTION
+ 14     WHEN NO_DATA_FOUND THEN
+ 15       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 16   END ship_name_pf;
+ 17   PROCEDURE basket_info_pp
+ 18    (p_basket IN NUMBER,
+ 19     p_shop OUT NUMBER,
+ 20     p_date OUT DATE,
+ 21     p_ship out varchar) -- added out variable
+ 22    IS
+ 23   BEGIN
+ 24     SELECT idshopper, dtordered
+ 25      INTO p_shop, p_date
+ 26      FROM bb_basket
+ 27      WHERE idbasket = p_basket;
+ 28     p_ship := ship_name_pf(p_basket); -- out variable used here
+ 29   EXCEPTION
+ 30     WHEN NO_DATA_FOUND THEN
+ 31       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 32   END basket_info_pp;
+ 33  END;
+ 34  /
+
+Package body created.
+
+
+SQL> CREATE OR REPLACE PACKAGE order_info_pkg IS
+  2  --Take out function ship_name_pf
+  3   PROCEDURE basket_info_pp
+  4    (p_basket IN NUMBER,
+  5     p_shop OUT NUMBER,
+  6     p_date OUT DATE,
+  7     p_ship_name OUT VARCHAR);--variable to return name order shipped by
+  8  END;
+  9  /
+
+Package created.
+
+SQL> CREATE OR REPLACE PACKAGE BODY order_info_pkg IS
+  2   FUNCTION ship_name_pf
+  3     (p_basket IN NUMBER)
+  4     RETURN VARCHAR2
+  5    IS
+  6     lv_name_txt VARCHAR2(25);
+  7   BEGIN
+  8    SELECT shipfirstname||' '||shiplastname
+  9     INTO lv_name_txt
+ 10     FROM bb_basket
+ 11     WHERE idBasket = p_basket;
+ 12    RETURN lv_name_txt;
+ 13   EXCEPTION
+ 14     WHEN NO_DATA_FOUND THEN
+ 15       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 16   END ship_name_pf;
+ 17   PROCEDURE basket_info_pp
+ 18    (p_basket IN NUMBER,
+ 19     p_shop OUT NUMBER,
+ 20     p_date OUT DATE,
+ 21     p_ship_name OUT VARCHAR) --variable to return name order shipped by
+ 22    IS
+ 23   BEGIN
+ 24     SELECT idshopper, dtordered
+ 25      INTO p_shop, p_date
+ 26      FROM bb_basket
+ 27      WHERE idbasket = p_basket;
+ 28      p_ship_name := ship_name_pf(p_basket); -- for p_ship_name variable
+ 29   EXCEPTION
+ 30     WHEN NO_DATA_FOUND THEN
+ 31       DBMS_OUTPUT.PUT_LINE('Invalid basket id');
+ 32   END basket_info_pp;
+ 33  END;
+ 34  /
+
+Package body created.
+
+SQL> 
+SQL> DECLARE
+  2      lv_shopper_id NUMBER;        -- Variable to store the shopper ID
+  3      lv_ord_date DATE;            -- Variable to store the order date
+  4      lv_ship_name VARCHAR2(25);   -- Variable to store the shipped-to name
+  5  BEGIN
+  6      -- Call the BASKET_INFO_PP procedure
+  7      order_info_pkg.basket_info_pp(
+  8          p_basket => 4,          -- Basket ID to test
+  9          p_shop => lv_shopper_id,
+ 10          p_date => lv_ord_date,
+ 11          p_ship_name => lv_ship_name
+ 12      );
+ 13  
+ 14      -- Display the returned values using DBMS_OUTPUT
+ 15      DBMS_OUTPUT.PUT_LINE(lv_shopper_id);
+ 16      DBMS_OUTPUT.PUT_LINE(lv_ord_date);
+ 17      DBMS_OUTPUT.PUT_LINE(lv_ship_name);
+ 18  END;
+ 19  /
+21
+12-FEB-12
+John Carter
+
+PL/SQL procedure successfully completed.
+
+SQL> ----Assignment 7-4: Using Packaged Variables----
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION verify_logon (
+  2      p_username IN VARCHAR2,
+  3      p_password IN VARCHAR2)
+  4      RETURN CHAR
+  5  IS
+  6      lv_verify_user bb_shopper.username%TYPE := 'N'; -- Default value to 'N'
+  7      verified char(1) := 'N';
+  8  BEGIN
+  9      SELECT p_username
+ 10      INTO lv_verify_user
+ 11      FROM bb_shopper
+ 12      WHERE password = p_password;
+ 13  
+ 14      verified := 'Y';
+ 15      RETURN verified;
+ 16  
+ 17  EXCEPTION
+ 18      WHEN NO_DATA_FOUND THEN
+ 19          DBMS_OUTPUT.PUT_LINE('Logon values are invalid.');
+ 20  END verify_logon;
+ 21  /
+
+Function created.
+
+SQL> DECLARE
+  2      lv_confirm CHAR(1);
+  3  BEGIN
+  4      lv_confirm := verify_logon('gma1', 'goofy');
+  5      DBMS_OUTPUT.PUT_LINE('Logon verified?: ' || lv_confirm);
+  6  END;
+  7  /
+Logon verified?: Y
+
+PL/SQL procedure successfully completed.
+
+SQL> ---7-4-Part 3-----
+SQL> CREATE OR REPLACE PACKAGE login_pkg IS
+  2      -- Packaged variables
+  3      lv_shopper_id bb_shopper.idshopper%TYPE;
+  4      lv_zip_prefix VARCHAR2(3);
+  5  
+  6      -- Function declaration
+  7      FUNCTION verify_logon (
+  8          p_username IN VARCHAR2,
+  9          p_password IN VARCHAR2
+ 10      ) RETURN CHAR;
+ 11  END login_pkg;
+ 12  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY login_pkg IS
+  2      -- Function implementation
+  3      FUNCTION verify_logon (
+  4          p_username IN VARCHAR2,
+  5          p_password IN VARCHAR2
+  6      ) RETURN CHAR
+  7      IS
+  8          lv_verify_user bb_shopper.username%TYPE := 'N'; -- Default value to 'N'
+  9          verified CHAR(1) := 'N';
+ 10      BEGIN
+ 11          SELECT p_username, idshopper, SUBSTR(zip, 1, 3)
+ 12          INTO lv_verify_user, lv_shopper_id, lv_zip_prefix
+ 13          FROM bb_shopper
+ 14          WHERE password = p_password;
+ 15  
+ 16          verified := 'Y'; -- Mark user as verified
+ 17          RETURN verified;
+ 18  
+ 19      EXCEPTION
+ 20          WHEN NO_DATA_FOUND THEN
+ 21              DBMS_OUTPUT.PUT_LINE('Logon values are invalid.');
+ 22              RETURN verified; -- Return 'N'
+ 23      END verify_logon;
+ 24  END login_pkg;
+ 25  /
+
+Warning: Package Body created with compilation errors.
+
+SQL> drop package login_pkg;
+
+Package dropped.
+
+SQL> --Have to drop the verify_logon function
+SQL> DROP FUNCTION verify_logon;
+
+Function dropped.
+
+SQL> CREATE OR REPLACE PACKAGE login_pkg IS
+  2      -- Packaged variables
+  3      lv_shopper_id bb_shopper.idshopper%TYPE;
+  4      lv_zip_prefix VARCHAR2(3);
+  5  
+  6      -- Function declaration
+  7      FUNCTION verify_logon (
+  8          p_username IN VARCHAR2,
+  9          p_password IN VARCHAR2
+ 10      ) RETURN CHAR;
+ 11  END login_pkg;
+ 12  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY login_pkg IS
+  2      -- Function implementation
+  3      FUNCTION verify_logon (
+  4          p_username IN VARCHAR2,
+  5          p_password IN VARCHAR2
+  6      ) RETURN CHAR
+  7      IS
+  8          lv_verify_user bb_shopper.username%TYPE := 'N'; -- Default value to 'N'
+  9          verified CHAR(1) := 'N';
+ 10      BEGIN
+ 11          SELECT p_username, idshopper, SUBSTR(zip, 1, 3)
+ 12          INTO lv_verify_user, lv_shopper_id, lv_zip_prefix
+ 13          FROM bb_shopper
+ 14          WHERE password = p_password;
+ 15  
+ 16          verified := 'Y'; -- Mark user as verified
+ 17          RETURN verified;
+ 18  
+ 19      EXCEPTION
+ 20          WHEN NO_DATA_FOUND THEN
+ 21              DBMS_OUTPUT.PUT_LINE('Logon values are invalid.');
+ 22              RETURN verified; -- Return 'N'
+ 23      END verify_logon;
+ 24  END login_pkg;
+ 25  /
+
+Warning: Package Body created with compilation errors.
+
+SQL> DROP PACKAGE login_pkg;
+
+Package dropped.
+
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE login_pkg IS
+  2      lv_shopper_id NUMBER; --Variable for idshopper
+  3      lv_zip_prefix VARCHAR2(3); --Variable for first three of zip
+  4  
+  5      -- Function declaration
+  6      FUNCTION verify_logon (
+  7          p_username IN VARCHAR2,
+  8          p_password IN VARCHAR2)
+  9          RETURN CHAR;
+ 10  END login_pkg;
+ 11  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY login_pkg IS
+  2      FUNCTION verify_logon (
+  3          p_username IN VARCHAR2,
+  4          p_password IN VARCHAR2)
+  5          RETURN CHAR
+  6      IS
+  7          lv_verify_user bb_shopper.username%TYPE := 'N'; -- Default value to 'N'
+  8          verified char(1) := 'N';
+  9  
+ 10      BEGIN
+ 11          SELECT p_username, idshopper, SUBSTR(zipcode, 1, 3)
+ 12          INTO lv_verify_user, lv_shopper_id, lv_zip_prefix
+ 13          FROM bb_shopper
+ 14          WHERE password = p_password;
+ 15  
+ 16          verified := 'Y';
+ 17          RETURN verified;
+ 18  
+ 19      EXCEPTION
+ 20          WHEN NO_DATA_FOUND THEN
+ 21              DBMS_OUTPUT.PUT_LINE('Logon values are invalid.');
+ 22              RETURN verified;
+ 23      END verify_logon;
+ 24  END login_pkg;
+ 25  /
+
+Package body created.
+
+SQL> 
+SQL> DECLARE
+  2      confirm CHAR(1);
+  3  BEGIN
+  4      -- Test the verify_logon function with a sample username and password
+  5      confirm := login_pkg.verify_logon('gma1', 'goofy');
+  6  
+  7      -- Display the function result
+  8      DBMS_OUTPUT.PUT_LINE('Logon Result: ' || confirm);
+  9  
+ 10      -- Display the values of packaged variables
+ 11      DBMS_OUTPUT.PUT_LINE('Shopper ID: ' || login_pkg.lv_shopper_id);
+ 12      DBMS_OUTPUT.PUT_LINE('ZIP Prefix: ' || login_pkg.lv_zip_prefix);
+ 13  END;
+ 14  /
+Logon Result: Y
+Shopper ID: 26
+ZIP Prefix: 277
+
+PL/SQL procedure successfully completed.
+
+SQL> --DROP PACKAGE shop_query_pkg;
+SQL> DROP PACKAGE shop_query_pkg;
+
+Package dropped.
+
+SQL> ----Assignment 7-5: Overloading Packaged Procedures----
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE shop_query_pkg IS
+  2      -- Procedure to get shopper information by shopper ID
+  3      PROCEDURE get_shopper_info
+  4          (p_shopper_id IN NUMBER,--Numeric IN parameter
+  5          p_name OUT VARCHAR2,
+  6          p_city OUT VARCHAR2,
+  7          p_state OUT VARCHAR2,
+  8          p_phone OUT VARCHAR2,
+  9          p_email OUT VARCHAR2);
+ 10  
+ 11      -- Procedure to get shopper information by last name
+ 12      PROCEDURE get_shopper_info
+ 13          (p_last_name IN VARCHAR2,--Character IN parameter
+ 14          p_name OUT VARCHAR2,
+ 15          p_city OUT VARCHAR2,
+ 16          p_state OUT VARCHAR2,
+ 17          p_phone OUT VARCHAR2,
+ 18          p_email OUT VARCHAR2);
+ 19  END;
+ 20  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY shop_query_pkg
+  2      IS
+  3      PROCEDURE get_shopper_info --Get shopper info by ID
+  4          (p_shopper_id IN NUMBER,
+  5          p_name OUT VARCHAR2,
+  6          p_city OUT VARCHAR2,
+  7          p_state OUT VARCHAR2,
+  8          p_phone OUT VARCHAR2,
+  9          p_email OUT VARCHAR2)
+ 10      IS
+ 11      BEGIN
+ 12          SELECT firstname || ' ' || lastname, city, state, phone, email
+ 13          INTO p_name, p_city, p_state, p_phone, p_email
+ 14          FROM bb_shopper
+ 15          WHERE idshopper = p_shopper_id;
+ 16      EXCEPTION
+ 17          WHEN NO_DATA_FOUND THEN
+ 18              DBMS_OUTPUT.PUT_LINE('Shopper ID not found.');
+ 19      END get_shopper_info;
+ 20  
+ 21      PROCEDURE get_shopper_info
+ 22          (p_last_name IN VARCHAR2,
+ 23          p_name OUT VARCHAR2,
+ 24          p_city OUT VARCHAR2,
+ 25          p_state OUT VARCHAR2,
+ 26          p_phone OUT VARCHAR2,
+ 27          p_email OUT VARCHAR2)
+ 28      IS
+ 29      BEGIN
+ 30          SELECT firstname || ' ' || lastname, city, state, phone, email
+ 31          INTO p_name, p_city, p_state, p_phone, p_email
+ 32          FROM bb_shopper
+ 33          WHERE lastname = p_last_name;
+ 34      EXCEPTION
+ 35          WHEN NO_DATA_FOUND THEN
+ 36              DBMS_OUTPUT.PUT_LINE('Shopper with last name not found.');
+ 37      END get_shopper_info;
+ 38  END shop_query_pkg;
+ 39  /
+
+Package body created.
+
+SQL> 
+SQL> -----  TEST 1 -----
+SQL> DECLARE
+  2      v_name VARCHAR2(50);
+  3      v_city VARCHAR2(50);
+  4      v_state VARCHAR2(50);
+  5      v_phone VARCHAR2(15);
+  6      v_email VARCHAR2(50);
+  7  BEGIN
+  8      -- Call the procedure with shopper ID
+  9      shop_query_pkg.get_shopper_info(23, v_name, v_city, v_state, v_phone, v_email);
+ 10  
+ 11      -- Display the shopper information
+ 12      DBMS_OUTPUT.PUT_LINE('Shopper Name: ' || v_name);
+ 13      DBMS_OUTPUT.PUT_LINE('City: ' || v_city);
+ 14      DBMS_OUTPUT.PUT_LINE('State: ' || v_state);
+ 15      DBMS_OUTPUT.PUT_LINE('Phone: ' || v_phone);
+ 16      DBMS_OUTPUT.PUT_LINE('Email: ' || v_email);
+ 17  END;
+ 18  /
+Shopper Name: Kenny Ratman
+City: South Park
+State: NC
+Phone: 9015680902
+Email: ratboy@msn.net
+
+PL/SQL procedure successfully completed.
+
+SQL> ----- TEST 2 -----
+SQL> 
+SQL> DECLARE
+  2      v_name VARCHAR2(50);
+  3      v_city VARCHAR2(50);
+  4      v_state VARCHAR2(50);
+  5      v_phone VARCHAR2(15);
+  6      v_email VARCHAR2(50);
+  7  BEGIN
+  8      -- Call the procedure with last name
+  9      shop_query_pkg.get_shopper_info('Ratman', v_name, v_city, v_state, v_phone, v_email);
+ 10  
+ 11      -- Display the shopper information
+ 12      DBMS_OUTPUT.PUT_LINE('Shopper Name: ' || v_name);
+ 13      DBMS_OUTPUT.PUT_LINE('City: ' || v_city);
+ 14      DBMS_OUTPUT.PUT_LINE('State: ' || v_state);
+ 15      DBMS_OUTPUT.PUT_LINE('Phone: ' || v_phone);
+ 16      DBMS_OUTPUT.PUT_LINE('Email: ' || v_email);
+ 17  END;
+ 18  /
+Shopper Name: Kenny Ratman
+City: South Park
+State: NC
+Phone: 9015680902
+Email: ratboy@msn.net
+
+PL/SQL procedure successfully completed.
+
+SQL> -----Assignment 7-6: Creating a Package with Only a Specification----
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE tax_rate_pkg IS
+  2      -- Packaged constants for tax rates
+  3      pv_tax_nc CONSTANT NUMBER := 0.035; -- North Carolina
+  4      pv_tax_tx CONSTANT NUMBER := 0.05;  -- Texas
+  5      pv_tax_tn CONSTANT NUMBER := 0.02;  -- Tennessee
+  6  END tax_rate_pkg;
+  7  /
+
+Package created.
+
+SQL> BEGIN
+  2      -- Display the values of the tax rates
+  3      DBMS_OUTPUT.PUT_LINE('Tax Rate for NC: ' || tax_rate_pkg.pv_tax_nc);
+  4      DBMS_OUTPUT.PUT_LINE('Tax Rate for TX: ' || tax_rate_pkg.pv_tax_tx);
+  5      DBMS_OUTPUT.PUT_LINE('Tax Rate for TN: ' || tax_rate_pkg.pv_tax_tn);
+  6  END;
+  7  /
+Tax Rate for NC: .035
+Tax Rate for TX: .05
+Tax Rate for TN: .02
+
+PL/SQL procedure successfully completed.
+
+SQL> ------Assignment 7-7: Using a Cursor in a Package -------
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE tax_rate_pkg IS
+  2      -- Packaged cursor
+  3      CURSOR tax_cursor IS
+  4          SELECT taxrate, state
+  5          FROM bb_tax;
+  6  
+  7      -- Function for a specific state
+  8      FUNCTION get_tax_rate
+  9          (pv_state in bb_tax.state%TYPE)
+ 10          RETURN bb_tax.taxrate%TYPE;
+ 11  END;
+ 12  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY tax_rate_pkg IS
+  2      -- Function to get tax rate
+  3      FUNCTION get_tax_rate
+  4          (pv_state in bb_tax.state%TYPE)
+  5          RETURN bb_tax.taxrate%TYPE
+  6          IS
+  7              pv_tax_rate bb_tax.taxrate%TYPE := 0.00; -- Default tax rate
+  8      BEGIN
+  9          -- Loop through cursor for matching state
+ 10          FOR rec_tax IN tax_cursor LOOP
+ 11              IF rec_tax.state = pv_state THEN
+ 12                  pv_tax_rate := rec_tax.taxrate;
+ 13  
+ 14              END IF;
+ 15          END LOOP;
+ 16  
+ 17          RETURN pv_tax_rate; -- Return the tax rate or 0
+ 18      END get_tax_rate;
+ 19  END tax_rate_pkg;
+ 20  /
+
+Package body created.
+
+SQL> ---- TEST WITH NC ---
+SQL> BEGIN
+  2      DBMS_OUTPUT.PUT_LINE('NC'||' '||tax_rate_pkg.get_tax_RATE('NC'));
+  3  END;
+  4  /
+NC .03
+
+PL/SQL procedure successfully completed.
+
+SQL> ------Assignment 7-7: Using a Cursor in a Package -------
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE tax_rate_pkg IS
+  2      -- Packaged cursor
+  3      CURSOR tax_cursor IS
+  4          SELECT taxrate, state
+  5          FROM bb_tax;
+  6  
+  7      -- Function for a specific state
+  8      FUNCTION get_tax_rate
+  9          (pv_state in bb_tax.state%TYPE)
+ 10          RETURN bb_tax.taxrate%TYPE;
+ 11  END;
+ 12  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY tax_rate_pkg IS
+  2      -- Function to get tax rate
+  3      FUNCTION get_tax_rate
+  4          (pv_state in bb_tax.state%TYPE)
+  5          RETURN bb_tax.taxrate%TYPE
+  6          IS
+  7              pv_tax_rate bb_tax.taxrate%TYPE := 0; -- Default tax rate
+  8      BEGIN
+  9          -- Loop through cursor for matching state
+ 10          FOR rec_tax IN tax_cursor LOOP
+ 11              IF rec_tax.state = pv_state THEN
+ 12                  pv_tax_rate := rec_tax.taxrate;
+ 13  
+ 14              END IF;
+ 15          END LOOP;
+ 16  
+ 17          RETURN pv_tax_rate; -- Return the tax rate or 0
+ 18      END get_tax_rate;
+ 19  END tax_rate_pkg;
+ 20  /
+
+Package body created.
+
+SQL> ----TEST PACKAGED FUNCTION ----
+SQL> BEGIN
+  2      DBMS_OUTPUT.PUT_LINE('NC'||' '||tax_rate_pkg.get_tax_RATE('NC'));
+  3  END;
+  4  /
+NC .03
+
+PL/SQL procedure successfully completed.
+
+SQL> ----Assignment 7-8: Using a One-Time-Only Procedure in a Package----
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE login_pkg IS
+  2      pv_id_num NUMBER(3);             -- Packaged variable for ID
+  3      pv_logon_time TIMESTAMP;         -- Packaged variable for logon timestamp
+  4  
+  5      -- Function declaration
+  6      FUNCTION login_ck_pf
+  7          (p_user IN VARCHAR2,
+  8          p_pass IN VARCHAR2)
+  9          RETURN CHAR;
+ 10  
+ 11      -- One-time-only procedure declaration
+ 12      PROCEDURE set_logon_time;
+ 13  END login_pkg;
+ 14  /
+
+Package created.
+
+SQL> 
+SQL> CREATE OR REPLACE PACKAGE BODY login_pkg IS
+  2      -- Function implementation
+  3      FUNCTION login_ck_pf
+  4          (p_user IN VARCHAR2,
+  5          p_pass IN VARCHAR2)
+  6          RETURN CHAR
+  7      IS
+  8          lv_ck_txt CHAR(1) := 'N';    -- Default value
+  9          lv_id_num NUMBER(5);         -- Local variable for ID
+ 10      BEGIN
+ 11          SELECT idShopper
+ 12          INTO lv_id_num
+ 13          FROM bb_shopper
+ 14          WHERE username = p_user
+ 15            AND password = p_pass;
+ 16  
+ 17          -- Set values upon successful logon
+ 18          lv_ck_txt := 'Y';
+ 19          pv_id_num := lv_id_num;
+ 20  
+ 21          -- Call the one-time-only procedure to set the logon time
+ 22          set_logon_time;
+ 23  
+ 24          RETURN lv_ck_txt;
+ 25      EXCEPTION
+ 26          WHEN NO_DATA_FOUND THEN
+ 27              RETURN lv_ck_txt;       -- Return 'N' if no match
+ 28      END login_ck_pf;
+ 29  
+ 30      -- One-time-only procedure implementation
+ 31      PROCEDURE set_logon_time IS
+ 32      BEGIN
+ 33          IF pv_logon_time IS NULL THEN
+ 34              pv_logon_time := SYSTIMESTAMP; -- Set logon timestamp
+ 35          END IF;
+ 36      END set_logon_time;
+ 37  END login_pkg;
+ 38  /
+
+Package body created.
+
+SQL> BEGIN
+  2      -- Call the login function to trigger the one-time procedure
+  3      IF login_pkg.login_ck_pf('gma1', 'goofy') = 'Y' THEN
+  4          DBMS_OUTPUT.PUT_LINE('Logon Time: ' || login_pkg.pv_logon_time);
+  5      ELSE
+  6          DBMS_OUTPUT.PUT_LINE('Logon Failed');
+  7      END IF;
+  8  END;
+  9  /
+Logon Time: 12-DEC-24 11.49.39.202000 PM
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off;

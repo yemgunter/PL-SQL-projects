@@ -1,0 +1,389 @@
+SQL> spool;
+currently spooling to C:\Users\yolan\OneDrive\Documents\GitHub\pl-sql-projects\LABS\YGunter_ITSE1345_Lab_3.txt
+SQL> clear screen;
+
+SQL> -----Lab 3 ----
+SQL> 
+SQL> spool;
+currently spooling to C:\Users\yolan\OneDrive\Documents\GitHub\pl-sql-projects\LABS\YGunter_ITSE1345_Lab_3.txt
+SQL> -----Lab 3 Part 1 ----
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE get_emp_data
+  2      (p_empno IN emp.empno%TYPE)
+  3  IS
+  4      -- Variable to hold the row data
+  5      v_employee emp%ROWTYPE;
+  6  BEGIN
+  7      -- Fetch data using a cursor
+  8      SELECT *
+  9      INTO v_employee
+ 10      FROM emp
+ 11      WHERE empno = p_empno;
+ 12  
+ 13      -- Output the employee data
+ 14      DBMS_OUTPUT.PUT_LINE('Employee Number: ' || v_employee.empno);
+ 15      DBMS_OUTPUT.PUT_LINE('Emplohee Name: ' || v_employee.ename);
+ 16      DBMS_OUTPUT.PUT_LINE('Job Title: ' || v_employee.job);
+ 17      DBMS_OUTPUT.PUT_LINE('Hire Date: ' || v_employee.hiredate);
+ 18      DBMS_OUTPUT.PUT_LINE('Salary: ' || v_employee.sal);
+ 19  EXCEPTION
+ 20      WHEN NO_DATA_FOUND THEN
+ 21          DBMS_OUTPUT.PUT_LINE('Employee: ' || p_empno || ' does not exist.');
+ 22  END get_emp_data;
+ 23  /
+
+Procedure created.
+
+SQL> BEGIN
+  2    get_emp_data(7902);
+  3    get_emp_data(7938);
+  4  END;
+  5  /
+Employee: 7902 does not exist.
+Employee: 7938 does not exist.
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT * FROM EMPLOYEE;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------
+      7839 KING       PRESIDENT            17-NOV-91       5000                    10
+      7698 BLAKE      MANAGER         7839 01-MAY-98       2850                    30
+      7782 CLARK      MANAGER         7839 09-JUN-96       2450                    10
+      7566 JONES      MANAGER         7839 02-APR-91       2975                    20
+      7654 MARTIN     SALESMAN        7698 28-SEP-97       1250       1400         30
+      7499 ALLEN      SALESMAN        7698 20-FEB-99       1600        300         30
+      7844 TURNER     SALESMAN        7698 08-SEP-99       1500          0         30
+      7900 JAMES      CLERK           7698 03-DEC-01        950                    30
+      7521 WARD       SALESMAN        7698 22-FEB-03       1250        500         30
+      7902 FORD       ANALYST         7566 03-DEC-05       3000                    20
+      7369 SMITH      CLERK           7902 17-DEC-03        800                    20
+      7788 SCOTT      ANALYST         7566 09-DEC-04       3000                    20
+      7876 ADAMS      CLERK           7788 12-JAN-99       1100                    20
+      7934 MILLER     CLERK           7782 23-JAN-00       1300                    10
+
+14 rows selected.
+
+SQL> -----LAB 3 ------
+SQL> ---Part 1 -----
+SQL> CREATE OR REPLACE PROCEDURE get_emp_data
+  2      (p_empno IN employee.empno%TYPE)
+  3  IS
+  4      -- Variable for the row data
+  5      v_employee employee%ROWTYPE;
+  6  BEGIN
+  7      -- Get data using a cursor
+  8      SELECT *
+  9      INTO v_employee
+ 10      FROM employee
+ 11      WHERE empno = p_empno;
+ 12  
+ 13      -- Output employee data
+ 14      DBMS_OUTPUT.PUT_LINE('Employee Number: ' || v_employee.empno);
+ 15      DBMS_OUTPUT.PUT_LINE('Emplohee Name: ' || v_employee.ename);
+ 16      DBMS_OUTPUT.PUT_LINE('Job Title: ' || v_employee.job);
+ 17      DBMS_OUTPUT.PUT_LINE('Hire Date: ' || v_employee.hiredate);
+ 18      DBMS_OUTPUT.PUT_LINE('Salary: ' || v_employee.sal);
+ 19  EXCEPTION
+ 20      WHEN NO_DATA_FOUND THEN
+ 21          DBMS_OUTPUT.PUT_LINE('Employee: ' || p_empno || ' does not exist.');
+ 22  END get_emp_data;
+ 23  /
+
+Procedure created.
+
+SQL> BEGIN
+  2    get_emp_data(7902);
+  3    get_emp_data(7938);
+  4  END;
+  5  /
+Employee Number: 7902
+Emplohee Name: FORD
+Job Title: ANALYST
+Hire Date: 03-DEC-05
+Salary: 3000
+Employee: 7938 does not exist.
+
+PL/SQL procedure successfully completed.
+
+SQL> ---Part 2 -----
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION compare_dates
+  2      (p_date1 DATE,
+  3      p_date2 DATE)
+  4      RETURN INT
+  5  IS
+  6      v_result INT;
+  7  BEGIN
+  8      -- Compare two dates (ignoring time component)
+  9      IF p_date1 < p_date2 THEN
+ 10          v_result := -1;
+ 11      ELSIF p_date1 = p_date2 THEN
+ 12          v_result := 0;
+ 13      ELSE
+ 14          v_result := 1;
+ 15      END IF;
+ 16      RETURN v_result;
+ 17  END compare_dates;
+ 18  /
+
+Function created.
+
+SQL> BEGIN
+  2      -- Test Case 1: p_date1 < p_date2
+  3      DBMS_OUTPUT.PUT_LINE('Test 1: p_date1 < p_date2');
+  4      DBMS_OUTPUT.PUT_LINE('Result: ' || compare_dates(TO_DATE('2024-12-01', 'YYYY-MM-DD'), TO_DATE('2024-12-10', 'YYYY-MM-DD')));
+  5  
+  6      -- Test Case 2: p_date1 = p_date2
+  7      DBMS_OUTPUT.PUT_LINE('Test 2: p_date1 = p_date2');
+  8      DBMS_OUTPUT.PUT_LINE('Result: ' || compare_dates(TO_DATE('2024-12-10', 'YYYY-MM-DD'), TO_DATE('2024-12-10', 'YYYY-MM-DD')));
+  9  
+ 10      -- Test Case 3: p_date1 > p_date2
+ 11      DBMS_OUTPUT.PUT_LINE('Test 3: p_date1 > p_date2');
+ 12      DBMS_OUTPUT.PUT_LINE('Result: ' || compare_dates(TO_DATE('2024-12-15', 'YYYY-MM-DD'), TO_DATE('2024-12-10', 'YYYY-MM-DD')));
+ 13  END;
+ 14  /
+Test 1: p_date1 < p_date2
+Result: -1
+Test 2: p_date1 = p_date2
+Result: 0
+Test 3: p_date1 > p_date2
+Result: 1
+
+PL/SQL procedure successfully completed.
+
+SQL> ---Part 3 -----
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE cust_info
+  2      (p_account_id IN NUMBER)
+  3  IS
+  4      -- Declare a record variable to hold customer data
+  5      v_customer customer%ROWTYPE;
+  6  BEGIN
+  7      -- Retrieve the customer row based on the account ID
+  8      SELECT *
+  9      INTO v_customer
+ 10      FROM customer
+ 11      WHERE account_id = p_account_id;
+ 12  
+ 13      -- Get customer information
+ 14      DBMS_OUTPUT.PUT_LINE('Account ID: ' || v_customer.account_id);
+ 15      DBMS_OUTPUT.PUT_LINE('Customer Name: ' || v_customer.cust_name);
+ 16      DBMS_OUTPUT.PUT_LINE('Cust ID: ' || v_customer.cust_id);
+ 17      DBMS_OUTPUT.PUT_LINE('Account Tupe: ' || v_customer.account_type);
+ 18  
+ 19  EXCEPTION
+ 20      WHEN NO_DATA_FOUND THEN
+ 21           DBMS_OUTPUT.PUT_LINE('Cust_ID not valid. Returning garbage values.');
+ 22          -- Display garbage values
+ 23          DBMS_OUTPUT.PUT_LINE('Account ID: ' || NULL);
+ 24          DBMS_OUTPUT.PUT_LINE('Customer Name: ' || NULL);
+ 25          DBMS_OUTPUT.PUT_LINE('Cust ID: ' || NULL);
+ 26          DBMS_OUTPUT.PUT_LINE('Account Tupe: ' || NULL);
+ 27  END cust_info;
+ 28  /
+
+Procedure created.
+
+SQL> BEGIN
+  2      -- Test with a valid account ID
+  3      DBMS_OUTPUT.PUT_LINE('Testing with valid account ID: 1001');
+  4      cust_info(1001);
+  5  
+  6      -- Test with an invalid account ID
+  7      DBMS_OUTPUT.PUT_LINE('Testing with invalid account ID: 9999');
+  8      cust_info(9999);
+  9  END;
+ 10  /
+Testing with valid account ID: 1001
+Cust_ID not valid. Returning garbage values.
+Account ID:
+Customer Name:
+Cust ID:
+Account Tupe:
+Testing with invalid account ID: 9999
+Cust_ID not valid. Returning garbage values.
+Account ID:
+Customer Name:
+Cust ID:
+Account Tupe:
+
+PL/SQL procedure successfully completed.
+
+SQL> ---Part 4 -----
+SQL> 
+SQL> DROP TABLE Physician CASCADE CONSTRAINTS;
+DROP TABLE Physician CASCADE CONSTRAINTS
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> 
+SQL> CREATE TABLE Physician (
+  2      Phys_ID NUMBER(10) PRIMARY KEY,
+  3      Phys_Name VARCHAR2(25),
+  4      Phys_Phone VARCHAR2(15),
+  5      Phys_Specialty VARCHAR2(25));
+
+Table created.
+
+SQL> 
+SQL> INSERT INTO Physician (Phys_ID, Phys_Name, Phys_Phone, Phys_Specialty)
+  2  VALUES (101, 'Wilcox, Christy', '512-329-1848', 'Throat, Eyes, Ears');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO Physician (Phys_ID, Phys_Name, Phys_Phone, Phys_Specialty)
+  2  VALUES (102, 'Nusca, Janie', '512-516-3947', 'Cardiovascular');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO Physician (Phys_ID, Phys_Name, Phys_Phone, Phys_Specialty)
+  2  VALUES (103, 'Gomez, Johny', '512-382-4987', 'Orthopedics');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO Physician (Phys_ID, Phys_Name, Phys_Phone, Phys_Specialty)
+  2  VALUES (104, 'Li, Jan', '512-516-3948', 'Cardiovascular');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO Physician (Phys_ID, Phys_Name, Phys_Phone, Phys_Specialty)
+  2  VALUES (105, 'Simmons, Alex', '512-940-5700', 'Hematology');
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT * FROM Physician;
+SQL> 
+
+   PHYS_ID PHYS_NAME                 PHYS_PHONE      PHYS_SPECIALTY
+---------- ------------------------- --------------- -------------------------
+       101 Wilcox, Christy           512-329-1848    Throat, Eyes, Ears
+       102 Nusca, Janie              512-516-3947    Cardiovascular
+       103 Gomez, Johny              512-382-4987    Orthopedics
+       104 Li, Jan                   512-516-3948    Cardiovascular
+       105 Simmons, Alex             512-940-5700    Hematology
+
+SQL> --update physician table
+SQL> 
+SQL> DECLARE
+  2      -- Named parameters for input values
+  3      v_phys_id NUMBER(3) := 106;
+  4      v_phys_name VARCHAR2(50) := 'gunter, yolanda';
+  5      v_phys_phone VARCHAR2(15) := '512-348-7936';
+  6      v_phys_specialty VARCHAR2(30) := 'neurology';
+  7  
+  8      -- Counter to check if the record exists
+  9      v_count NUMBER;
+ 10  BEGIN
+ 11      -- Check if the phys_id already exists in the Physician table
+ 12      SELECT COUNT(*)
+ 13      INTO v_count
+ 14      FROM physician
+ 15      WHERE phys_id = v_phys_id;
+ 16  
+ 17      IF v_count > 0 THEN
+ 18          -- If record exists, update the record
+ 19          UPDATE physician
+ 20          SET phys_name = v_phys_name,
+ 21              phys_phone = v_phys_phone,
+ 22              phys_specialty = v_phys_specialty
+ 23          WHERE phys_id = v_phys_id;
+ 24  
+ 25          DBMS_OUTPUT.PUT_LINE('record updated successfully for phys_id: ' || v_phys_id);
+ 26      ELSE
+ 27          -- If record does not exist, insert a new record
+ 28          INSERT INTO physician (phys_id, phys_name, phys_phone, phys_specialty)
+ 29          VALUES (v_phys_id, v_phys_name, v_phys_phone, v_phys_specialty);
+ 30  
+ 31          DBMS_OUTPUT.PUT_LINE('record inserted successfully for phys_id: ' || v_phys_id);
+ 32      END IF;
+ 33  
+ 34      -- Commit the transaction
+ 35      COMMIT;
+ 36  END;
+ 37  /
+record updated successfully for phys_id: 106
+
+PL/SQL procedure successfully completed.
+
+SQL> --check data
+SQL> SELECT * FROM Physician;
+
+   PHYS_ID PHYS_NAME                 PHYS_PHONE      PHYS_SPECIALTY
+---------- ------------------------- --------------- -------------------------
+       101 Wilcox, Christy           512-329-1848    Throat, Eyes, Ears
+       102 Nusca, Janie              512-516-3947    Cardiovascular
+       103 Gomez, Johny              512-382-4987    Orthopedics
+       104 Li, Jan                   512-516-3948    Cardiovascular
+       105 Simmons, Alex             512-940-5700    Hematology
+       106 gunter, yolanda           512-348-7936    neurology
+
+6 rows selected.
+
+SQL> --- Moving On----
+SQL> 
+SQL> ----- Part 5 -----
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION adjust_string
+  2      (p_input_string VARCHAR2,
+  3      p_length NUMBER)
+  4      RETURN VARCHAR2
+  5  IS
+  6      v_trimmed_string VARCHAR2(32767);
+  7      v_adjusted_string VARCHAR2(32767);
+  8  BEGIN
+  9      -- Step 1 leading spaces, delete them
+ 10      v_trimmed_string := LTRIM(p_input_string);
+ 11  
+ 12      -- Step 2 specified length is greater than the actual length
+ 13      IF LENGTH(v_trimmed_string) < p_length THEN
+ 14          -- Pad on the right
+ 15          v_adjusted_string := RPAD(v_trimmed_string, p_length);
+ 16      ELSIF LENGTH(v_trimmed_string) > p_length THEN
+ 17          -- Truncate
+ 18          v_adjusted_string := SUBSTR(v_trimmed_string, 1, p_length);
+ 19      ELSE
+ 20          -- No adjustment needed if lengths are equal
+ 21          v_adjusted_string := v_trimmed_string;
+ 22      END IF;
+ 23  
+ 24      -- Return the adjusted string
+ 25      RETURN v_adjusted_string;
+ 26  END adjust_string;
+ 27  /
+
+Function created.
+
+SQL> ---Test---
+SQL> 
+SQL> BEGIN
+  2      -- Test Case 1: Truncate to length 8
+  3      DBMS_OUTPUT.PUT_LINE('Original: ''When is the Time?'', Adjusted: ''' || adjust_string('When is the Time?', 8) || ''', Length: ' || LENGTH(adjust_string('When is the Time?', 8)));
+  4  
+  5      -- Test Case 2: Adjust to length 17 (no change needed)
+  6      DBMS_OUTPUT.PUT_LINE('Original: ''When is the Time?'', Adjusted: ''' || adjust_string('When is the Time?', 17) || ''', Length: ' || LENGTH(adjust_string('When is the Time?', 17)));
+  7  
+  8      -- Test Case 3: Pad to length 30
+  9      DBMS_OUTPUT.PUT_LINE('Original: ''    When is the Time.         '', Adjusted: ''' || adjust_string('    When is the Time.         ', 30) || ''', Length: ' || LENGTH(adjust_string('    When is the Time.         ', 30)));
+ 10  END;
+ 11  /
+Original: 'When is the Time?', Adjusted: 'When is ', Length: 8
+Original: 'When is the Time?', Adjusted: 'When is the Time?', Length: 17
+Original: '    When is the Time.         ', Adjusted: 'When is the Time.             ', Length: 30
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off;

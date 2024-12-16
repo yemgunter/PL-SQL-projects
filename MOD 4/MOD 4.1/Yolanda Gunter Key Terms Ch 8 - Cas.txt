@@ -1,0 +1,68 @@
+Yolanda Gunter Key Terms Ch 8 - Cas.txt
+
+1. Program unit dependencies: These are the connections between different parts of a program, like how procedures, functions, and packages rely on other objects. Understanding them helps avoid problems when one thing depends on another. 
+
+2. Direct dependency: This happens when one object, like a procedure, directly uses another object, such as a table or another procedure. 
+
+3. Indirect dependencies: These occur when an object relies on another object that itself depends on something else, creating a chain that’s harder to follow. 
+
+4. USER_DEPENDENCIES view: A database tool that shows which objects depend on each other. 
+
+5. Dependency Tree Utility: This tool creates a map of all the connections between objects, both direct and indirect, but needs a special setup to work. 
+
+6. Remote database connections: These are links to use objects in another database. The database doesn’t automatically track changes to these objects, so problems might not show up right away if something changes. 
+
+7. Timestamp model: Checks when an object was last updated to decide if something that depends on it needs to be updated. 
+
+8. Signature model: Compares details like the type and order of inputs and outputs to decide if changes to a remote object will cause a problem. 
+
+9. Program Unit Privileges: The permissions needed to access or use certain program parts. 
+
+10. Compiler parameters: Settings that control how a program is checked and translated into something the computer can run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+Yolanda Gunter Key Terms Ch 7 - Cas.txt
+
+1. Package Specification: The part of a package that lists the procedures, functions, and variables you can use. It's like a table of contents for the package.
+
+2. Package Body: The part of a package where the actual code for procedures and functions is written. It must match what’s listed in the specification.
+
+3. Package Scope: Defines whether something in the package can be used outside it (public) or only inside it (private).
+
+4. Global Constructs: Variables or objects in a package that can be used anywhere in the program and keep their values during the entire session.
+
+5. Forward Declaration: A way to declare a procedure or function at the top of a package before writing its full code later.
+
+6. One-Time-Only Procedure: A procedure in a package that runs automatically the first time the package is used in a session, then never again during that session.
+
+7. Overloading: Using the same name for multiple procedures or functions in a package, but each must have different inputs (like numbers or text).
+
+8. Purity Levels: Rules about what a packaged function can or can’t do, like reading data or changing the database.
+
+9. PRAGMA RESTRICT_REFERENCES: A command that specifies the purity levels of a function to ensure it doesn’t do things like modify data when it shouldn’t.
+
+10. REF CURSOR: A flexible type of cursor that can run different queries and pass the results between parts of the program.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,121 @@
+SQL> spool;
+currently spooling to C:\Users\yolan\OneDrive\Documents\GitHub\pl-sql-projects\HandsOn\YolandaGunterHandsOn8.txt
+SQL> 
+SQL> ----Assignment 8-1: Reviewing Dependency Information in the Data Dictionary ---
+SQL> 
+SQL> DESC USER_OBJECTS;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ OBJECT_NAME                                                    VARCHAR2(128)
+ SUBOBJECT_NAME                                                 VARCHAR2(30)
+ OBJECT_ID                                                      NUMBER
+ DATA_OBJECT_ID                                                 NUMBER
+ OBJECT_TYPE                                                    VARCHAR2(19)
+ CREATED                                                        DATE
+ LAST_DDL_TIME                                                  DATE
+ TIMESTAMP                                                      VARCHAR2(19)
+ STATUS                                                         VARCHAR2(7)
+ TEMPORARY                                                      VARCHAR2(1)
+ GENERATED                                                      VARCHAR2(1)
+ SECONDARY                                                      VARCHAR2(1)
+ NAMESPACE                                                      NUMBER
+ EDITION_NAME                                                   VARCHAR2(30)
+
+SQL> SELECT OBJECT_NAME, STATUS, TIMESTAMP
+  2  FROM USER_OBJECTS
+  3  WHERE OBJECT_TYPE = 'PROCEDURE';
+
+OBJECT_NAME                                                                                         
+----------------------------------------------------------------------------------------------------
+STATUS  TIMESTAMP                                                                                   
+------- -------------------                                                                         
+ORA$_SYS_REP_AUTH                                                                                   
+VALID   2014-05-29:13:11:52                                                                         
+                                                                                                    
+CUST_INFO                                                                                           
+VALID   2024-12-13:02:39:53                                                                         
+                                                                                                    
+SHIP_COST_SP                                                                                        
+VALID   2024-12-13:00:40:38                                                                         
+                                                                                                    
+ORDER_TOTAL_SP                                                                                      
+VALID   2024-12-13:05:04:47                                                                         
+                                                                                                    
+ORDER_TOTAL_SP2                                                                                     
+VALID   2024-12-13:05:04:47                                                                         
+                                                                                                    
+STOCK_CK_SP                                                                                         
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+MEMBER_CK_SP                                                                                        
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+LOGIN_SP                                                                                            
+INVALID 2024-12-13:05:04:48                                                                         
+                                                                                                    
+LOGIN2_SP                                                                                           
+INVALID 2024-12-13:05:04:48                                                                         
+                                                                                                    
+TEST_NOCOPY_SP                                                                                      
+VALID   2024-12-13:00:40:38                                                                         
+                                                                                                    
+RUN_NOCOPY_SP                                                                                       
+VALID   2024-12-13:00:40:38                                                                         
+                                                                                                    
+BASK_CALC_SP                                                                                        
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+STATUS_SP                                                                                           
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+PROMO_TEST_SP                                                                                       
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+TC_TEST_SP2                                                                                         
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+
+OBJECT_NAME                                                                                         
+----------------------------------------------------------------------------------------------------
+STATUS  TIMESTAMP                                                                                   
+------- -------------------                                                                         
+TC_TEST_SP1                                                                                         
+VALID   2024-12-13:05:04:48                                                                         
+                                                                                                    
+PHONE_FMT_SP                                                                                        
+VALID   2024-12-13:00:40:38                                                                         
+                                                                                                    
+GET_EMP_DATA                                                                                        
+VALID   2024-12-13:02:00:20                                                                         
+                                                                                                    
+
+18 rows selected.
+
+SQL> DESC user_dependencies;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ NAME                                                  NOT NULL VARCHAR2(30)
+ TYPE                                                           VARCHAR2(18)
+ REFERENCED_OWNER                                               VARCHAR2(30)
+ REFERENCED_NAME                                                VARCHAR2(64)
+ REFERENCED_TYPE                                                VARCHAR2(18)
+ REFERENCED_LINK_NAME                                           VARCHAR2(128)
+ SCHEMAID                                                       NUMBER
+ DEPENDENCY_TYPE                                                VARCHAR2(4)
+
+SQL> SELECT NAME, TYPE
+  2  FROM USER_DEPENDENCIES
+  3  WHERE REFERENCED_NAME = 'BB_BASKET';
+
+NAME                           TYPE                                                                 
+------------------------------ ------------------                                                   
+BASK_CALC_SP                   PROCEDURE                                                            
+BB_SHIP_VU                     VIEW                                                                 
+ORDER_INFO_PKG                 PACKAGE BODY                                                         
+PROMO_TEST_SP                  PROCEDURE                                                            
+STATUS_SP                      PROCEDURE                                                            
+TAX_CALC2_SF                   FUNCTION                                                             
+
+6 rows selected.
+
+SQL> spool off;
